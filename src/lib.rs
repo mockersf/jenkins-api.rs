@@ -1,4 +1,5 @@
-#[deny(warnings)]
+#![deny(warnings)]
+
 extern crate reqwest;
 
 #[macro_use]
