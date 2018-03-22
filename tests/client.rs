@@ -8,7 +8,6 @@ fn can_get_jenkins_home() {
         .with_user("user".to_owned(), Some("password".to_owned()))
         .build()
         .unwrap();
-    println!("{:?}", jenkins.get_home());
     assert!(jenkins.get_home().is_ok());
 }
 
@@ -22,7 +21,7 @@ fn should_be_forbidden() {
     assert!(response.is_err());
     assert_eq!(
         format!("{:?}", response),
-        "Err(Error { kind: ClientError(Unauthorized), url: Some(\"http://localhost:8080//api/json\") })"
+        "Err(Error { kind: ClientError(Unauthorized), url: Some(\"http://localhost:8080/api/json\") })"
     );
 }
 
@@ -41,7 +40,6 @@ fn can_get_view() {
         .with_user("user".to_owned(), Some("password".to_owned()))
         .build()
         .unwrap();
-    println!("{:?}", jenkins.get_view("view%20disabled"));
     assert!(jenkins.get_view("view%20disabled").is_ok());
 }
 
@@ -57,4 +55,13 @@ fn should_get_view_not_found() {
         format!("{:?}", response),
         "Err(Error { kind: ClientError(NotFound), url: Some(\"http://localhost:8080/view/zut/api/json\") })"
     );
+}
+
+#[test]
+fn can_get_job() {
+    let jenkins = JenkinsBuilder::new("http://localhost:8080".to_owned())
+        .with_user("user".to_owned(), Some("password".to_owned()))
+        .build()
+        .unwrap();
+    assert!(jenkins.get_job("normal%20job").is_ok());
 }

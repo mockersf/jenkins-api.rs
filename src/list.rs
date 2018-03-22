@@ -1,14 +1,14 @@
 use failure::Error;
 
-use jobs::Job;
-use super::Jenkins;
-use super::client::Path;
+use jobs::ShortJob;
+use Jenkins;
+use client::Path;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct View {
-    name: String,
-    url: String,
+    pub name: String,
+    pub url: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -26,7 +26,7 @@ pub struct Home {
     node_name: String,
     num_executors: i32,
     description: Option<String>,
-    jobs: Vec<Job>,
+    jobs: Vec<ShortJob>,
     quieting_down: bool,
     slave_agent_port: i32,
     use_crumbs: bool,
@@ -40,7 +40,7 @@ pub struct ListView {
     description: String,
     name: String,
     url: String,
-    jobs: Vec<Job>,
+    jobs: Vec<ShortJob>,
 }
 
 impl Jenkins {

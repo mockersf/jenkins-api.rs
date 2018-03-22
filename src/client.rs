@@ -66,13 +66,15 @@ impl JenkinsBuilder {
 pub(crate) enum Path<'a> {
     Home,
     View { name: &'a str },
+    Job { name: &'a str },
 }
 
 impl<'a> ToString for Path<'a> {
     fn to_string(&self) -> String {
         match self {
-            &Path::Home => "/".to_string(),
+            &Path::Home => "".to_string(),
             &Path::View { ref name } => format!("/view/{}", name),
+            &Path::Job { ref name } => format!("/job/{}", name),
         }
     }
 }
