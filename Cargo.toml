@@ -1,0 +1,13 @@
+[package]
+name = "jenkins_api"
+version = "0.1.0"
+authors = ["François Mockers <mockersf@gmail.com>"]
+
+[dependencies]
+reqwest = "0.8"
+
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+
+failure = "0.1"
