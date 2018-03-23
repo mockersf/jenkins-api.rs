@@ -31,7 +31,7 @@ pub struct ShortJob {
 }
 impl ShortJob {
     pub fn get_full_job(&self, jenkins_client: &Jenkins) -> Result<Job, Error> {
-        jenkins_client.get_from_url(self.url.clone())
+        jenkins_client.get_from_url(&self.url)
     }
 }
 
@@ -43,7 +43,7 @@ pub struct ShortBuild {
 }
 impl ShortBuild {
     pub fn get_full_build(&self, jenkins_client: &Jenkins) -> Result<Build, Error> {
-        jenkins_client.get_from_url(self.url.clone())
+        jenkins_client.get_from_url(&self.url)
     }
 }
 

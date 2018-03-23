@@ -38,15 +38,15 @@ impl Jenkins {
             ("/vie", 3) => Path::View {
                 name: Name::UrlEncodedName(&path[6..(path.len() - 1)]),
             },
-            (_, _) => Path::Raw { path: path },
+            (_, _) => Path::Raw { path },
         }
     }
 
-    pub(crate) fn get_from_url<T>(&self, url: String) -> Result<T, failure::Error>
+    pub(crate) fn get_from_url<T>(&self, url: &str) -> Result<T, failure::Error>
     where
         for<'de> T: Deserialize<'de>,
     {
-        Ok(self.get(&self.url_to_path(&url))
+        Ok(self.get(&self.url_to_path(url))
             .send()?
             .error_for_status()?
             .json()?)
@@ -75,7 +75,7 @@ impl JenkinsBuilder {
     pub fn build(self) -> Result<Jenkins, Error> {
         let mut headers = Headers::new();
 
-        if let &Some(ref user) = &self.user {
+        if let Some(ref user) = self.user {
             headers.set(Authorization(Basic {
                 username: user.username.clone(),
                 password: user.password.clone(),
@@ -106,9 +106,9 @@ pub(crate) enum Name<'a> {
 
 impl<'a> ToString for Name<'a> {
     fn to_string(&self) -> String {
-        match self {
-            &Name::Name(name) => urlencoding::encode(name),
-            &Name::UrlEncodedName(name) => name.to_string(),
+        match *self {
+            Name::Name(name) => urlencoding::encode(name),
+            Name::UrlEncodedName(name) => name.to_string(),
         }
     }
 }
@@ -124,15 +124,15 @@ pub(crate) enum Path<'a> {
 
 impl<'a> ToString for Path<'a> {
     fn to_string(&self) -> String {
-        match self {
-            &Path::Home => "".to_string(),
-            &Path::View { ref name } => format!("/view/{}", name.to_string()),
-            &Path::Job { ref name } => format!("/job/{}", name.to_string()),
-            &Path::Build {
+        match *self {
+            Path::Home => "".to_string(),
+            Path::View { ref name } => format!("/view/{}", name.to_string()),
+            Path::Job { ref name } => format!("/job/{}", name.to_string()),
+            Path::Build {
                 ref job_name,
                 ref id,
             } => format!("/job/{}/{}", job_name.to_string(), id),
-            &Path::Raw { ref path } => format!("{}", path),
+            Path::Raw { path } => format!("{}", path),
         }
     }
 }

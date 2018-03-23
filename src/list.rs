@@ -12,7 +12,7 @@ pub struct ShortView {
 }
 impl ShortView {
     pub fn get_full_view(&self, jenkins_client: &Jenkins) -> Result<View, Error> {
-        jenkins_client.get_from_url(self.url.clone())
+        jenkins_client.get_from_url(&self.url)
     }
 }
 
