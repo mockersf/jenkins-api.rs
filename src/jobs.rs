@@ -2,6 +2,7 @@ use failure::Error;
 
 use super::Jenkins;
 use super::client::{Name, Path};
+use super::error;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -98,6 +99,23 @@ pub struct Build {
     pub built_on: String,
     pub id: String,
     pub queue_id: u32,
+}
+impl Build {
+    pub fn get_job(&self, jenkins_client: &Jenkins) -> Result<Job, Error> {
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::Build { job_name, .. } = path {
+            Ok(jenkins_client
+                .get(&Path::Job { name: job_name })
+                .send()?
+                .error_for_status()?
+                .json()?)
+        } else {
+            Err(error::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "job".to_string(),
+            }.into())
+        }
+    }
 }
 
 impl Jenkins {

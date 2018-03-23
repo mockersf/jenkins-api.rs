@@ -34,10 +34,29 @@ impl Jenkins {
         } else {
             url
         };
-        match (&path[0..4], path.chars().filter(|c| *c == '/').count()) {
-            ("/vie", 3) => Path::View {
+        let first_slash = path.char_indices().filter(|c| c.1 == '/').nth(1).unwrap().0;
+        match (
+            &path[0..first_slash],
+            path.chars().filter(|c| *c == '/').count(),
+        ) {
+            ("/view", 3) => Path::View {
                 name: Name::UrlEncodedName(&path[6..(path.len() - 1)]),
             },
+            ("/job", 3) => Path::Job {
+                name: Name::UrlEncodedName(&path[5..(path.len() - 1)]),
+            },
+            ("/job", 4) => {
+                let last_slash = path.char_indices()
+                    .rev()
+                    .filter(|c| c.1 == '/')
+                    .nth(1)
+                    .unwrap()
+                    .0;
+                Path::Build {
+                    job_name: Name::UrlEncodedName(&path[5..last_slash]),
+                    id: path[(last_slash + 1)..(path.len() - 1)].parse().unwrap(),
+                }
+            }
             (_, _) => Path::Raw { path },
         }
     }

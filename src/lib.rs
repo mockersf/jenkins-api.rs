@@ -10,6 +10,7 @@ extern crate serde_json;
 
 extern crate urlencoding;
 
+#[macro_use]
 extern crate failure;
 
 mod client;
@@ -17,3 +18,4 @@ pub use client::{Jenkins, JenkinsBuilder};
 
 mod list;
 mod jobs;
+mod error;
