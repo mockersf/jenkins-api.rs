@@ -34,7 +34,13 @@ pub struct JenkinsBuilder {
 impl JenkinsBuilder {
     pub fn new(url: &str) -> Self {
         JenkinsBuilder {
-            url: url.to_string(),
+            url: {
+                let last: String = url.chars().rev().take(1).collect();
+                match last.as_str() {
+                    "/" => url[0..(url.len() - 1)].to_string(),
+                    _ => url.to_string(),
+                }
+            },
             user: None,
         }
     }

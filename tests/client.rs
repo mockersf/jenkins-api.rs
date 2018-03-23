@@ -57,7 +57,7 @@ fn should_get_view_not_found() {
 
 #[test]
 fn can_get_job() {
-    let jenkins = JenkinsBuilder::new("http://localhost:8080")
+    let jenkins = JenkinsBuilder::new("http://localhost:8080/")
         .with_user("user", Some("password"))
         .build()
         .unwrap();
