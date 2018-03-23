@@ -75,6 +75,7 @@ pub(crate) enum Path<'a> {
     Home,
     View { name: &'a str },
     Job { name: &'a str },
+    Build { job_name: &'a str, id: u32 },
 }
 
 impl<'a> ToString for Path<'a> {
@@ -83,6 +84,10 @@ impl<'a> ToString for Path<'a> {
             &Path::Home => "".to_string(),
             &Path::View { ref name } => format!("/view/{}", urlencoding::encode(name)),
             &Path::Job { ref name } => format!("/job/{}", urlencoding::encode(name)),
+            &Path::Build {
+                ref job_name,
+                ref id,
+            } => format!("/job/{}/{}", urlencoding::encode(job_name), id),
         }
     }
 }

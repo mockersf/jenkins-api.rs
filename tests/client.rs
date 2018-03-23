@@ -63,3 +63,12 @@ fn can_get_job() {
         .unwrap();
     assert!(jenkins.get_job("normal job").is_ok());
 }
+
+#[test]
+fn can_get_build() {
+    let jenkins = JenkinsBuilder::new("http://localhost:8080")
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+    assert!(jenkins.get_build("normal job", 1).is_ok());
+}
