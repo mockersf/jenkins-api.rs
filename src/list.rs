@@ -6,7 +6,7 @@ use client::Path;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct View {
+pub struct ShortView {
     pub name: String,
     pub url: String,
 }
@@ -21,23 +21,23 @@ pub enum Mode {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Home {
-    mode: Mode,
-    node_description: String,
-    node_name: String,
-    num_executors: i32,
-    description: Option<String>,
-    jobs: Vec<ShortJob>,
-    quieting_down: bool,
-    slave_agent_port: i32,
-    use_crumbs: bool,
-    use_security: bool,
-    views: Vec<View>,
+    pub mode: Mode,
+    pub node_description: String,
+    pub node_name: String,
+    pub num_executors: i32,
+    pub description: Option<String>,
+    pub jobs: Vec<ShortJob>,
+    pub quieting_down: bool,
+    pub slave_agent_port: i32,
+    pub use_crumbs: bool,
+    pub use_security: bool,
+    pub views: Vec<ShortView>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ListView {
-    description: String,
+pub struct View {
+    description: Option<String>,
     name: String,
     url: String,
     jobs: Vec<ShortJob>,
