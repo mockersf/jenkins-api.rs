@@ -32,9 +32,9 @@ pub struct JenkinsBuilder {
 }
 
 impl JenkinsBuilder {
-    pub fn new(url: String) -> Self {
+    pub fn new(url: &str) -> Self {
         JenkinsBuilder {
-            url: url,
+            url: url.to_string(),
             user: None,
         }
     }
@@ -56,10 +56,10 @@ impl JenkinsBuilder {
         })
     }
 
-    pub fn with_user(mut self, login: String, password: Option<String>) -> Self {
+    pub fn with_user(mut self, login: &str, password: Option<&str>) -> Self {
         self.user = Some(User {
-            username: login,
-            password: password,
+            username: login.to_string(),
+            password: password.map(|s| s.to_string()),
         });
         self
     }

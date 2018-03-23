@@ -4,8 +4,8 @@ use jenkins_api::JenkinsBuilder;
 
 #[test]
 fn can_get_jenkins_home() {
-    let jenkins = JenkinsBuilder::new("http://localhost:8080".to_owned())
-        .with_user("user".to_owned(), Some("password".to_owned()))
+    let jenkins = JenkinsBuilder::new("http://localhost:8080")
+        .with_user("user", Some("password"))
         .build()
         .unwrap();
     assert!(jenkins.get_home().is_ok());
@@ -13,8 +13,8 @@ fn can_get_jenkins_home() {
 
 #[test]
 fn should_be_forbidden() {
-    let jenkins = JenkinsBuilder::new("http://localhost:8080".to_owned())
-        .with_user("unknown".to_owned(), Some("password".to_owned()))
+    let jenkins = JenkinsBuilder::new("http://localhost:8080")
+        .with_user("unknown", Some("password"))
         .build()
         .unwrap();
     let response = jenkins.get_home();
@@ -27,17 +27,15 @@ fn should_be_forbidden() {
 
 #[test]
 fn should_be_connection_error() {
-    let jenkins = JenkinsBuilder::new("http://localhost:808".to_owned())
-        .build()
-        .unwrap();
+    let jenkins = JenkinsBuilder::new("http://localhost:808").build().unwrap();
     let response = jenkins.get_home();
     assert!(response.is_err());
 }
 
 #[test]
 fn can_get_view() {
-    let jenkins = JenkinsBuilder::new("http://localhost:8080".to_owned())
-        .with_user("user".to_owned(), Some("password".to_owned()))
+    let jenkins = JenkinsBuilder::new("http://localhost:8080")
+        .with_user("user", Some("password"))
         .build()
         .unwrap();
     assert!(jenkins.get_view("view disabled").is_ok());
@@ -45,8 +43,8 @@ fn can_get_view() {
 
 #[test]
 fn should_get_view_not_found() {
-    let jenkins = JenkinsBuilder::new("http://localhost:8080".to_owned())
-        .with_user("user".to_owned(), Some("password".to_owned()))
+    let jenkins = JenkinsBuilder::new("http://localhost:8080")
+        .with_user("user", Some("password"))
         .build()
         .unwrap();
     let response = jenkins.get_view("zut");
@@ -59,8 +57,8 @@ fn should_get_view_not_found() {
 
 #[test]
 fn can_get_job() {
-    let jenkins = JenkinsBuilder::new("http://localhost:8080".to_owned())
-        .with_user("user".to_owned(), Some("password".to_owned()))
+    let jenkins = JenkinsBuilder::new("http://localhost:8080")
+        .with_user("user", Some("password"))
         .build()
         .unwrap();
     assert!(jenkins.get_job("normal job").is_ok());

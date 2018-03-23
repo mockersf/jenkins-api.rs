@@ -5,10 +5,9 @@ Bindings to [Jenkins JSON API](https://wiki.jenkins.io/display/JENKINS/Remote+ac
 ## Example
 
 ```rust
-let jenkins = JenkinsBuilder::new("http://localhost:8080".to_owned())
-    .with_user("user".to_owned(), Some("password".to_owned()))
+let jenkins = JenkinsBuilder::new("http://localhost:8080")
+    .with_user("user", Some("password"))
     .build()
     .unwrap();
-let job = jenkins.get_job("job name")unwrap();
+let job = jenkins.get_job("job name").unwrap();
 ```
-
