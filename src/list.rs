@@ -37,10 +37,10 @@ pub struct Home {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct View {
-    description: Option<String>,
-    name: String,
-    url: String,
-    jobs: Vec<ShortJob>,
+    pub description: Option<String>,
+    pub name: String,
+    pub url: String,
+    pub jobs: Vec<ShortJob>,
 }
 
 impl Jenkins {

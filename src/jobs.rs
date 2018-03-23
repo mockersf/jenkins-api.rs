@@ -25,42 +25,42 @@ pub enum BallColor {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ShortJob {
-    name: String,
-    url: String,
-    color: BallColor,
+    pub name: String,
+    pub url: String,
+    pub color: BallColor,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ShortBuild {
-    url: String,
-    number: i32,
+    pub url: String,
+    pub number: i32,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Job {
-    name: String,
-    display_name: String,
-    full_display_name: String,
-    full_name: String,
-    description: String,
-    url: String,
-    color: BallColor,
-    buildable: bool,
-    concurrent_build: bool,
-    keep_dependencies: bool,
-    next_build_number: i32,
-    in_queue: bool,
-    last_build: Option<ShortBuild>,
-    first_build: Option<ShortBuild>,
-    last_stable_build: Option<ShortBuild>,
-    last_unstable_build: Option<ShortBuild>,
-    last_successful_build: Option<ShortBuild>,
-    last_unsuccessful_build: Option<ShortBuild>,
-    last_completed_build: Option<ShortBuild>,
-    last_failed_build: Option<ShortBuild>,
-    builds: Vec<ShortBuild>,
+    pub name: String,
+    pub display_name: String,
+    pub full_display_name: String,
+    pub full_name: String,
+    pub description: String,
+    pub url: String,
+    pub color: BallColor,
+    pub buildable: bool,
+    pub concurrent_build: bool,
+    pub keep_dependencies: bool,
+    pub next_build_number: i32,
+    pub in_queue: bool,
+    pub last_build: Option<ShortBuild>,
+    pub first_build: Option<ShortBuild>,
+    pub last_stable_build: Option<ShortBuild>,
+    pub last_unstable_build: Option<ShortBuild>,
+    pub last_successful_build: Option<ShortBuild>,
+    pub last_unsuccessful_build: Option<ShortBuild>,
+    pub last_completed_build: Option<ShortBuild>,
+    pub last_failed_build: Option<ShortBuild>,
+    pub builds: Vec<ShortBuild>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -76,18 +76,18 @@ pub enum BuildStatus {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Build {
-    url: String,
-    number: i32,
-    estimated_duration: u32,
-    timestamp: u64,
-    keep_log: bool,
-    result: BuildStatus,
-    display_name: String,
-    full_display_name: String,
-    building: bool,
-    built_on: String,
-    id: String,
-    queue_id: u32,
+    pub url: String,
+    pub number: i32,
+    pub estimated_duration: u32,
+    pub timestamp: u64,
+    pub keep_log: bool,
+    pub result: BuildStatus,
+    pub display_name: String,
+    pub full_display_name: String,
+    pub building: bool,
+    pub built_on: String,
+    pub id: String,
+    pub queue_id: u32,
 }
 
 impl Jenkins {
