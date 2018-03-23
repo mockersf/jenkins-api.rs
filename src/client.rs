@@ -1,6 +1,8 @@
 use reqwest::header::{Authorization, Basic, Headers};
 use reqwest::{Client, Error, RequestBuilder};
 
+use urlencoding;
+
 #[derive(Debug)]
 pub(crate) struct User {
     pub(crate) username: String,
@@ -73,8 +75,8 @@ impl<'a> ToString for Path<'a> {
     fn to_string(&self) -> String {
         match self {
             &Path::Home => "".to_string(),
-            &Path::View { ref name } => format!("/view/{}", name),
-            &Path::Job { ref name } => format!("/job/{}", name),
+            &Path::View { ref name } => format!("/view/{}", urlencoding::encode(name)),
+            &Path::Job { ref name } => format!("/job/{}", urlencoding::encode(name)),
         }
     }
 }

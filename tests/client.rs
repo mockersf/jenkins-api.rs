@@ -40,7 +40,7 @@ fn can_get_view() {
         .with_user("user".to_owned(), Some("password".to_owned()))
         .build()
         .unwrap();
-    assert!(jenkins.get_view("view%20disabled").is_ok());
+    assert!(jenkins.get_view("view disabled").is_ok());
 }
 
 #[test]
@@ -63,5 +63,5 @@ fn can_get_job() {
         .with_user("user".to_owned(), Some("password".to_owned()))
         .build()
         .unwrap();
-    assert!(jenkins.get_job("normal%20job").is_ok());
+    assert!(jenkins.get_job("normal job").is_ok());
 }
