@@ -1,0 +1,6 @@
+Started by user [8mha:////4JPFB7jLvAcrTHK1Xwx37QNphm1IeoOxFX6ORmyx4RxPAAAAkx+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyWEgYu/dLi1CIwAQDYegtJvwAAAA==[0muser
+Building in workspace /var/jenkins_home/workspace/normal job
+[normal job] $ /bin/sh -xe /tmp/jenkins3806384646574898021.sh
++ echo success
+success
+Finished: SUCCESS
