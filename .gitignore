@@ -2,3 +2,6 @@
 /target/
 **/*.rs.bk
 Cargo.lock
+
+tests/jenkins_data/war
+tests/jenkins_data/updates
