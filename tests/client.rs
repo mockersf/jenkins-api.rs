@@ -61,7 +61,15 @@ fn can_get_job() {
         .with_user("user", Some("password"))
         .build()
         .unwrap();
-    assert!(jenkins.get_job("normal job").is_ok());
+    let job = jenkins.get_job("normal job");
+    assert!(job.is_ok());
+    assert!(
+        job.unwrap()
+            .last_build
+            .unwrap()
+            .get_full_build(&jenkins)
+            .is_ok()
+    );
 }
 
 #[test]
@@ -71,4 +79,19 @@ fn can_get_build() {
         .build()
         .unwrap();
     assert!(jenkins.get_build("normal job", 1).is_ok());
+}
+
+#[test]
+fn can_get_jenkins_view_from_home() {
+    let jenkins = JenkinsBuilder::new("http://localhost:8080")
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+    let home = jenkins.get_home();
+    assert!(home.is_ok());
+    let first_view = &home.unwrap().views[1];
+    let full_view = first_view.get_full_view(&jenkins);
+    assert!(full_view.is_ok());
+    let full_job = full_view.unwrap().jobs[0].get_full_job(&jenkins);
+    assert!(full_job.is_ok());
 }

@@ -2,13 +2,18 @@ use failure::Error;
 
 use jobs::ShortJob;
 use Jenkins;
-use client::Path;
+use client::{Name, Path};
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ShortView {
     pub name: String,
     pub url: String,
+}
+impl ShortView {
+    pub fn get_full_view(&self, jenkins_client: &Jenkins) -> Result<View, Error> {
+        jenkins_client.get_from_url(self.url.clone())
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -49,8 +54,9 @@ impl Jenkins {
     }
 
     pub fn get_view(&self, view_name: &str) -> Result<View, Error> {
-        Ok(self.get(&Path::View { name: view_name })
-            .send()?
+        Ok(self.get(&Path::View {
+            name: Name::Name(view_name),
+        }).send()?
             .error_for_status()?
             .json()?)
     }

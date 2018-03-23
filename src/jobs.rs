@@ -1,7 +1,7 @@
 use failure::Error;
 
 use super::Jenkins;
-use super::client::Path;
+use super::client::{Name, Path};
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -29,12 +29,22 @@ pub struct ShortJob {
     pub url: String,
     pub color: BallColor,
 }
+impl ShortJob {
+    pub fn get_full_job(&self, jenkins_client: &Jenkins) -> Result<Job, Error> {
+        jenkins_client.get_from_url(self.url.clone())
+    }
+}
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ShortBuild {
     pub url: String,
     pub number: i32,
+}
+impl ShortBuild {
+    pub fn get_full_build(&self, jenkins_client: &Jenkins) -> Result<Build, Error> {
+        jenkins_client.get_from_url(self.url.clone())
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -92,15 +102,16 @@ pub struct Build {
 
 impl Jenkins {
     pub fn get_job(&self, job_name: &str) -> Result<Job, Error> {
-        Ok(self.get(&Path::Job { name: job_name })
-            .send()?
+        Ok(self.get(&Path::Job {
+            name: Name::Name(job_name),
+        }).send()?
             .error_for_status()?
             .json()?)
     }
 
     pub fn get_build(&self, job_name: &str, build_id: u32) -> Result<Build, Error> {
         Ok(self.get(&Path::Build {
-            job_name: job_name,
+            job_name: Name::Name(job_name),
             id: build_id,
         }).send()?
             .error_for_status()?
