@@ -1,5 +1,31 @@
 #![deny(warnings)]
 
+//! Bindings to [Jenkins JSON API](https://wiki.jenkins.io/display/JENKINS/Remote+access+API)
+//!
+//! # Example
+//!
+//! ```rust
+//! extern crate jenkins_api;
+//!
+//! use jenkins_api::JenkinsBuilder;
+//!
+//! fn main() {
+//!     let jenkins = JenkinsBuilder::new("http://localhost:8080")
+//!         .with_user("user", Some("password"))
+//!         .build()
+//!         .unwrap();
+//!
+//!     let job = jenkins.get_job("job name").unwrap();
+//!     let build = job.last_build.unwrap().get_full_build(&jenkins).unwrap();
+//!
+//!     println!(
+//!         "last build for job {} at {} was {:?}",
+//!         job.name, build.timestamp, build.result
+//!     );
+//! }
+//! ```
+//!
+
 extern crate reqwest;
 
 #[macro_use]
@@ -17,5 +43,7 @@ mod client;
 pub use client::{Jenkins, JenkinsBuilder};
 
 mod list;
+pub use list::*;
 mod jobs;
-mod error;
+pub use jobs::*;
+pub mod error;

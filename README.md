@@ -7,6 +7,8 @@ Bindings to [Jenkins JSON API](https://wiki.jenkins.io/display/JENKINS/Remote+ac
 ```rust
 extern crate jenkins_api;
 
+use jenkins_api::JenkinsBuilder;
+
 fn main() {
     let jenkins = JenkinsBuilder::new("http://localhost:8080")
         .with_user("user", Some("password"))
