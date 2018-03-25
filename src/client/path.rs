@@ -20,14 +20,37 @@ impl<'a> ToString for Name<'a> {
 #[derive(Debug)]
 pub(crate) enum Path<'a> {
     Home,
-    View { name: Name<'a> },
-    Job { name: Name<'a> },
-    JobEnable { name: Name<'a> },
-    JobDisable { name: Name<'a> },
-    Build { job_name: Name<'a>, number: u32 },
+    View {
+        name: Name<'a>,
+    },
+    AddJobToView {
+        job_name: Name<'a>,
+        view_name: Name<'a>,
+    },
+    RemoveJobFromView {
+        job_name: Name<'a>,
+        view_name: Name<'a>,
+    },
+    Job {
+        name: Name<'a>,
+    },
+    JobEnable {
+        name: Name<'a>,
+    },
+    JobDisable {
+        name: Name<'a>,
+    },
+    Build {
+        job_name: Name<'a>,
+        number: u32,
+    },
     Queue,
-    QueueItem { id: u32 },
-    Raw { path: &'a str },
+    QueueItem {
+        id: u32,
+    },
+    Raw {
+        path: &'a str,
+    },
     CrumbIssuer,
 }
 
@@ -36,6 +59,22 @@ impl<'a> ToString for Path<'a> {
         match *self {
             Path::Home => "".to_string(),
             Path::View { ref name } => format!("/view/{}", name.to_string()),
+            Path::AddJobToView {
+                ref job_name,
+                ref view_name,
+            } => format!(
+                "/view/{}/addJobToView?name={}",
+                view_name.to_string(),
+                job_name.to_string()
+            ),
+            Path::RemoveJobFromView {
+                ref job_name,
+                ref view_name,
+            } => format!(
+                "/view/{}/removeJobFromView?name={}",
+                view_name.to_string(),
+                job_name.to_string()
+            ),
             Path::Job { ref name } => format!("/job/{}", name.to_string()),
             Path::JobEnable { ref name } => format!("/job/{}/enable", name.to_string()),
             Path::JobDisable { ref name } => format!("/job/{}/disable", name.to_string()),

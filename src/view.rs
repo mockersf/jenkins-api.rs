@@ -60,6 +60,41 @@ pub struct View {
     pub url: String,
     pub jobs: Vec<ShortJob>,
 }
+impl View {
+    /// Add the job `job_name` to this view
+    pub fn add_job(&self, jenkins_client: &Jenkins, job_name: &str) -> Result<(), Error> {
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::View { name } = path {
+            jenkins_client.post(&Path::AddJobToView {
+                job_name: Name::Name(job_name),
+                view_name: name,
+            })?;
+            Ok(())
+        } else {
+            Err(client::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "View".to_string(),
+            }.into())
+        }
+    }
+
+    /// Remove the job `job_name` from this view
+    pub fn remove_job(&self, jenkins_client: &Jenkins, job_name: &str) -> Result<(), Error> {
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::View { name } = path {
+            jenkins_client.post(&Path::RemoveJobFromView {
+                job_name: Name::Name(job_name),
+                view_name: name,
+            })?;
+            Ok(())
+        } else {
+            Err(client::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "View".to_string(),
+            }.into())
+        }
+    }
+}
 
 impl Jenkins {
     /// Get Jenkins `Home`
@@ -73,5 +108,23 @@ impl Jenkins {
             name: Name::Name(view_name),
         })?
             .json()?)
+    }
+
+    /// Add the job `job_name` to the view `view_name`
+    pub fn add_job(&self, view_name: &str, job_name: &str) -> Result<(), Error> {
+        self.post(&Path::AddJobToView {
+            job_name: Name::Name(job_name),
+            view_name: Name::Name(view_name),
+        })?;
+        Ok(())
+    }
+
+    /// Remove the job `job_name` from the view `view_name`
+    pub fn remove_job(&self, view_name: &str, job_name: &str) -> Result<(), Error> {
+        self.post(&Path::AddJobToView {
+            job_name: Name::Name(job_name),
+            view_name: Name::Name(view_name),
+        })?;
+        Ok(())
     }
 }

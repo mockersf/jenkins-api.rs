@@ -101,6 +101,40 @@ impl Job {
             }.into())
         }
     }
+
+    /// Add this job to the view `view_name`
+    pub fn add_to_view(&self, jenkins_client: &Jenkins, view_name: &str) -> Result<(), Error> {
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::Job { name } = path {
+            jenkins_client.post(&Path::AddJobToView {
+                job_name: name,
+                view_name: Name::Name(view_name),
+            })?;
+            Ok(())
+        } else {
+            Err(client::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "Job".to_string(),
+            }.into())
+        }
+    }
+
+    /// Remove this job from the view `view_name`
+    pub fn remove_from_view(&self, jenkins_client: &Jenkins, view_name: &str) -> Result<(), Error> {
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::Job { name } = path {
+            jenkins_client.post(&Path::RemoveJobFromView {
+                job_name: name,
+                view_name: Name::Name(view_name),
+            })?;
+            Ok(())
+        } else {
+            Err(client::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "Job".to_string(),
+            }.into())
+        }
+    }
 }
 
 impl Jenkins {
