@@ -13,7 +13,15 @@ pub struct ShortBuild {
 }
 impl ShortBuild {
     pub fn get_full_build(&self, jenkins_client: &Jenkins) -> Result<Build, Error> {
-        jenkins_client.get_from_url(&self.url)
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::Build { .. } = path {
+            Ok(jenkins_client.get(&path)?.json()?)
+        } else {
+            Err(error::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "build".to_string(),
+            }.into())
+        }
     }
 }
 
@@ -47,11 +55,7 @@ impl Build {
     pub fn get_job(&self, jenkins_client: &Jenkins) -> Result<Job, Error> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Build { job_name, .. } = path {
-            Ok(jenkins_client
-                .get(&Path::Job { name: job_name })
-                .send()?
-                .error_for_status()?
-                .json()?)
+            Ok(jenkins_client.get(&Path::Job { name: job_name })?.json()?)
         } else {
             Err(error::Error::InvalidUrl {
                 url: self.url.clone(),
@@ -66,8 +70,7 @@ impl Jenkins {
         Ok(self.get(&Path::Build {
             job_name: Name::Name(job_name),
             id: build_id,
-        }).send()?
-            .error_for_status()?
+        })?
             .json()?)
     }
 }

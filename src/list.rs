@@ -3,6 +3,7 @@ use failure::Error;
 use job::ShortJob;
 use Jenkins;
 use client::{Name, Path};
+use error;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -12,7 +13,15 @@ pub struct ShortView {
 }
 impl ShortView {
     pub fn get_full_view(&self, jenkins_client: &Jenkins) -> Result<View, Error> {
-        jenkins_client.get_from_url(&self.url)
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::View { .. } = path {
+            Ok(jenkins_client.get(&path)?.json()?)
+        } else {
+            Err(error::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "view".to_string(),
+            }.into())
+        }
     }
 }
 
@@ -50,14 +59,13 @@ pub struct View {
 
 impl Jenkins {
     pub fn get_home(&self) -> Result<Home, Error> {
-        Ok(self.get(&Path::Home).send()?.error_for_status()?.json()?)
+        Ok(self.get(&Path::Home)?.json()?)
     }
 
     pub fn get_view(&self, view_name: &str) -> Result<View, Error> {
         Ok(self.get(&Path::View {
             name: Name::Name(view_name),
-        }).send()?
-            .error_for_status()?
+        })?
             .json()?)
     }
 }

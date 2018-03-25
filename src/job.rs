@@ -33,7 +33,15 @@ pub struct ShortJob {
 }
 impl ShortJob {
     pub fn get_full_job(&self, jenkins_client: &Jenkins) -> Result<Job, Error> {
-        jenkins_client.get_from_url(&self.url)
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::Job { .. } = path {
+            Ok(jenkins_client.get(&path)?.json()?)
+        } else {
+            Err(error::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "job".to_string(),
+            }.into())
+        }
     }
 }
 
@@ -94,8 +102,7 @@ impl Jenkins {
     pub fn get_job(&self, job_name: &str) -> Result<Job, Error> {
         Ok(self.get(&Path::Job {
             name: Name::Name(job_name),
-        }).send()?
-            .error_for_status()?
+        })?
             .json()?)
     }
 }

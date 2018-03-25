@@ -36,10 +36,7 @@ impl Jenkins {
         request_builder: &mut RequestBuilder,
     ) -> Result<(), failure::Error> {
         if self.csrf_enabled {
-            let crumb: Crumb = self.get(&Path::CrumbIssuer)
-                .send()?
-                .error_for_status()?
-                .json()?;
+            let crumb: Crumb = self.get(&Path::CrumbIssuer)?.json()?;
             if crumb.crumb_request_field != Crumb::header_name() {
                 return Err(error::Error::InvalidCrumbFieldName {
                     field_name: crumb.crumb_request_field,

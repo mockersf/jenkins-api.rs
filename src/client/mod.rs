@@ -1,6 +1,4 @@
-use reqwest::{Client, RequestBuilder, Response};
-
-use serde::Deserialize;
+use reqwest::{Client, Response};
 
 use failure;
 
@@ -33,8 +31,11 @@ impl Jenkins {
         format!("{}{}", self.url, endpoint)
     }
 
-    pub(crate) fn get(&self, path: &Path) -> RequestBuilder {
-        self.client.get(&self.url_api_json(&path.to_string()))
+    pub(crate) fn get(&self, path: &Path) -> Result<Response, failure::Error> {
+        Ok(self.client
+            .get(&self.url_api_json(&path.to_string()))
+            .send()?
+            .error_for_status()?)
     }
 
     pub(crate) fn post(&self, path: &Path) -> Result<Response, failure::Error> {
@@ -43,15 +44,5 @@ impl Jenkins {
         self.add_csrf_to_request(&mut request_builder)?;
 
         Ok(request_builder.send()?.error_for_status()?)
-    }
-
-    pub(crate) fn get_from_url<T>(&self, url: &str) -> Result<T, failure::Error>
-    where
-        for<'de> T: Deserialize<'de>,
-    {
-        Ok(self.get(&self.url_to_path(url))
-            .send()?
-            .error_for_status()?
-            .json()?)
     }
 }
