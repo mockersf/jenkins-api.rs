@@ -1,5 +1,5 @@
-use reqwest::header::{Authorization, Basic, Headers};
-use reqwest::{Client, Error, RequestBuilder};
+use reqwest::header::{Authorization, Basic, Formatter, Header, Headers, Raw};
+use reqwest::{Client, Error, RequestBuilder, Response};
 
 use serde::Deserialize;
 use urlencoding;
@@ -16,7 +16,8 @@ pub(crate) struct User {
 pub struct Jenkins {
     url: String,
     client: Client,
-    pub(crate) user: Option<User>,
+    user: Option<User>,
+    csrf_enabled: bool,
 }
 
 impl Jenkins {
@@ -24,8 +25,26 @@ impl Jenkins {
         format!("{}{}/api/json", self.url, endpoint)
     }
 
+    pub(crate) fn url(&self, endpoint: &str) -> String {
+        format!("{}{}", self.url, endpoint)
+    }
+
     pub(crate) fn get(&self, path: &Path) -> RequestBuilder {
         self.client.get(&self.url_api_json(&path.to_string()))
+    }
+
+    pub(crate) fn post(&self, path: &Path) -> Result<Response, failure::Error> {
+        let mut request_builder = self.client.post(&self.url(&path.to_string()));
+
+        if self.csrf_enabled {
+            let crumb: Crumb = self.get(&Path::CrumbIssuer)
+                .send()?
+                .error_for_status()?
+                .json()?;
+            request_builder.header(crumb);
+        }
+
+        Ok(request_builder.send()?.error_for_status()?)
     }
 
     pub(crate) fn url_to_path<'a>(&self, url: &'a str) -> Path<'a> {
@@ -75,6 +94,7 @@ impl Jenkins {
 pub struct JenkinsBuilder {
     url: String,
     user: Option<User>,
+    csrf_enabled: bool,
 }
 
 impl JenkinsBuilder {
@@ -88,6 +108,7 @@ impl JenkinsBuilder {
                 }
             },
             user: None,
+            csrf_enabled: true,
         }
     }
 
@@ -105,6 +126,7 @@ impl JenkinsBuilder {
             url: self.url,
             client: Client::builder().default_headers(headers).build()?,
             user: self.user,
+            csrf_enabled: self.csrf_enabled,
         })
     }
 
@@ -113,6 +135,11 @@ impl JenkinsBuilder {
             username: login.to_string(),
             password: password.map(|s| s.to_string()),
         });
+        self
+    }
+
+    pub fn disable_csrf(mut self) -> Self {
+        self.csrf_enabled = false;
         self
     }
 }
@@ -139,6 +166,7 @@ pub(crate) enum Path<'a> {
     Job { name: Name<'a> },
     Build { job_name: Name<'a>, id: u32 },
     Raw { path: &'a str },
+    CrumbIssuer,
 }
 
 impl<'a> ToString for Path<'a> {
@@ -152,6 +180,29 @@ impl<'a> ToString for Path<'a> {
                 ref id,
             } => format!("/job/{}/{}", job_name.to_string(), id),
             Path::Raw { path } => format!("{}", path),
+            Path::CrumbIssuer => "/crumbIssuer".to_string(),
         }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+struct Crumb {
+    crumb: String,
+    crumb_request_field: String,
+}
+use std::fmt;
+use hyper;
+impl Header for Crumb {
+    fn header_name() -> &'static str {
+        "Jenkins-Crumb"
+    }
+
+    fn parse_header(_: &Raw) -> Result<Self, hyper::error::Error> {
+        unimplemented!();
+    }
+
+    fn fmt_header(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
+        f.fmt_line(&self.crumb)
     }
 }
