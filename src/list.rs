@@ -1,6 +1,6 @@
 use failure::Error;
 
-use jobs::ShortJob;
+use job::ShortJob;
 use Jenkins;
 use client::{Name, Path};
 

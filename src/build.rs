@@ -1,9 +1,9 @@
 use failure::Error;
 
-use jobs::Job;
-use super::Jenkins;
-use super::client::{Name, Path};
-use super::error;
+use job::Job;
+use Jenkins;
+use client::{Name, Path};
+use error;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]

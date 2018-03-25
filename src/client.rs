@@ -6,6 +6,8 @@ use urlencoding;
 
 use failure;
 
+use error;
+
 #[derive(Debug)]
 struct User {
     username: String,
@@ -42,7 +44,7 @@ impl Jenkins {
                 .error_for_status()?
                 .json()?;
             if crumb.crumb_request_field != Crumb::header_name() {
-                return Err(super::error::Error::InvalidCrumbField {
+                return Err(error::Error::InvalidCrumbField {
                     field: crumb.crumb_request_field,
                 }.into());
             }

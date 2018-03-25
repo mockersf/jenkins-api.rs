@@ -45,8 +45,8 @@ pub use client::{Jenkins, JenkinsBuilder};
 
 mod list;
 pub use list::*;
-mod jobs;
-pub use jobs::*;
+mod job;
+pub use job::*;
 mod build;
 pub use build::*;
 pub mod error;

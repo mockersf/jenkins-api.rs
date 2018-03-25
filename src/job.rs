@@ -1,9 +1,9 @@
 use failure::Error;
 
 use build::ShortBuild;
-use super::Jenkins;
-use super::client::{Name, Path};
-use super::error;
+use Jenkins;
+use client::{Name, Path};
+use error;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
