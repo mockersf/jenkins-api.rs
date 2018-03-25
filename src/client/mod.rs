@@ -2,6 +2,8 @@ use reqwest::{Client, Response};
 
 use failure;
 
+mod error;
+pub use self::error::Error;
 mod path;
 pub(crate) use self::path::{Name, Path};
 mod builder;

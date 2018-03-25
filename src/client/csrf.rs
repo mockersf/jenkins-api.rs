@@ -5,9 +5,7 @@ use failure;
 use reqwest::header::{Formatter, Header, Raw};
 use reqwest::RequestBuilder;
 
-use error;
-
-use super::{Jenkins, Path};
+use super::{error, Jenkins, Path};
 
 #[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]

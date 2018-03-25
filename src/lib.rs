@@ -41,7 +41,7 @@ extern crate urlencoding;
 extern crate failure;
 
 mod client;
-pub use client::{Jenkins, JenkinsBuilder};
+pub use client::{Error, Jenkins, JenkinsBuilder};
 
 mod list;
 pub use list::*;
@@ -49,4 +49,3 @@ mod job;
 pub use job::*;
 mod build;
 pub use build::*;
-pub mod error;

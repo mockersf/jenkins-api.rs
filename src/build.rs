@@ -2,8 +2,7 @@ use failure::Error;
 
 use job::Job;
 use Jenkins;
-use client::{Name, Path};
-use error;
+use client::{self, Name, Path};
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,7 +16,7 @@ impl ShortBuild {
         if let Path::Build { .. } = path {
             Ok(jenkins_client.get(&path)?.json()?)
         } else {
-            Err(error::Error::InvalidUrl {
+            Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
                 expected: "build".to_string(),
             }.into())
@@ -57,7 +56,7 @@ impl Build {
         if let Path::Build { job_name, .. } = path {
             Ok(jenkins_client.get(&Path::Job { name: job_name })?.json()?)
         } else {
-            Err(error::Error::InvalidUrl {
+            Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
                 expected: "build".to_string(),
             }.into())

@@ -2,8 +2,7 @@ use failure::Error;
 
 use job::ShortJob;
 use Jenkins;
-use client::{Name, Path};
-use error;
+use client::{self, Name, Path};
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,7 +16,7 @@ impl ShortView {
         if let Path::View { .. } = path {
             Ok(jenkins_client.get(&path)?.json()?)
         } else {
-            Err(error::Error::InvalidUrl {
+            Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
                 expected: "view".to_string(),
             }.into())
