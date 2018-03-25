@@ -3,6 +3,7 @@ use failure::Error;
 use build::ShortBuild;
 use super::Jenkins;
 use super::client::{Name, Path};
+use super::error;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -66,15 +67,26 @@ impl Job {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Job { name } = path {
             jenkins_client.post(&Path::JobEnable { name })?;
+            Ok(())
+        } else {
+            Err(error::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "job".to_string(),
+            }.into())
         }
-        Ok(())
     }
+
     pub fn disable(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Job { name } = path {
             jenkins_client.post(&Path::JobDisable { name })?;
+            Ok(())
+        } else {
+            Err(error::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "job".to_string(),
+            }.into())
         }
-        Ok(())
     }
 }
 

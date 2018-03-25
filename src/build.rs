@@ -55,7 +55,7 @@ impl Build {
         } else {
             Err(error::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: "job".to_string(),
+                expected: "build".to_string(),
             }.into())
         }
     }
