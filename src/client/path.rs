@@ -25,6 +25,8 @@ pub(crate) enum Path<'a> {
     JobEnable { name: Name<'a> },
     JobDisable { name: Name<'a> },
     Build { job_name: Name<'a>, number: u32 },
+    Queue,
+    QueueItem { id: u32 },
     Raw { path: &'a str },
     CrumbIssuer,
 }
@@ -41,6 +43,8 @@ impl<'a> ToString for Path<'a> {
                 ref job_name,
                 ref number,
             } => format!("/job/{}/{}", job_name.to_string(), number),
+            Path::Queue => "/queue".to_string(),
+            Path::QueueItem { ref id } => format!("/queue/item/{}", id),
             Path::Raw { path } => format!("{}", path),
             Path::CrumbIssuer => "/crumbIssuer".to_string(),
         }
@@ -75,6 +79,17 @@ impl Jenkins {
                 Path::Build {
                     job_name: Name::UrlEncodedName(&path[5..last_slash]),
                     number: path[(last_slash + 1)..(path.len() - 1)].parse().unwrap(),
+                }
+            }
+            ("/queue", 4) => {
+                let last_slash = path.char_indices()
+                    .rev()
+                    .filter(|c| c.1 == '/')
+                    .nth(1)
+                    .unwrap()
+                    .0;
+                Path::QueueItem {
+                    id: path[(last_slash + 1)..(path.len() - 1)].parse().unwrap(),
                 }
             }
             (_, _) => Path::Raw { path },
