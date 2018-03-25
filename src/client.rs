@@ -44,8 +44,8 @@ impl Jenkins {
                 .error_for_status()?
                 .json()?;
             if crumb.crumb_request_field != Crumb::header_name() {
-                return Err(error::Error::InvalidCrumbField {
-                    field: crumb.crumb_request_field,
+                return Err(error::Error::InvalidCrumbFieldName {
+                    field_name: crumb.crumb_request_field,
                 }.into());
             }
             request_builder.header(crumb);
