@@ -43,8 +43,8 @@ extern crate failure;
 mod client;
 pub use client::{Error, Jenkins, JenkinsBuilder};
 
-mod list;
-pub use list::*;
+mod view;
+pub use view::*;
 mod job;
 pub use job::*;
 mod build;
