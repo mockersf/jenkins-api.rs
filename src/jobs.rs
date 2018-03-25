@@ -73,6 +73,22 @@ pub struct Job {
     pub last_failed_build: Option<ShortBuild>,
     pub builds: Vec<ShortBuild>,
 }
+impl Job {
+    pub fn enable(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::Job { name } = path {
+            jenkins_client.post(&Path::JobEnable { name })?;
+        }
+        Ok(())
+    }
+    pub fn disable(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::Job { name } = path {
+            jenkins_client.post(&Path::JobDisable { name })?;
+        }
+        Ok(())
+    }
+}
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]

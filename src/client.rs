@@ -164,6 +164,8 @@ pub(crate) enum Path<'a> {
     Home,
     View { name: Name<'a> },
     Job { name: Name<'a> },
+    JobEnable { name: Name<'a> },
+    JobDisable { name: Name<'a> },
     Build { job_name: Name<'a>, id: u32 },
     Raw { path: &'a str },
     CrumbIssuer,
@@ -175,6 +177,8 @@ impl<'a> ToString for Path<'a> {
             Path::Home => "".to_string(),
             Path::View { ref name } => format!("/view/{}", name.to_string()),
             Path::Job { ref name } => format!("/job/{}", name.to_string()),
+            Path::JobEnable { ref name } => format!("/job/{}/enable", name.to_string()),
+            Path::JobDisable { ref name } => format!("/job/{}/disable", name.to_string()),
             Path::Build {
                 ref job_name,
                 ref id,

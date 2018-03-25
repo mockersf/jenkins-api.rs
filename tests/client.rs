@@ -104,3 +104,29 @@ fn can_get_build_from_job_and_back() {
     assert!(job_back.is_ok());
     assert_eq!(job_back.unwrap().name, job_ok.name);
 }
+
+#[test]
+fn can_disable_job_and_reenable() {
+    let jenkins = JenkinsBuilder::new("http://localhost:8080/")
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+    let job = jenkins.get_job("normal job");
+    assert!(job.is_ok());
+    let job_ok = job.unwrap();
+    assert!(job_ok.buildable);
+
+    let disabling = job_ok.disable(&jenkins);
+    assert!(disabling.is_ok());
+    let job_disabled = jenkins.get_job("normal job");
+    assert!(job_disabled.is_ok());
+    let job_disabled_ok = job_disabled.unwrap();
+    assert!(!job_disabled_ok.buildable);
+
+    let enabling = job_ok.enable(&jenkins);
+    assert!(enabling.is_ok());
+    let job_enabled = jenkins.get_job("normal job");
+    assert!(job_enabled.is_ok());
+    let job_enabled_ok = job_enabled.unwrap();
+    assert!(job_enabled_ok.buildable);
+}
