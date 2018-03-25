@@ -123,7 +123,7 @@ fn can_disable_job_and_reenable() {
     let job_disabled_ok = job_disabled.unwrap();
     assert!(!job_disabled_ok.buildable);
 
-    let enabling = job_ok.enable(&jenkins);
+    let enabling = job_disabled_ok.enable(&jenkins);
     assert!(enabling.is_ok());
     let job_enabled = jenkins.get_job("normal job");
     assert!(job_enabled.is_ok());
