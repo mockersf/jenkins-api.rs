@@ -16,6 +16,7 @@ struct User {
     password: Option<String>,
 }
 
+/// Client struct with the methods to query Jenkins
 #[derive(Debug)]
 pub struct Jenkins {
     url: String,

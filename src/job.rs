@@ -4,6 +4,7 @@ use build::ShortBuild;
 use Jenkins;
 use client::{self, Name, Path};
 
+/// Ball Color corresponding to a `BuildStatus`
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum BallColor {
@@ -23,6 +24,7 @@ pub enum BallColor {
     #[serde(rename = "notbuilt_anime")] NotBuiltAnime,
 }
 
+/// Short Job that is used in lists and links from other structs
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ShortJob {
@@ -31,6 +33,7 @@ pub struct ShortJob {
     pub color: BallColor,
 }
 impl ShortJob {
+    /// Get the full details of a `Job` matching the `ShortJob`
     pub fn get_full_job(&self, jenkins_client: &Jenkins) -> Result<Job, Error> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Job { .. } = path {
@@ -44,6 +47,7 @@ impl ShortJob {
     }
 }
 
+/// A Jenkins `Job`
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Job {
@@ -57,7 +61,7 @@ pub struct Job {
     pub buildable: bool,
     pub concurrent_build: bool,
     pub keep_dependencies: bool,
-    pub next_build_number: i32,
+    pub next_build_number: u32,
     pub in_queue: bool,
     pub last_build: Option<ShortBuild>,
     pub first_build: Option<ShortBuild>,
@@ -70,6 +74,7 @@ pub struct Job {
     pub builds: Vec<ShortBuild>,
 }
 impl Job {
+    /// Enable a `Job`. This will consume the `Job` and it will need to be refreshed as it may have been updated
     pub fn enable(self, jenkins_client: &Jenkins) -> Result<(), Error> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Job { name } = path {
@@ -83,6 +88,7 @@ impl Job {
         }
     }
 
+    /// Disable a `Job`. This will consume the `Job` and it will need to be refreshed as it may have been updated
     pub fn disable(self, jenkins_client: &Jenkins) -> Result<(), Error> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Job { name } = path {
@@ -98,6 +104,7 @@ impl Job {
 }
 
 impl Jenkins {
+    /// Get a job from it's `job_name`
     pub fn get_job(&self, job_name: &str) -> Result<Job, Error> {
         Ok(self.get(&Path::Job {
             name: Name::Name(job_name),

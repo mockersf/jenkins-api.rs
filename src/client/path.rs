@@ -24,7 +24,7 @@ pub(crate) enum Path<'a> {
     Job { name: Name<'a> },
     JobEnable { name: Name<'a> },
     JobDisable { name: Name<'a> },
-    Build { job_name: Name<'a>, id: u32 },
+    Build { job_name: Name<'a>, number: u32 },
     Raw { path: &'a str },
     CrumbIssuer,
 }
@@ -39,8 +39,8 @@ impl<'a> ToString for Path<'a> {
             Path::JobDisable { ref name } => format!("/job/{}/disable", name.to_string()),
             Path::Build {
                 ref job_name,
-                ref id,
-            } => format!("/job/{}/{}", job_name.to_string(), id),
+                ref number,
+            } => format!("/job/{}/{}", job_name.to_string(), number),
             Path::Raw { path } => format!("{}", path),
             Path::CrumbIssuer => "/crumbIssuer".to_string(),
         }
@@ -74,7 +74,7 @@ impl Jenkins {
                     .0;
                 Path::Build {
                     job_name: Name::UrlEncodedName(&path[5..last_slash]),
-                    id: path[(last_slash + 1)..(path.len() - 1)].parse().unwrap(),
+                    number: path[(last_slash + 1)..(path.len() - 1)].parse().unwrap(),
                 }
             }
             (_, _) => Path::Raw { path },

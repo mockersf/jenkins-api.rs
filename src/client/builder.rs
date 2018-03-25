@@ -3,6 +3,20 @@ use reqwest::{Client, Error};
 
 use super::{Jenkins, User};
 
+/// Builder for Jenkins client
+///
+/// ```rust
+///# extern crate jenkins_api;
+///#
+///# use jenkins_api::JenkinsBuilder;
+///#
+///# fn main() {
+///     let jenkins = JenkinsBuilder::new("http://localhost:8080")
+///         .with_user("user", Some("password"))
+///         .build()
+///         .unwrap();
+///# }
+/// ```
 pub struct JenkinsBuilder {
     url: String,
     user: Option<User>,
@@ -10,6 +24,7 @@ pub struct JenkinsBuilder {
 }
 
 impl JenkinsBuilder {
+    /// Create a new builder with Jenkins url
     pub fn new(url: &str) -> Self {
         JenkinsBuilder {
             url: {
@@ -24,6 +39,7 @@ impl JenkinsBuilder {
         }
     }
 
+    /// Build the Jenkins client
     pub fn build(self) -> Result<Jenkins, Error> {
         let mut headers = Headers::new();
 
@@ -42,6 +58,7 @@ impl JenkinsBuilder {
         })
     }
 
+    /// Specify the user to use for authorizing queries
     pub fn with_user(mut self, login: &str, password: Option<&str>) -> Self {
         self.user = Some(User {
             username: login.to_string(),
@@ -50,6 +67,7 @@ impl JenkinsBuilder {
         self
     }
 
+    /// Disable CSRF in crumbs used for post queries
     pub fn disable_csrf(mut self) -> Self {
         self.csrf_enabled = false;
         self
