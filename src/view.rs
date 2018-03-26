@@ -45,7 +45,7 @@ impl ShortView {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: "view".to_string(),
+                expected: "View".to_string(),
             }.into())
         }
     }

@@ -41,7 +41,7 @@ impl ShortJob {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: "job".to_string(),
+                expected: "Job".to_string(),
             }.into())
         }
     }
@@ -83,7 +83,7 @@ impl Job {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: "job".to_string(),
+                expected: "Job".to_string(),
             }.into())
         }
     }
@@ -97,7 +97,7 @@ impl Job {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: "job".to_string(),
+                expected: "Job".to_string(),
             }.into())
         }
     }

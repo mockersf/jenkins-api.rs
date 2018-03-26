@@ -20,7 +20,7 @@ impl ShortBuild {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: "build".to_string(),
+                expected: "Build".to_string(),
             }.into())
         }
     }
@@ -63,7 +63,7 @@ impl Build {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: "build".to_string(),
+                expected: "Build".to_string(),
             }.into())
         }
     }
