@@ -9,6 +9,7 @@ documentation = "https://docs.rs/jenkins_api"
 keywords = ["jenkins"]
 license = "MIT"
 readme = "README.md"
+build = "build.rs"
 
 [badges]
 travis-ci = { repository = "mockersf/jenkins-api.rs" }
@@ -24,3 +25,9 @@ serde_json = "1.0"
 urlencoding = "1.0.0"
 
 failure = "0.1"
+
+[build-dependencies]
+skeptic = "0.13"
+
+[dev-dependencies]
+skeptic = "0.13"
