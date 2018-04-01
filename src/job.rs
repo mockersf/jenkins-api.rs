@@ -5,7 +5,7 @@ use Jenkins;
 use client::{self, Name, Path};
 
 /// Ball Color corresponding to a `BuildStatus`
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone, Copy)]
 #[serde(rename_all = "snake_case")]
 pub enum BallColor {
     Blue,
@@ -20,8 +20,10 @@ pub enum BallColor {
     DisabledAnime,
     Aborted,
     AbortedAnime,
-    #[serde(rename = "notbuilt")] NotBuilt,
-    #[serde(rename = "notbuilt_anime")] NotBuiltAnime,
+    #[serde(rename = "notbuilt")]
+    NotBuilt,
+    #[serde(rename = "notbuilt_anime")]
+    NotBuiltAnime,
 }
 
 /// Short Job that is used in lists and links from other structs

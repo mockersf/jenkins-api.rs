@@ -5,7 +5,7 @@ use Jenkins;
 use client::{self, Name, Path};
 
 /// Describe how Jenkins allocates jobs to agents
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone, Copy)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum Mode {
     Normal,

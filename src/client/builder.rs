@@ -17,6 +17,7 @@ use super::{Jenkins, User};
 ///         .unwrap();
 ///# }
 /// ```
+#[derive(Debug)]
 pub struct JenkinsBuilder {
     url: String,
     user: Option<User>,
