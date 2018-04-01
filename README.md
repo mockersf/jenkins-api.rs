@@ -7,7 +7,7 @@ Bindings to [Jenkins JSON API](https://wiki.jenkins.io/display/JENKINS/Remote+ac
 ```rust
 extern crate jenkins_api;
 
-use jenkins_api::JenkinsBuilder;
+use jenkins_api::{JenkinsBuilder, BuildStatus};
 
 fn main() {
     let jenkins = JenkinsBuilder::new("http://localhost:8080")
@@ -22,5 +22,10 @@ fn main() {
         "last build for job {} at {} was {:?}",
         job.name, build.timestamp, build.result
     );
+
+    if build.result == BuildStatus::Success {
+        println!("triggering a new build");
+        jenkins.build_job("job name").unwrap();
+    }
 }
 ```

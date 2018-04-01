@@ -5,6 +5,27 @@ use build::ShortBuild;
 use Jenkins;
 use client::{self, Path};
 
+/// Short Queue Item that is returned when building a job
+#[derive(Debug, Deserialize)]
+pub struct ShortQueueItem {
+    /// URL to this queued item
+    pub url: String,
+}
+impl ShortQueueItem {
+    /// Get the full details of a `QueueItem` matching the `ShortQueueItem`
+    pub fn get_full_queue_item(&self, jenkins_client: &Jenkins) -> Result<QueueItem, Error> {
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::QueueItem { .. } = path {
+            Ok(jenkins_client.get(&path)?.json()?)
+        } else {
+            Err(client::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "QueueItem".to_string(),
+            }.into())
+        }
+    }
+}
+
 /// A queued item in Jenkins, with information about the `Job` and why / since when it's waiting
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]

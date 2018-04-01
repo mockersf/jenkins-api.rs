@@ -1,6 +1,9 @@
 use failure::Error;
 
+use reqwest::header::Location;
+
 use build::ShortBuild;
+use queue::ShortQueueItem;
 use Jenkins;
 use client::{self, Name, Path};
 
@@ -175,6 +178,29 @@ impl Job {
             }.into())
         }
     }
+
+    /// Build this job
+    pub fn build(&self, jenkins_client: &Jenkins) -> Result<ShortQueueItem, Error> {
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::Job { name } = path {
+            let response = jenkins_client.post(&Path::BuildJob { name: name })?;
+            if let Some(location) = response.headers().get::<Location>() {
+                Ok(ShortQueueItem {
+                    url: location.lines().next().unwrap().to_string(),
+                })
+            } else {
+                Err(client::Error::InvalidUrl {
+                    url: "".to_string(),
+                    expected: "ShortQueueItem".to_string(),
+                }.into())
+            }
+        } else {
+            Err(client::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "Job".to_string(),
+            }.into())
+        }
+    }
 }
 
 impl Jenkins {
@@ -184,5 +210,22 @@ impl Jenkins {
             name: Name::Name(job_name),
         })?
             .json()?)
+    }
+
+    /// Build a job from it's `job_name`
+    pub fn build_job(&self, job_name: &str) -> Result<ShortQueueItem, Error> {
+        let response = self.post(&Path::BuildJob {
+            name: Name::Name(job_name),
+        })?;
+        if let Some(location) = response.headers().get::<Location>() {
+            Ok(ShortQueueItem {
+                url: location.lines().next().unwrap().to_string(),
+            })
+        } else {
+            Err(client::Error::InvalidUrl {
+                url: "".to_string(),
+                expected: "ShortQueueItem".to_string(),
+            }.into())
+        }
     }
 }

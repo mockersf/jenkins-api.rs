@@ -1,5 +1,7 @@
 # Changes
 
-# 0.1.2
+# 0.2.0
 
-* fix case for error messages
+* Fix case for error messages
+* Better Queue management
+* Can trigger job without parameters

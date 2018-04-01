@@ -29,7 +29,7 @@ impl ShortBuild {
 }
 
 /// Status of a build
-#[derive(Debug, Deserialize, Clone, Copy)]
+#[derive(Debug, Deserialize, Clone, Copy, PartialEq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum BuildStatus {
     /// Successful build

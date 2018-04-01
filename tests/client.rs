@@ -1,6 +1,7 @@
 extern crate jenkins_api;
 
 use jenkins_api::JenkinsBuilder;
+use std::{thread, time};
 
 #[test]
 fn can_get_jenkins_home() {
@@ -166,4 +167,48 @@ fn can_add_and_remove_job_from_view() {
     let view_without = jenkins.get_view("test view");
     assert!(view_without.is_ok());
     assert_eq!(view_without.unwrap().jobs.len(), 0);
+}
+
+#[test]
+fn can_get_queue() {
+    let jenkins = JenkinsBuilder::new("http://localhost:8080/")
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+    let job = jenkins.get_job("long job");
+    assert!(job.is_ok());
+    let job_ok = job.unwrap();
+    {
+        let triggered = job_ok.build(&jenkins);
+        assert!(triggered.is_ok());
+    }
+    let few_seconds = time::Duration::from_secs(5);
+    thread::sleep(few_seconds);
+    {
+        let triggered = job_ok.build(&jenkins);
+        assert!(triggered.is_ok());
+    }
+    let queue = jenkins.get_queue();
+    assert!(queue.is_ok());
+}
+
+#[test]
+fn can_get_queue_item() {
+    let jenkins = JenkinsBuilder::new("http://localhost:8080/")
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+
+    let job = jenkins.get_job("job name");
+    assert!(job.is_ok());
+    let triggered = job.unwrap().build(&jenkins);
+    assert!(triggered.is_ok());
+
+    let triggered_ok = triggered.unwrap();
+
+    let few_seconds = time::Duration::from_secs(2);
+    for _ in 0..10 {
+        assert!(triggered_ok.get_full_queue_item(&jenkins).is_ok());
+        thread::sleep(few_seconds);
+    }
 }
