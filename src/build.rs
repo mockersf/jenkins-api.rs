@@ -8,7 +8,9 @@ use client::{self, Name, Path};
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ShortBuild {
+    /// URL for the build
     pub url: String,
+    /// Build number
     pub number: u32,
 }
 impl ShortBuild {
@@ -30,10 +32,15 @@ impl ShortBuild {
 #[derive(Debug, Deserialize, Clone, Copy)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum BuildStatus {
+    /// Successful build
     Success,
+    /// Unstable build
     Unstable,
+    /// Failed build
     Failure,
+    /// Not yet built
     NotBuilt,
+    /// Aborted build
     Aborted,
 }
 
@@ -41,17 +48,29 @@ pub enum BuildStatus {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Build {
+    /// URL for the build
     pub url: String,
+    /// Build number for this job
     pub number: u32,
+    /// Estimated duration
     pub estimated_duration: u32,
+    /// Timestamp of the build start
     pub timestamp: u64,
+    /// Are the logs kept?
     pub keep_log: bool,
+    /// Build result
     pub result: BuildStatus,
+    /// Display name, usually "#" followed by the build number
     pub display_name: String,
+    /// Full display name: job name followed by the build display name
     pub full_display_name: String,
+    /// Is this build currently running
     pub building: bool,
+    /// Which slave was it build on
     pub built_on: String,
+    /// Build number in string format
     pub id: String,
+    /// ID while in the build queue
     pub queue_id: u32,
 }
 impl Build {
