@@ -8,20 +8,34 @@ use client::{self, Name, Path};
 #[derive(Debug, Deserialize, Clone, Copy)]
 #[serde(rename_all = "snake_case")]
 pub enum BallColor {
+    /// Success
     Blue,
+    /// Success, and build is on-going
     BlueAnime,
+    /// Unstable
     Yellow,
+    /// Unstable, and build is on-going
     YellowAnime,
+    /// Failure
     Red,
+    /// Failure, and build is on-going
     RedAnime,
+    /// Catch-all for disabled, aborted, not yet build
     Grey,
+    /// Catch-all for disabled, aborted, not yet build, and build is on-going
     GreyAnime,
+    /// Disabled
     Disabled,
+    /// Disabled, and build is on-going
     DisabledAnime,
+    /// Aborted
     Aborted,
+    ///Aborted, and build is on-going
     AbortedAnime,
+    /// Not Build
     #[serde(rename = "notbuilt")]
     NotBuilt,
+    /// Not Build, and build is on-going
     #[serde(rename = "notbuilt_anime")]
     NotBuiltAnime,
 }
@@ -30,8 +44,11 @@ pub enum BallColor {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ShortJob {
+    /// Name of the job
     pub name: String,
+    /// URL for the job
     pub url: String,
+    /// Ball Color for the status of the job
     pub color: BallColor,
 }
 impl ShortJob {
@@ -53,31 +70,52 @@ impl ShortJob {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Job {
+    /// Name of the job
     pub name: String,
+    /// Display Name of the job
     pub display_name: String,
+    /// Full Display Name of the job
     pub full_display_name: String,
+    /// Full Name of the job
     pub full_name: String,
+    /// Description of the job
     pub description: String,
+    /// URL for the job
     pub url: String,
+    /// Ball Color for the status of the job
     pub color: BallColor,
+    /// Is the job buildable?
     pub buildable: bool,
+    /// Is concurrent build enabled for the job?
     pub concurrent_build: bool,
+    /// Are dependencies kept for this job?
     pub keep_dependencies: bool,
+    /// Next build number
     pub next_build_number: u32,
+    /// Is this job currently in build queue
     pub in_queue: bool,
+    /// Link to the last build
     pub last_build: Option<ShortBuild>,
+    /// Link to the first build
     pub first_build: Option<ShortBuild>,
+    /// Link to the last stable build
     pub last_stable_build: Option<ShortBuild>,
+    /// Link to the last unstable build
     pub last_unstable_build: Option<ShortBuild>,
+    /// Link to the last successful build
     pub last_successful_build: Option<ShortBuild>,
+    /// Link to the last unsucressful build
     pub last_unsuccessful_build: Option<ShortBuild>,
+    /// Link to the last complete build
     pub last_completed_build: Option<ShortBuild>,
+    /// Link to the last failed build
     pub last_failed_build: Option<ShortBuild>,
+    /// List of builds of the job
     pub builds: Vec<ShortBuild>,
 }
 impl Job {
-    /// Enable a `Job`. This will consume the `Job` and it will need to be refreshed as it may have been updated
-    pub fn enable(self, jenkins_client: &Jenkins) -> Result<(), Error> {
+    /// Enable a `Job`. It may need to be refreshed as it may have been updated
+    pub fn enable(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Job { name } = path {
             jenkins_client.post(&Path::JobEnable { name })?;
@@ -90,8 +128,8 @@ impl Job {
         }
     }
 
-    /// Disable a `Job`. This will consume the `Job` and it will need to be refreshed as it may have been updated
-    pub fn disable(self, jenkins_client: &Jenkins) -> Result<(), Error> {
+    /// Disable a `Job`. It may need to be refreshed as it may have been updated
+    pub fn disable(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Job { name } = path {
             jenkins_client.post(&Path::JobDisable { name })?;
