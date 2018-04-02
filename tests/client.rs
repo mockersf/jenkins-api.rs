@@ -178,16 +178,8 @@ fn can_get_queue() {
     let job = jenkins.get_job("long job");
     assert!(job.is_ok());
     let job_ok = job.unwrap();
-    {
-        let triggered = job_ok.build(&jenkins);
-        assert!(triggered.is_ok());
-    }
-    let few_seconds = time::Duration::from_secs(5);
-    thread::sleep(few_seconds);
-    {
-        let triggered = job_ok.build(&jenkins);
-        assert!(triggered.is_ok());
-    }
+    let triggered = job_ok.build(&jenkins);
+    assert!(triggered.is_ok());
     let queue = jenkins.get_queue();
     assert!(queue.is_ok());
 }
@@ -207,7 +199,7 @@ fn can_get_queue_item() {
     let triggered_ok = triggered.unwrap();
 
     let few_seconds = time::Duration::from_secs(2);
-    for _ in 0..10 {
+    for _ in 0..5 {
         assert!(triggered_ok.get_full_queue_item(&jenkins).is_ok());
         thread::sleep(few_seconds);
     }
