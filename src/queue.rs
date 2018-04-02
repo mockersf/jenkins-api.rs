@@ -30,7 +30,7 @@ impl ShortQueueItem {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct QueueItem {
-    /// Is this item blocked    
+    /// Is this item blocked
     pub blocked: bool,
     /// Is this item buildable
     pub buildable: bool,
@@ -86,6 +86,6 @@ impl Jenkins {
 
     /// Get a queue item from it's ID
     pub fn get_queue_item(&self, id: u32) -> Result<QueueItem, Error> {
-        Ok(self.get(&Path::QueueItem { id: id })?.json()?)
+        Ok(self.get(&Path::QueueItem { id })?.json()?)
     }
 }

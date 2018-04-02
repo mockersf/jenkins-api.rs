@@ -183,7 +183,7 @@ impl Job {
     pub fn build(&self, jenkins_client: &Jenkins) -> Result<ShortQueueItem, Error> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Job { name } = path {
-            let response = jenkins_client.post(&Path::BuildJob { name: name })?;
+            let response = jenkins_client.post(&Path::BuildJob { name })?;
             if let Some(location) = response.headers().get::<Location>() {
                 Ok(ShortQueueItem {
                     url: location.lines().next().unwrap().to_string(),
