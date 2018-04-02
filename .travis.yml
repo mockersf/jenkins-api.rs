@@ -9,6 +9,19 @@ matrix:
   allow_failures:
     - rust: nightly
   fast_finish: true
+  include:
+  - rust: stable
+    env: RUSTFMT
+    install:
+    - rustup component add rustfmt-preview
+    script:
+    - cargo fmt -- --write-mode=diff
+  - rust: nightly
+    env: CLIPPY
+    install:
+    - travis_wait cargo install clippy || echo "clippy already installed"
+    script:
+    - cargo clippy -- -D clippy
 
 services:
   - docker
