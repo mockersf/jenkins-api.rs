@@ -43,7 +43,7 @@ pub struct Home {
 }
 
 /// Short View that is used in lists and links from other structs
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ShortView {
     /// Name of the view

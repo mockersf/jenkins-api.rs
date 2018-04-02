@@ -6,7 +6,7 @@ use Jenkins;
 use client::{self, Path};
 
 /// Short Queue Item that is returned when building a job
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct ShortQueueItem {
     /// URL to this queued item
     pub url: String,

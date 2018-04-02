@@ -5,7 +5,7 @@ use Jenkins;
 use client::{self, Name, Path};
 
 /// Short Build that is used in lists and links from other structs
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ShortBuild {
     /// URL for the build

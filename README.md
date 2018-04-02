@@ -16,16 +16,22 @@ fn main() {
         .unwrap();
 
     let job = jenkins.get_job("job name").unwrap();
-    let build = job.last_build.unwrap().get_full_build(&jenkins).unwrap();
 
-    println!(
-        "last build for job {} at {} was {:?}",
-        job.name, build.timestamp, build.result
-    );
+    let to_build = if let Some(short_build) = job.last_build.clone() {
+        let build = short_build.get_full_build(&jenkins).unwrap();
+        println!(
+            "last build for job {} at {} was {:?}",
+            job.name, build.timestamp, build.result
+        );
+        build.result != BuildStatus::Success
+    } else {
+        println!("job {} was never built", job.name);
+        true
+    };
 
-    if build.result == BuildStatus::Success {
+    if to_build {
         println!("triggering a new build");
-        jenkins.build_job("job name").unwrap();
+        job.build(&jenkins).unwrap();
     }
 }
 ```
