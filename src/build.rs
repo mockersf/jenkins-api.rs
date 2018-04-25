@@ -86,6 +86,19 @@ impl Build {
             }.into())
         }
     }
+
+    /// Get the console output from a `Build`
+    pub fn get_console(&self, jenkins_client: &Jenkins) -> Result<String, Error> {
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::Build { job_name, number } = path {
+            Ok(jenkins_client.get(&Path::ConsoleText { job_name, number })?.text()?)
+        } else {
+            Err(client::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "Build".to_string(),
+            }.into())
+        }
+    }
 }
 
 impl Jenkins {

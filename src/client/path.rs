@@ -47,6 +47,10 @@ pub(crate) enum Path<'a> {
         job_name: Name<'a>,
         number: u32,
     },
+    ConsoleText {
+        job_name: Name<'a>,
+        number: u32,
+    },
     Queue,
     QueueItem {
         id: u32,
@@ -86,6 +90,10 @@ impl<'a> ToString for Path<'a> {
                 ref job_name,
                 ref number,
             } => format!("/job/{}/{}", job_name.to_string(), number),
+            Path::ConsoleText {
+                ref job_name,
+                ref number,
+            } => format!("/job/{}/{}/consoleText", job_name.to_string(), number),
             Path::Queue => "/queue".to_string(),
             Path::QueueItem { ref id } => format!("/queue/item/{}", id),
             Path::Raw { path } => format!("{}", path),
