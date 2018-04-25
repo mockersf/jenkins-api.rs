@@ -80,9 +80,8 @@ pub struct Build {
 /// An `Action` on a `Build`
 #[derive(Debug, Deserialize, Clone)]
 pub struct Action {
-    /// The hudson.model.{X}Action (not always present)
-    #[serde(default, skip_serializing_if = "String::is_empty")]
-    pub _class: String,
+    /// The hudson.model.{X}Action
+    pub _class: Option<String>,
     /// Parameters if present
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub parameters: Vec<Parameter>,
@@ -131,8 +130,10 @@ impl Build {
     /// Get the build parameters from a `Build`
     pub fn get_parameters(&self) -> Vec<Parameter> {
         for a in &self.actions {
-            if a._class == "hudson.model.ParametersAction" {
-                return a.parameters.clone();
+            if let Some(ref c) = a._class {
+                if c == "hudson.model.ParametersAction" {
+                    return a.parameters.clone();
+                }
             }
         }
         vec![]
