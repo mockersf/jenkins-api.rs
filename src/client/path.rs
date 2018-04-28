@@ -96,7 +96,7 @@ impl<'a> ToString for Path<'a> {
             } => format!("/job/{}/{}/consoleText", job_name.to_string(), number),
             Path::Queue => "/queue".to_string(),
             Path::QueueItem { ref id } => format!("/queue/item/{}", id),
-            Path::Raw { path } => format!("{}", path),
+            Path::Raw { path } => path.to_string(),
             Path::CrumbIssuer => "/crumbIssuer".to_string(),
         }
     }
