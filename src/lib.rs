@@ -34,6 +34,7 @@ extern crate reqwest;
 #[macro_use]
 extern crate serde_derive;
 
+#[macro_use]
 extern crate serde;
 extern crate serde_json;
 
@@ -44,6 +45,9 @@ extern crate failure;
 
 mod client;
 pub use client::{Error, Jenkins, JenkinsBuilder};
+
+#[macro_use]
+mod helpers;
 
 mod view;
 pub use view::*;
