@@ -4,6 +4,7 @@ use job::Job;
 use action::Action;
 use Jenkins;
 use client::{self, Name, Path};
+use serde_json;
 
 /// Short Build that is used in lists and links from other structs
 #[derive(Debug, Deserialize, Clone)]
@@ -46,7 +47,7 @@ pub enum BuildStatus {
 }
 
 /// A `Build` of a `Job`
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Build {
     /// URL for the build
@@ -69,6 +70,8 @@ pub struct Build {
     pub building: bool,
     /// Which slave was it build on
     pub built_on: String,
+    /// Build parameters
+    pub actions: Vec<Action>,
     /// Build number in string format
     pub id: String,
     /// ID while in the build queue
@@ -76,6 +79,28 @@ pub struct Build {
     /// Build actions
     pub actions: Vec<Action>,
 }
+
+/// An `Action` on a `Build`
+#[derive(Debug, Deserialize, Clone)]
+pub struct Action {
+    /// The hudson.model.{X}Action
+    pub _class: Option<String>,
+    /// Parameters if present
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub parameters: Vec<Parameter>,
+}
+
+/// A `Parameter` on an `Action`
+#[derive(Debug, Deserialize, Clone)]
+pub struct Parameter {
+    /// The hudson.model.{X}ParameterValue
+    pub _class: String,
+    /// The parameter name
+    pub name: String,
+    /// The parameter value (bool / String usually as indicated by _class)
+    pub value: serde_json::Value,
+}
+
 impl Build {
     /// Get the `Job` from a `Build`
     pub fn get_job(&self, jenkins_client: &Jenkins) -> Result<Job, Error> {
@@ -103,6 +128,18 @@ impl Build {
                 expected: "Build".to_string(),
             }.into())
         }
+    }
+
+    /// Get the build parameters from a `Build`
+    pub fn get_parameters(&self) -> Vec<Parameter> {
+        for a in &self.actions {
+            if let Some(ref c) = a._class {
+                if c == "hudson.model.ParametersAction" {
+                    return a.parameters.clone();
+                }
+            }
+        }
+        vec![]
     }
 }
 
