@@ -53,6 +53,7 @@ mod view;
 pub use view::*;
 mod job;
 pub use job::*;
+pub mod action;
 mod build;
 pub use build::*;
 mod queue;

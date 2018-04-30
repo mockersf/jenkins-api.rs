@@ -1,6 +1,7 @@
 use failure::Error;
 
 use job::Job;
+use action::Action;
 use Jenkins;
 use client::{self, Name, Path};
 
@@ -72,6 +73,8 @@ pub struct Build {
     pub id: String,
     /// ID while in the build queue
     pub queue_id: u32,
+    /// Build actions
+    pub actions: Vec<Action>,
 }
 impl Build {
     /// Get the `Job` from a `Build`
