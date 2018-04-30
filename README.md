@@ -2,6 +2,8 @@
 
 Bindings to [Jenkins JSON API](https://wiki.jenkins.io/display/JENKINS/Remote+access+API)
 
+The API docs for the master branch are published [here](https://mockersf.github.io/jenkins-api.rs/).
+
 ## Example
 
 ```rust
