@@ -87,7 +87,9 @@ macro_rules! tagged_enum_or_default {
                                 }
 
                                 Ok($name::$variant {
-                                    $($field: $field.unwrap(),)*
+                                    $($field: $field.ok_or(
+                                        ::serde::de::Error::missing_field(stringify!($field))
+                                    )?,)*
                                 })
                             }
                         }
