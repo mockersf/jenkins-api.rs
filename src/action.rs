@@ -6,24 +6,24 @@ tagged_enum_or_default!(
     /// A `Parameter` on a `ParametersAction`
     pub enum Parameter {
         /// A boolean parameter
-        BooleanParameterValue ("hudson.model.BooleanParameterValue") {
+        BooleanParameterValue (_class = "hudson.model.BooleanParameterValue") {
             /// The parameter name
             name: String,
             /// The parameter value
             value: bool,
         },
         /// A file parameter
-        FileParameterValue ("hudson.model.FileParameterValue") {
+        FileParameterValue (_class = "hudson.model.FileParameterValue") {
             /// The parameter name
             name: String,
         },
         /// A password parameter
-        PasswordParameterValue ("hudson.model.PasswordParameterValue") {
+        PasswordParameterValue (_class = "hudson.model.PasswordParameterValue") {
             /// The parameter name
             name: String,
         },
         /// A run parameter
-        RunParameterValue ("hudson.model.RunParameterValue") {
+        RunParameterValue (_class = "hudson.model.RunParameterValue") {
             /// The parameter name
             name: String,
             /// Name of the `Job` for this parameter
@@ -32,14 +32,14 @@ tagged_enum_or_default!(
             number: String,
         },
         /// A string parameter
-        StringParameterValue ("hudson.model.StringParameterValue") {
+        StringParameterValue (_class = "hudson.model.StringParameterValue") {
             /// The parameter name
             name: String,
             /// The parameter value
             value: String,
         },
         /// A text parameter
-        TextParameterValue ("hudson.model.TextParameterValue") {
+        TextParameterValue (_class = "hudson.model.TextParameterValue") {
             /// The parameter name
             name: String,
             /// The parameter value
@@ -52,7 +52,7 @@ tagged_enum_or_default!(
     /// A `Cause` on a `CauseAction`
     pub enum Cause {
         /// Caused by a user
-        UserIdCause ("hudson.model.Cause$UserIdCause") {
+        UserIdCause (_class = "hudson.model.Cause$UserIdCause") {
             /// Short description of the cause
             short_description: String,
             /// User ID responsible
@@ -61,7 +61,7 @@ tagged_enum_or_default!(
             user_name: String,
         },
         /// Caused remotely
-        RemoteCause ("hudson.model.Cause$RemoteCause") {
+        RemoteCause (_class = "hudson.model.Cause$RemoteCause") {
             /// Short description of the cause
             short_description: String,
             /// addr that triggered
@@ -70,7 +70,7 @@ tagged_enum_or_default!(
             note: Option<String>,
         },
         /// Caused by another project
-        UpstreamCause ("hudson.model.Cause$UpstreamCause") {
+        UpstreamCause (_class = "hudson.model.Cause$UpstreamCause") {
             /// Short description of the cause
             short_description: String,
             /// `Build` number that triggered this `Build`
@@ -81,12 +81,12 @@ tagged_enum_or_default!(
             upstream_url: String,
         },
         /// Caused by a timer
-        TimerTriggerCause ("hudson.triggers.TimerTrigger$TimerTriggerCause") {
+        TimerTriggerCause (_class = "hudson.triggers.TimerTrigger$TimerTriggerCause") {
             /// Short description of the cause
             short_description: String,
         },
         /// Caused by a SCM change
-        SCMTriggerCause ("hudson.triggers.SCMTrigger$SCMTriggerCause") {
+        SCMTriggerCause (_class = "hudson.triggers.SCMTrigger$SCMTriggerCause") {
             /// Short description of the cause
             short_description: String,
         },
@@ -97,12 +97,12 @@ tagged_enum_or_default!(
     /// An `Action` of a `Build`
     pub enum Action {
         /// An action holding parameters
-        ParametersAction ("hudson.model.ParametersAction") {
+        ParametersAction (_class = "hudson.model.ParametersAction") {
             /// The list of parameters
             parameters: Vec<Parameter>,
         },
         /// An action listing causes
-        CauseAction ("hudson.model.CauseAction") {
+        CauseAction (_class = "hudson.model.CauseAction") {
             /// The list of causes
             causes: Vec<Cause>,
         },
