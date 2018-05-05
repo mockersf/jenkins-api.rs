@@ -78,7 +78,7 @@ macro_rules! tagged_enum_or_default {
                                                 )?
                                             );
                                         },)*
-                                        _ => {
+                                        "this_value_should_never_match_directly" | _ => {
                                             let _ = try!(::serde::de::MapAccess::next_value::<
                                                 ::serde::de::IgnoredAny,
                                             >(&mut map));
