@@ -1,5 +1,9 @@
 # Changes
 
+# 0.2.2
+
+* Can deserialize git informations from a build
+
 # 0.2.1
 
 * Can deserialize actions from a build
