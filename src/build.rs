@@ -176,11 +176,11 @@ pub mod changeset {
     #[serde(rename_all = "lowercase")]
     pub enum EditType {
         /// Adding a new file
-        ADD,
+        Add,
         /// Editing a file
-        EDIT,
+        Edit,
         /// Deleting a file
-        DELETE,
+        Delete,
     }
 
     /// A file that was changed
