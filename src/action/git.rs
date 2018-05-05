@@ -9,9 +9,9 @@ use std::collections::HashMap;
 pub struct Branch {
     /// SHA1 of the branch
     #[serde(rename = "SHA1")]
-    sha1: String,
+    pub sha1: String,
     /// Name of the branch
-    name: String,
+    pub name: String,
 }
 
 /// Revision from git
@@ -19,9 +19,9 @@ pub struct Branch {
 pub struct Revision {
     /// SHA1 of the revision
     #[serde(rename = "SHA1")]
-    sha1: String,
+    pub sha1: String,
     /// Branch information
-    branch: Vec<Branch>,
+    pub branch: Vec<Branch>,
 }
 
 tagged_enum_or_default!(
@@ -46,5 +46,5 @@ tagged_enum_or_default!(
 pub struct BuildsByBranch {
     /// HashMap of builds by branch name
     #[serde(flatten)]
-    branches: HashMap<String, BranchBuild>,
+    pub branches: HashMap<String, BranchBuild>,
 }
