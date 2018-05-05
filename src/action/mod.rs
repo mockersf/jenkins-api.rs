@@ -6,7 +6,7 @@ mod parameters;
 pub use self::parameters::Parameter;
 mod causes;
 pub use self::causes::Cause;
-mod git;
+pub mod git;
 
 tagged_enum_or_default!(
     /// An `Action` of a `Build`
