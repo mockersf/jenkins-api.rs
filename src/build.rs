@@ -2,6 +2,7 @@ use failure::Error;
 
 use job::Job;
 use action::Action;
+use user::ShortUser;
 use Jenkins;
 use client::{self, Name, Path};
 
@@ -75,6 +76,8 @@ pub struct Build {
     pub queue_id: u32,
     /// Build actions
     pub actions: Vec<Action>,
+    /// Change set for this build
+    pub change_set: ChangeSetList,
 }
 impl Build {
     /// Get the `Job` from a `Build`
@@ -115,4 +118,73 @@ impl Jenkins {
         })?
             .json()?)
     }
+}
+
+use serde::Deserializer;
+
+tagged_enum_or_default!(
+    /// List of changes found
+    pub enum ChangeSetList {
+        /// No changes recorded
+        EmptyChangeSet (_class = "hudson.scm.EmptyChangeLogSet") {
+        },
+        /// Changes found from git
+        GitChangeSetList (_class = "hudson.plugins.git.GitChangeSetList") {
+            /// Origin of the changes
+            kind: String,
+            /// Changes in this list
+            items: Vec<ChangeSet>,
+        },
+    }
+);
+
+tagged_enum_or_default!(
+    /// Changes found
+    pub enum ChangeSet {
+        /// Changes found from git
+        GitChangeSet (_class = "hudson.plugins.git.GitChangeSet") {
+            /// Comment
+            comment: String,
+            /// Email of the commit
+            author_email: String,
+            /// ID of the commit
+            commit_id: String,
+            /// Date of the commit
+            date: String,
+            /// Commit message
+            msg: String,
+            /// Timestamp of the commit
+            timestamp: u64,
+            /// ID of the commit
+            id: String,
+            /// Files changed in the commit
+            affected_paths: Vec<String>,
+            /// Author of the commit
+            author: ShortUser,
+            /// Files changed in the commit, and how
+            paths: Vec<PathChange>,
+        },
+    }
+);
+
+/// Edit type on a file
+#[derive(Debug, Deserialize, Clone, Copy)]
+#[serde(rename_all = "lowercase")]
+pub enum EditType {
+    /// Adding a new file
+    ADD,
+    /// Editing a file
+    EDIT,
+    /// Deleting a file
+    DELETE,
+}
+
+/// A file that was changed
+#[derive(Debug, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct PathChange {
+    /// File that was changed
+    pub file: String,
+    /// How it was changed
+    pub edit_type: EditType,
 }

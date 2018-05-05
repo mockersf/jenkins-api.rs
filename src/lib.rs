@@ -58,3 +58,5 @@ mod build;
 pub use build::*;
 mod queue;
 pub use queue::*;
+mod user;
+pub use user::*;
