@@ -46,8 +46,8 @@ macro_rules! tagged_enum_or_default {
 
                         #[derive(Debug)]
                         struct VariantVisitor<'de> {
-                            marker: ::std::marker::PhantomData<Action>,
-                            lifetime: ::std::marker::PhantomData<&'de Action>,
+                            marker: ::std::marker::PhantomData<$name>,
+                            lifetime: ::std::marker::PhantomData<&'de $name>,
                         }
 
                         impl<'de> ::serde::de::Visitor<'de> for VariantVisitor<'de> {
