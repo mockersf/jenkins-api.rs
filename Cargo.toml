@@ -1,6 +1,6 @@
 [package]
 name = "jenkins_api"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["François Mockers <mockersf@gmail.com>"]
 description = "Bindings for the Jenkins JSON API"
 repository = "https://github.com/mockersf/jenkins-api.rs"
