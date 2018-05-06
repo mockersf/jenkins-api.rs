@@ -4,6 +4,7 @@
 
 * Can deserialize git informations from a build
 * Can trigger job remotely (GET request with a token)
+* Can poll configured SCM of a project
 
 # 0.2.1 (2018/05/04)
 

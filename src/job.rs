@@ -235,6 +235,20 @@ impl Job {
             }.into())
         }
     }
+
+    /// Poll configured SCM for changes
+    pub fn poll_scm(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::Job { name } = path {
+            jenkins_client.post(&Path::PollSCMJob { name })?;
+            Ok(())
+        } else {
+            Err(client::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "Job".to_string(),
+            }.into())
+        }
+    }
 }
 
 impl Jenkins {
@@ -291,5 +305,13 @@ impl Jenkins {
                 expected: "ShortQueueItem".to_string(),
             }.into())
         }
+    }
+
+    /// Poll SCM of a job from it's `job_name`
+    pub fn poll_scm_job(&self, job_name: &str) -> Result<(), Error> {
+        self.post(&Path::PollSCMJob {
+            name: Name::Name(job_name),
+        })?;
+        Ok(())
     }
 }
