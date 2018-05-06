@@ -201,6 +201,40 @@ impl Job {
             }.into())
         }
     }
+
+    /// Trigger a build remotely
+    pub fn trigger_remotely(
+        &self,
+        jenkins_client: &Jenkins,
+        token: &str,
+        cause: Option<&str>,
+    ) -> Result<ShortQueueItem, Error> {
+        let path = jenkins_client.url_to_path(&self.url);
+        if let Path::Job { name } = path {
+            let mut qps = Vec::new();
+            qps.push(("token", token));
+            if let Some(cause) = cause {
+                qps.push(("cause", cause));
+            }
+
+            let response = jenkins_client.get_with_params(&Path::BuildJob { name }, &qps)?;
+            if let Some(location) = response.headers().get::<Location>() {
+                Ok(ShortQueueItem {
+                    url: location.lines().next().unwrap().to_string(),
+                })
+            } else {
+                Err(client::Error::InvalidUrl {
+                    url: "".to_string(),
+                    expected: "ShortQueueItem".to_string(),
+                }.into())
+            }
+        } else {
+            Err(client::Error::InvalidUrl {
+                url: self.url.clone(),
+                expected: "Job".to_string(),
+            }.into())
+        }
+    }
 }
 
 impl Jenkins {
@@ -217,6 +251,36 @@ impl Jenkins {
         let response = self.post(&Path::BuildJob {
             name: Name::Name(job_name),
         })?;
+        if let Some(location) = response.headers().get::<Location>() {
+            Ok(ShortQueueItem {
+                url: location.lines().next().unwrap().to_string(),
+            })
+        } else {
+            Err(client::Error::InvalidUrl {
+                url: "".to_string(),
+                expected: "ShortQueueItem".to_string(),
+            }.into())
+        }
+    }
+
+    /// Trigger a job remotely from it's `job_name`
+    pub fn trigger_job_remotely(
+        &self,
+        job_name: &str,
+        token: &str,
+        cause: Option<&str>,
+    ) -> Result<ShortQueueItem, Error> {
+        let mut qps = Vec::new();
+        qps.push(("token", token));
+        if let Some(cause) = cause {
+            qps.push(("cause", cause));
+        }
+        let response = self.get_with_params(
+            &Path::BuildJob {
+                name: Name::Name(job_name),
+            },
+            &qps,
+        )?;
         if let Some(location) = response.headers().get::<Location>() {
             Ok(ShortQueueItem {
                 url: location.lines().next().unwrap().to_string(),

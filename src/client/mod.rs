@@ -41,6 +41,18 @@ impl Jenkins {
             .error_for_status()?)
     }
 
+    pub(crate) fn get_with_params(
+        &self,
+        path: &Path,
+        qps: &[(&str, &str)],
+    ) -> Result<Response, failure::Error> {
+        Ok(self.client
+            .get(&self.url_api_json(&path.to_string()))
+            .query(qps)
+            .send()?
+            .error_for_status()?)
+    }
+
     pub(crate) fn post(&self, path: &Path) -> Result<Response, failure::Error> {
         let mut request_builder = self.client.post(&self.url(&path.to_string()));
 
