@@ -1,11 +1,10 @@
 use failure::Error;
 
-use reqwest::header::Location;
-
 use build::ShortBuild;
 use queue::ShortQueueItem;
 use Jenkins;
 use client::{self, Name, Path};
+use job_builder::JobBuilder;
 
 /// Ball Color corresponding to a `BuildStatus`
 #[derive(Debug, Deserialize, Clone, Copy)]
@@ -181,25 +180,15 @@ impl Job {
 
     /// Build this job
     pub fn build(&self, jenkins_client: &Jenkins) -> Result<ShortQueueItem, Error> {
-        let path = jenkins_client.url_to_path(&self.url);
-        if let Path::Job { name } = path {
-            let response = jenkins_client.post(&Path::BuildJob { name })?;
-            if let Some(location) = response.headers().get::<Location>() {
-                Ok(ShortQueueItem {
-                    url: location.lines().next().unwrap().to_string(),
-                })
-            } else {
-                Err(client::Error::InvalidUrl {
-                    url: "".to_string(),
-                    expected: "ShortQueueItem".to_string(),
-                }.into())
-            }
-        } else {
-            Err(client::Error::InvalidUrl {
-                url: self.url.clone(),
-                expected: "Job".to_string(),
-            }.into())
-        }
+        self.builder(jenkins_client)?.send()
+    }
+
+    /// Create a `JobBuilder` to setup a build of a `Job`
+    pub fn builder<'a, 'b, 'c, 'd>(
+        &'a self,
+        jenkins_client: &'b Jenkins,
+    ) -> Result<JobBuilder<'a, 'b, 'c, 'd>, Error> {
+        JobBuilder::new(self, jenkins_client)
     }
 
     /// Trigger a build remotely
@@ -209,31 +198,9 @@ impl Job {
         token: &str,
         cause: Option<&str>,
     ) -> Result<ShortQueueItem, Error> {
-        let path = jenkins_client.url_to_path(&self.url);
-        if let Path::Job { name } = path {
-            let mut qps = Vec::new();
-            qps.push(("token", token));
-            if let Some(cause) = cause {
-                qps.push(("cause", cause));
-            }
-
-            let response = jenkins_client.get_with_params(&Path::BuildJob { name }, &qps)?;
-            if let Some(location) = response.headers().get::<Location>() {
-                Ok(ShortQueueItem {
-                    url: location.lines().next().unwrap().to_string(),
-                })
-            } else {
-                Err(client::Error::InvalidUrl {
-                    url: "".to_string(),
-                    expected: "ShortQueueItem".to_string(),
-                }.into())
-            }
-        } else {
-            Err(client::Error::InvalidUrl {
-                url: self.url.clone(),
-                expected: "Job".to_string(),
-            }.into())
-        }
+        self.builder(jenkins_client)?
+            .remotely_with_token_and_cause(token, cause)
+            .send()
     }
 
     /// Poll configured SCM for changes
@@ -252,7 +219,7 @@ impl Job {
 }
 
 impl Jenkins {
-    /// Get a job from it's `job_name`
+    /// Get a `Job` from it's `job_name`
     pub fn get_job(&self, job_name: &str) -> Result<Job, Error> {
         Ok(self.get(&Path::Job {
             name: Name::Name(job_name),
@@ -260,54 +227,32 @@ impl Jenkins {
             .json()?)
     }
 
-    /// Build a job from it's `job_name`
+    /// Build a `Job` from it's `job_name`
     pub fn build_job(&self, job_name: &str) -> Result<ShortQueueItem, Error> {
-        let response = self.post(&Path::BuildJob {
-            name: Name::Name(job_name),
-        })?;
-        if let Some(location) = response.headers().get::<Location>() {
-            Ok(ShortQueueItem {
-                url: location.lines().next().unwrap().to_string(),
-            })
-        } else {
-            Err(client::Error::InvalidUrl {
-                url: "".to_string(),
-                expected: "ShortQueueItem".to_string(),
-            }.into())
-        }
+        JobBuilder::new_from_job_name(job_name, self)?.send()
     }
 
-    /// Trigger a job remotely from it's `job_name`
+    /// Trigger a `Job` remotely from it's `job_name`
     pub fn trigger_job_remotely(
         &self,
         job_name: &str,
         token: &str,
         cause: Option<&str>,
     ) -> Result<ShortQueueItem, Error> {
-        let mut qps = Vec::new();
-        qps.push(("token", token));
-        if let Some(cause) = cause {
-            qps.push(("cause", cause));
-        }
-        let response = self.get_with_params(
-            &Path::BuildJob {
-                name: Name::Name(job_name),
-            },
-            &qps,
-        )?;
-        if let Some(location) = response.headers().get::<Location>() {
-            Ok(ShortQueueItem {
-                url: location.lines().next().unwrap().to_string(),
-            })
-        } else {
-            Err(client::Error::InvalidUrl {
-                url: "".to_string(),
-                expected: "ShortQueueItem".to_string(),
-            }.into())
-        }
+        JobBuilder::new_from_job_name(job_name, self)?
+            .remotely_with_token_and_cause(token, cause)
+            .send()
     }
 
-    /// Poll SCM of a job from it's `job_name`
+    /// Create a `JobBuilder` to setup a build of a `Job` from it's `job_name`
+    pub fn job_builder<'a, 'b, 'c, 'd>(
+        &'b self,
+        job_name: &'a str,
+    ) -> Result<JobBuilder<'a, 'b, 'c, 'd>, Error> {
+        JobBuilder::new_from_job_name(job_name, self)
+    }
+
+    /// Poll SCM of a `Job` from it's `job_name`
     pub fn poll_scm_job(&self, job_name: &str) -> Result<(), Error> {
         self.post(&Path::PollSCMJob {
             name: Name::Name(job_name),

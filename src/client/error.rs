@@ -15,4 +15,16 @@ pub enum Error {
         /// Field name provided by Jenkins api for crumb
         field_name: String,
     },
+    /// Error thrown when building a parameterized job with an invalid parameter
+    #[fail(display = "illegal argument: '{}'", message)]
+    IllegalArgument {
+        /// Exception message provided by Jenkins
+        message: String,
+    },
+    /// Error thrown when building a job with invalid parameters
+    #[fail(display = "illegal state: '{}'", message)]
+    IllegalState {
+        /// Exception message provided by Jenkins
+        message: String,
+    },
 }

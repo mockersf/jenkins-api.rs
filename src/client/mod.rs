@@ -1,6 +1,8 @@
-use reqwest::{Client, Response};
-
+use reqwest::{Body, Client, Response, StatusCode};
+use reqwest::header::ContentType;
+use std::fmt::Debug;
 use failure;
+use regex::Regex;
 
 mod error;
 pub use self::error::Error;
@@ -59,5 +61,46 @@ impl Jenkins {
         self.add_csrf_to_request(&mut request_builder)?;
 
         Ok(request_builder.send()?.error_for_status()?)
+    }
+
+    pub(crate) fn post_with_body<T: Into<Body> + Debug>(
+        &self,
+        path: &Path,
+        body: T,
+        qps: &[(&str, &str)],
+    ) -> Result<Response, failure::Error> {
+        let mut request_builder = self.client.post(&self.url(&path.to_string()));
+
+        self.add_csrf_to_request(&mut request_builder)?;
+
+        request_builder.header(ContentType::form_url_encoded());
+        let mut response = request_builder.query(qps).body(body).send()?;
+
+        if response.status() == StatusCode::InternalServerError {
+            let body = response.text()?;
+
+            let re = Regex::new(r"java.lang.([a-zA-Z]+): (.*)").unwrap();
+            if let Some(captures) = re.captures(&body) {
+                match captures.get(1).map(|v| v.as_str()) {
+                    Some("IllegalStateException") => Err(Error::IllegalState {
+                        message: captures
+                            .get(2)
+                            .map(|v| v.as_str())
+                            .unwrap_or("no message")
+                            .to_string(),
+                    }),
+                    Some("IllegalArgumentException") => Err(Error::IllegalArgument {
+                        message: captures
+                            .get(2)
+                            .map(|v| v.as_str())
+                            .unwrap_or("no message")
+                            .to_string(),
+                    }),
+                    _ => Ok(()),
+                }?;
+            }
+        }
+
+        Ok(response.error_for_status()?)
     }
 }

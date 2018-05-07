@@ -37,11 +37,13 @@ extern crate serde_derive;
 #[macro_use]
 extern crate serde;
 extern crate serde_json;
+extern crate serde_urlencoded;
 
 extern crate urlencoding;
 
 #[macro_use]
 extern crate failure;
+extern crate regex;
 
 mod client;
 pub use client::{Error, Jenkins, JenkinsBuilder};
@@ -53,6 +55,7 @@ mod view;
 pub use view::*;
 mod job;
 pub use job::*;
+pub mod job_builder;
 pub mod action;
 mod build;
 pub use build::*;

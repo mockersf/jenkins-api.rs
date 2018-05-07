@@ -37,6 +37,9 @@ pub(crate) enum Path<'a> {
     BuildJob {
         name: Name<'a>,
     },
+    BuildJobWithParameters {
+        name: Name<'a>,
+    },
     PollSCMJob {
         name: Name<'a>,
     },
@@ -87,6 +90,9 @@ impl<'a> ToString for Path<'a> {
             ),
             Path::Job { ref name } => format!("/job/{}", name.to_string()),
             Path::BuildJob { ref name } => format!("/job/{}/build", name.to_string()),
+            Path::BuildJobWithParameters { ref name } => {
+                format!("/job/{}/buildWithParameters", name.to_string())
+            }
             Path::PollSCMJob { ref name } => format!("/job/{}/polling", name.to_string()),
             Path::JobEnable { ref name } => format!("/job/{}/enable", name.to_string()),
             Path::JobDisable { ref name } => format!("/job/{}/disable", name.to_string()),
