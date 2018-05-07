@@ -2,6 +2,7 @@ use failure::Error;
 
 use job::ShortJob;
 use build::ShortBuild;
+use action::Action;
 use Jenkins;
 use client::{self, Path};
 
@@ -54,6 +55,8 @@ pub struct QueueItem {
     pub buildable_start_milliseconds: Option<u64>,
     /// Link to the build once it has started
     pub executable: Option<ShortBuild>,
+    /// Build actions
+    pub actions: Vec<Action>,
 }
 impl QueueItem {
     /// Refresh a `QueueItem`, consuming the existing one and returning a new `QueueItem`

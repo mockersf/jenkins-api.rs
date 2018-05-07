@@ -6,6 +6,7 @@
 * Can trigger job remotely (GET request with a token)
 * Can poll configured SCM of a project
 * Can build job with parameters
+* Can deserialize actions from a queue item
 
 # 0.2.1 (2018/05/04)
 
