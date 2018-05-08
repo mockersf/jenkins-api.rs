@@ -126,9 +126,11 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
     /// Build with parameters
     /// Supported parameters type: Boolean, Choice, Multi-line string, Password, Run, String
     /// # Errors
-    /// If used on a `Job` without parameters, will return an [`Error::IllegalState`](../enum.Error.html#variant.IllegalState)
+    /// If used on a `Job` without parameters, sending this build will return an [`Error::IllegalState`](../enum.Error.html#variant.IllegalState)
     ///
-    /// If used with invalid parameters type / value, will return an [`Error::IllegalArgument`](../enum.Error.html#variant.IllegalArgument)
+    /// If used with invalid parameters type / value, sending this build will return an [`Error::IllegalArgument`](../enum.Error.html#variant.IllegalArgument)
+    ///
+    /// This methods will return an error if serializing `parameters` fails
     pub fn with_parameters<T: serde::Serialize>(mut self, parameters: &T) -> Result<Self, Error> {
         self.parameters = Some(serde_urlencoded::to_string(parameters)?);
         Ok(self)
