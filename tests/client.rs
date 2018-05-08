@@ -1,10 +1,23 @@
+extern crate env_logger;
+
 extern crate jenkins_api;
 
 use jenkins_api::JenkinsBuilder;
 use std::{thread, time};
 
+use std::sync::{Once, ONCE_INIT};
+
+static INIT: Once = ONCE_INIT;
+
+fn setup() {
+    INIT.call_once(|| {
+        env_logger::init();
+    });
+}
+
 #[test]
 fn can_get_jenkins_home() {
+    setup();
     let jenkins = JenkinsBuilder::new("http://localhost:8080")
         .with_user("user", Some("password"))
         .build()
@@ -14,6 +27,7 @@ fn can_get_jenkins_home() {
 
 #[test]
 fn should_be_forbidden() {
+    setup();
     let jenkins = JenkinsBuilder::new("http://localhost:8080")
         .with_user("unknown", Some("password"))
         .build()
@@ -28,6 +42,7 @@ fn should_be_forbidden() {
 
 #[test]
 fn should_be_connection_error() {
+    setup();
     let jenkins = JenkinsBuilder::new("http://localhost:808").build().unwrap();
     let response = jenkins.get_home();
     assert!(response.is_err());
@@ -35,6 +50,7 @@ fn should_be_connection_error() {
 
 #[test]
 fn can_get_view() {
+    setup();
     let jenkins = JenkinsBuilder::new("http://localhost:8080")
         .with_user("user", Some("password"))
         .build()
@@ -44,6 +60,7 @@ fn can_get_view() {
 
 #[test]
 fn should_get_view_not_found() {
+    setup();
     let jenkins = JenkinsBuilder::new("http://localhost:8080")
         .with_user("user", Some("password"))
         .build()
@@ -58,6 +75,7 @@ fn should_get_view_not_found() {
 
 #[test]
 fn can_get_job() {
+    setup();
     let jenkins = JenkinsBuilder::new("http://localhost:8080/")
         .with_user("user", Some("password"))
         .build()
@@ -68,6 +86,7 @@ fn can_get_job() {
 
 #[test]
 fn can_get_build() {
+    setup();
     let jenkins = JenkinsBuilder::new("http://localhost:8080")
         .with_user("user", Some("password"))
         .build()
@@ -77,6 +96,7 @@ fn can_get_build() {
 
 #[test]
 fn can_get_jenkins_view_from_home() {
+    setup();
     let jenkins = JenkinsBuilder::new("http://localhost:8080")
         .with_user("user", Some("password"))
         .build()
@@ -98,6 +118,7 @@ fn can_get_jenkins_view_from_home() {
 
 #[test]
 fn can_get_build_from_job_and_back() {
+    setup();
     let jenkins = JenkinsBuilder::new("http://localhost:8080/")
         .with_user("user", Some("password"))
         .build()
@@ -114,6 +135,7 @@ fn can_get_build_from_job_and_back() {
 
 #[test]
 fn can_disable_job_and_reenable() {
+    setup();
     let jenkins = JenkinsBuilder::new("http://localhost:8080/")
         .with_user("user", Some("password"))
         .build()
@@ -140,6 +162,7 @@ fn can_disable_job_and_reenable() {
 
 #[test]
 fn can_add_and_remove_job_from_view() {
+    setup();
     let jenkins = JenkinsBuilder::new("http://localhost:8080/")
         .with_user("user", Some("password"))
         .build()
@@ -171,6 +194,7 @@ fn can_add_and_remove_job_from_view() {
 
 #[test]
 fn can_get_queue() {
+    setup();
     let jenkins = JenkinsBuilder::new("http://localhost:8080/")
         .with_user("user", Some("password"))
         .build()
@@ -186,6 +210,7 @@ fn can_get_queue() {
 
 #[test]
 fn can_get_queue_item() {
+    setup();
     let jenkins = JenkinsBuilder::new("http://localhost:8080/")
         .with_user("user", Some("password"))
         .build()

@@ -7,6 +7,7 @@
 * Can poll configured SCM of a project
 * Can build job with parameters
 * Can deserialize actions from a queue item
+* Logging request and error responses
 
 # 0.2.1 (2018/05/04)
 

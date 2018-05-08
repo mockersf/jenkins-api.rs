@@ -45,6 +45,9 @@ extern crate urlencoding;
 extern crate failure;
 extern crate regex;
 
+#[macro_use]
+extern crate log;
+
 mod client;
 pub use client::{Error, Jenkins, JenkinsBuilder};
 

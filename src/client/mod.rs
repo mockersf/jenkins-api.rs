@@ -1,4 +1,4 @@
-use reqwest::{Body, Client, Response, StatusCode};
+use reqwest::{Body, Client, RequestBuilder, Response, StatusCode};
 use reqwest::header::ContentType;
 use std::fmt::Debug;
 use failure;
@@ -36,11 +36,23 @@ impl Jenkins {
         format!("{}{}", self.url, endpoint)
     }
 
+    fn send(&self, mut request_builder: RequestBuilder) -> Result<Response, failure::Error> {
+        let query = request_builder.build()?;
+        debug!("sending {} {}", query.method(), query.url());
+        Ok(self.client.execute(query)?)
+    }
+
+    fn error_for_status(response: Response) -> Result<Response, failure::Error> {
+        let status = response.status();
+        if status.is_client_error() || status.is_server_error() {
+            warn!("got an error: {}", status);
+        }
+        Ok(response.error_for_status()?)
+    }
+
     pub(crate) fn get(&self, path: &Path) -> Result<Response, failure::Error> {
-        Ok(self.client
-            .get(&self.url_api_json(&path.to_string()))
-            .send()?
-            .error_for_status()?)
+        let query = self.client.get(&self.url_api_json(&path.to_string()));
+        Ok(Self::error_for_status(self.send(query)?)?)
     }
 
     pub(crate) fn get_with_params(
@@ -48,11 +60,9 @@ impl Jenkins {
         path: &Path,
         qps: &[(&str, &str)],
     ) -> Result<Response, failure::Error> {
-        Ok(self.client
-            .get(&self.url_api_json(&path.to_string()))
-            .query(qps)
-            .send()?
-            .error_for_status()?)
+        let mut query = self.client.get(&self.url_api_json(&path.to_string()));
+        query.query(qps);
+        Ok(Self::error_for_status(self.send(query)?)?)
     }
 
     pub(crate) fn post(&self, path: &Path) -> Result<Response, failure::Error> {
@@ -74,7 +84,8 @@ impl Jenkins {
         self.add_csrf_to_request(&mut request_builder)?;
 
         request_builder.header(ContentType::form_url_encoded());
-        let mut response = request_builder.query(qps).body(body).send()?;
+        request_builder.query(qps).body(body);
+        let mut response = self.send(request_builder)?;
 
         if response.status() == StatusCode::InternalServerError {
             let body = response.text()?;
@@ -82,25 +93,44 @@ impl Jenkins {
             let re = Regex::new(r"java.lang.([a-zA-Z]+): (.*)").unwrap();
             if let Some(captures) = re.captures(&body) {
                 match captures.get(1).map(|v| v.as_str()) {
-                    Some("IllegalStateException") => Err(Error::IllegalState {
-                        message: captures
-                            .get(2)
-                            .map(|v| v.as_str())
-                            .unwrap_or("no message")
-                            .to_string(),
-                    }),
-                    Some("IllegalArgumentException") => Err(Error::IllegalArgument {
-                        message: captures
-                            .get(2)
-                            .map(|v| v.as_str())
-                            .unwrap_or("no message")
-                            .to_string(),
-                    }),
+                    Some("IllegalStateException") => {
+                        warn!(
+                            "got an IllegalState error: {}",
+                            captures.get(0).map(|v| v.as_str()).unwrap_or("unspecified")
+                        );
+                        Err(Error::IllegalState {
+                            message: captures
+                                .get(2)
+                                .map(|v| v.as_str())
+                                .unwrap_or("no message")
+                                .to_string(),
+                        })
+                    }
+                    Some("IllegalArgumentException") => {
+                        warn!(
+                            "got an IllegalArgument error: {}",
+                            captures.get(0).map(|v| v.as_str()).unwrap_or("unspecified")
+                        );
+                        Err(Error::IllegalArgument {
+                            message: captures
+                                .get(2)
+                                .map(|v| v.as_str())
+                                .unwrap_or("no message")
+                                .to_string(),
+                        })
+                    }
+                    Some(_) => {
+                        warn!(
+                            "got an Unknwon error: {}",
+                            captures.get(0).map(|v| v.as_str()).unwrap_or("unspecified")
+                        );
+                        Ok(())
+                    }
                     _ => Ok(()),
                 }?;
             }
         }
 
-        Ok(response.error_for_status()?)
+        Ok(Self::error_for_status(response)?)
     }
 }
