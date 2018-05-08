@@ -191,18 +191,6 @@ impl Job {
         JobBuilder::new(self, jenkins_client)
     }
 
-    /// Trigger a build remotely
-    pub fn trigger_remotely(
-        &self,
-        jenkins_client: &Jenkins,
-        token: &str,
-        cause: Option<&str>,
-    ) -> Result<ShortQueueItem, Error> {
-        self.builder(jenkins_client)?
-            .remotely_with_token_and_cause(token, cause)
-            .send()
-    }
-
     /// Poll configured SCM for changes
     pub fn poll_scm(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
         let path = jenkins_client.url_to_path(&self.url);
@@ -230,18 +218,6 @@ impl Jenkins {
     /// Build a `Job` from it's `job_name`
     pub fn build_job(&self, job_name: &str) -> Result<ShortQueueItem, Error> {
         JobBuilder::new_from_job_name(job_name, self)?.send()
-    }
-
-    /// Trigger a `Job` remotely from it's `job_name`
-    pub fn trigger_job_remotely(
-        &self,
-        job_name: &str,
-        token: &str,
-        cause: Option<&str>,
-    ) -> Result<ShortQueueItem, Error> {
-        JobBuilder::new_from_job_name(job_name, self)?
-            .remotely_with_token_and_cause(token, cause)
-            .send()
     }
 
     /// Create a `JobBuilder` to setup a build of a `Job` from it's `job_name`
