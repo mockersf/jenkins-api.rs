@@ -61,14 +61,14 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
     pub fn send(self) -> Result<ShortQueueItem, Error> {
         let response = match (self.token, self.parameters) {
             (Some(token), None) => {
-                let bound_cause = self.cause.clone().unwrap_or("");
-                let bound_delay = format!("{}", self.delay.clone().unwrap_or(0));
+                let bound_cause = self.cause.unwrap_or("");
+                let bound_delay = format!("{}", self.delay.unwrap_or(0));
                 let mut qps: Vec<(&str, &str)> = Vec::new();
                 qps.push(("token", &token));
-                if let Some(_) = self.cause {
+                if self.cause.is_some() {
                     qps.push(("cause", &bound_cause));
                 }
-                if let Some(_) = self.delay {
+                if self.delay.is_some() {
                     qps.push(("delay", &bound_delay));
                 }
 
@@ -84,9 +84,9 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
                 name: self.job_name,
             })?,
             (None, Some(parameters)) => {
-                let bound_delay = format!("{}", self.delay.clone().unwrap_or(0));
+                let bound_delay = format!("{}", self.delay.unwrap_or(0));
                 let mut qps: Vec<(&str, &str)> = Vec::new();
-                if let Some(_) = self.delay {
+                if self.delay.is_some() {
                     qps.push(("delay", &bound_delay));
                 }
                 self.jenkins_client.post_with_body(
