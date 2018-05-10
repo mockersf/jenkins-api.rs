@@ -1,7 +1,9 @@
 use failure::Error;
+use serde::Deserializer;
 
 use job::Job;
 use action::Action;
+use user::ShortUser;
 use Jenkins;
 use client::{self, Name, Path};
 
@@ -45,48 +47,98 @@ pub enum BuildStatus {
     Aborted,
 }
 
-/// A `Build` of a `Job`
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Build {
-    /// URL for the build
-    pub url: String,
-    /// Build number for this job
-    pub number: u32,
-    /// Estimated duration
-    pub estimated_duration: u32,
-    /// Timestamp of the build start
-    pub timestamp: u64,
-    /// Are the logs kept?
-    pub keep_log: bool,
-    /// Build result
-    pub result: BuildStatus,
-    /// Display name, usually "#" followed by the build number
-    pub display_name: String,
-    /// Full display name: job name followed by the build display name
-    pub full_display_name: String,
-    /// Is this build currently running
-    pub building: bool,
-    /// Which slave was it build on
-    pub built_on: String,
-    /// Build number in string format
-    pub id: String,
-    /// ID while in the build queue
-    pub queue_id: u32,
-    /// Build actions
-    pub actions: Vec<Action>,
-    /// Change set for this build
-    pub change_set: changeset::ChangeSetList,
-}
+tagged_enum_or_default!(
+
+    /// A `Build` of a `Job`
+    pub enum Build {
+        /// A `Build` from a FreeStyleProject
+        FreeStyleBuild (_class = "hudson.model.FreeStyleBuild") {
+            /// URL for the build
+            url: String,
+            /// Build number for this job
+            number: u32,
+            /// Estimated duration
+            estimated_duration: u32,
+            /// Timestamp of the build start
+            timestamp: u64,
+            /// Are the logs kept?
+            keep_log: bool,
+            /// Build result
+            result: BuildStatus,
+            /// Display name, usually "#" followed by the build number
+            display_name: String,
+            /// Full display name: job name followed by the build display name
+            full_display_name: String,
+            /// Is this build currently running
+            building: bool,
+            /// Which slave was it build on
+            built_on: String,
+            /// Build number in string format
+            id: String,
+            /// ID while in the build queue
+            queue_id: u32,
+            /// Build actions
+            actions: Vec<Action>,
+            /// Change set for this build
+            change_set: changeset::ChangeSetList,
+        },
+        /// A `Build` from a WorkflowJob
+        WorkflowRun (_class = "org.jenkinsci.plugins.workflow.job.WorkflowRun") {
+            /// URL for the build
+            url: String,
+            /// Build number for this job
+            number: u32,
+            /// Duration
+            duration: u32,
+            /// Estimated duration
+            estimated_duration: u32,
+            /// Timestamp of the build start
+            timestamp: u64,
+            /// Are the logs kept?
+            keep_log: bool,
+            /// Build result
+            result: BuildStatus,
+            /// Display name, usually "#" followed by the build number
+            display_name: String,
+            /// Full display name: job name followed by the build display name
+            full_display_name: String,
+            /// Is this build currently running
+            building: bool,
+            /// Build number in string format
+            id: String,
+            /// ID while in the build queue
+            queue_id: u32,
+            /// Build actions
+            actions: Vec<Action>,
+            /// Change set for this build
+            change_sets: Vec<changeset::ChangeSetList>,
+            /// Culprits
+            culprits: Vec<ShortUser>,
+            /// Previous build
+            previous_build: Option<ShortBuild>,
+        },
+    }
+);
+
 impl Build {
+    pub(crate) fn url(&self) -> Result<&str, Error> {
+        match self {
+            &Build::FreeStyleBuild { ref url, .. } => Ok(url),
+            &Build::WorkflowRun { ref url, .. } => Ok(url),
+            &Build::Unknown { .. } => Err(client::Error::UnknownType {
+                object_type: client::error::ExpectedType::Build,
+            }.into()),
+        }
+    }
+
     /// Get the `Job` from a `Build`
     pub fn get_job(&self, jenkins_client: &Jenkins) -> Result<Job, Error> {
-        let path = jenkins_client.url_to_path(&self.url);
+        let path = jenkins_client.url_to_path(&self.url()?);
         if let Path::Build { job_name, .. } = path {
             Ok(jenkins_client.get(&Path::Job { name: job_name })?.json()?)
         } else {
             Err(client::Error::InvalidUrl {
-                url: self.url.clone(),
+                url: self.url()?.to_string(),
                 expected: client::error::ExpectedType::Build,
             }.into())
         }
@@ -94,14 +146,14 @@ impl Build {
 
     /// Get the console output from a `Build`
     pub fn get_console(&self, jenkins_client: &Jenkins) -> Result<String, Error> {
-        let path = jenkins_client.url_to_path(&self.url);
+        let path = jenkins_client.url_to_path(&self.url()?);
         if let Path::Build { job_name, number } = path {
             Ok(jenkins_client
                 .get(&Path::ConsoleText { job_name, number })?
                 .text()?)
         } else {
             Err(client::Error::InvalidUrl {
-                url: self.url.clone(),
+                url: self.url()?.to_string(),
                 expected: client::error::ExpectedType::Build,
             }.into())
         }

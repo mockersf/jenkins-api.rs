@@ -4,6 +4,7 @@
 
 * Default enum variant renamed to Unknown
 * Changed `Error::InvalidUrl` `expected` field to an Enum (`error::ExpectedType`)
+* A `Build` can have many variants, for now either a free style or a pipeline
 
 # 0.2.2 (2018/05/10)
 

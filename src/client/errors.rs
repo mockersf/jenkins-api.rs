@@ -35,6 +35,13 @@ pub enum Error {
     /// Error when trying to remotely build a job with parameters
     #[fail(display = "can't build a job remotely with parameters")]
     UnsupportedBuildConfiguration,
+
+    /// Error when trying to act on an object of Unknown variant
+    #[fail(display = "can't use an Unknown object as a {}", object_type)]
+    UnknownType {
+        /// Object type of the Unknown variant
+        object_type: ExpectedType,
+    },
 }
 
 /// Possible type of URL expected in links between items
