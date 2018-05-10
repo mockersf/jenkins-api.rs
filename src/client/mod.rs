@@ -4,13 +4,18 @@ use std::fmt::Debug;
 use failure;
 use regex::Regex;
 
-mod error;
-pub use self::error::Error;
+mod errors;
+pub use self::errors::Error;
 mod path;
 pub(crate) use self::path::{Name, Path};
 mod builder;
 pub use self::builder::JenkinsBuilder;
 mod csrf;
+
+/// Helper type for error management
+pub mod error {
+    pub use super::errors::ExpectedUrl;
+}
 
 #[derive(Debug)]
 struct User {

@@ -5,7 +5,7 @@ use failure;
 use reqwest::header::{Formatter, Header, Raw};
 use reqwest::RequestBuilder;
 
-use super::{error, Jenkins, Path};
+use super::{errors, Jenkins, Path};
 
 #[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -36,7 +36,7 @@ impl Jenkins {
         if self.csrf_enabled {
             let crumb: Crumb = self.get(&Path::CrumbIssuer)?.json()?;
             if crumb.crumb_request_field != Crumb::header_name() {
-                return Err(error::Error::InvalidCrumbFieldName {
+                return Err(errors::Error::InvalidCrumbFieldName {
                     field_name: crumb.crumb_request_field,
                 }.into());
             }

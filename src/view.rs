@@ -60,7 +60,7 @@ impl ShortView {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: "View".to_string(),
+                expected: client::error::ExpectedUrl::View,
             }.into())
         }
     }
@@ -92,7 +92,7 @@ impl View {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: "View".to_string(),
+                expected: client::error::ExpectedUrl::View,
             }.into())
         }
     }
@@ -109,7 +109,7 @@ impl View {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: "View".to_string(),
+                expected: client::error::ExpectedUrl::View,
             }.into())
         }
     }

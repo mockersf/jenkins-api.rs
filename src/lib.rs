@@ -49,7 +49,7 @@ extern crate regex;
 extern crate log;
 
 mod client;
-pub use client::{Error, Jenkins, JenkinsBuilder};
+pub use client::{error, Error, Jenkins, JenkinsBuilder};
 
 #[macro_use]
 mod helpers;

@@ -1,3 +1,5 @@
+use std::fmt;
+
 /// Errors that can be thrown
 #[derive(Debug, Fail)]
 pub enum Error {
@@ -7,7 +9,7 @@ pub enum Error {
         /// URL found
         url: String,
         /// Expected URL type
-        expected: String,
+        expected: ExpectedUrl,
     },
 
     /// Error thrown when CSRF protection use an unexpected field name
@@ -33,4 +35,25 @@ pub enum Error {
     /// Error when trying to remotely build a job with parameters
     #[fail(display = "can't build a job remotely with parameters")]
     UnsupportedBuildConfiguration,
+}
+
+/// Possible type of URL expected in links between items
+#[derive(Debug, Copy, Clone)]
+pub enum ExpectedUrl {
+    /// URL to a `Build`
+    Build,
+    /// URL to a `Job`
+    Job,
+    /// URL to a `QueueItem`
+    QueueItem,
+    /// URL to a `View`
+    View,
+}
+
+impl fmt::Display for ExpectedUrl {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            _ => write!(f, "hohoho"),
+        }
+    }
 }
