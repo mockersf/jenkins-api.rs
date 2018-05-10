@@ -25,7 +25,7 @@ pub struct JobBuilder<'a, 'b, 'c, 'd> {
 
 impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
     pub(crate) fn new(job: &'a Job, jenkins_client: &'b Jenkins) -> Result<Self, Error> {
-        let path = jenkins_client.url_to_path(&job.url);
+        let path = jenkins_client.url_to_path(&job.url()?);
         if let Path::Job { name } = path {
             Ok(JobBuilder {
                 job_name: name,
@@ -37,7 +37,7 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
             })
         } else {
             Err(client::Error::InvalidUrl {
-                url: job.url.clone(),
+                url: job.url()?.to_string(),
                 expected: client::error::ExpectedType::Job,
             }.into())
         }

@@ -18,11 +18,11 @@
 //!         .unwrap();
 //!
 //!     let job = jenkins.get_job("job name").unwrap();
-//!     let build = job.last_build.unwrap().get_full_build(&jenkins).unwrap();
+//!     let build = job.last_build().unwrap().as_ref().unwrap().get_full_build(&jenkins).unwrap();
 //!
 //!     println!(
 //!         "last build for job {} at {} was {:?}",
-//!         job.name, build.timestamp, build.result
+//!         job.name().unwrap(), build.timestamp().unwrap(), build.result().unwrap()
 //!     );
 //! }
 //! ```

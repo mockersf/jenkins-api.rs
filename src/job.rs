@@ -1,4 +1,5 @@
 use failure::Error;
+use serde::Deserializer;
 
 use build::ShortBuild;
 use queue::ShortQueueItem;
@@ -68,63 +69,122 @@ impl ShortJob {
     }
 }
 
-/// A Jenkins `Job`
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Job {
-    /// Name of the job
-    pub name: String,
-    /// Display Name of the job
-    pub display_name: String,
-    /// Full Display Name of the job
-    pub full_display_name: String,
-    /// Full Name of the job
-    pub full_name: String,
-    /// Description of the job
-    pub description: String,
-    /// URL for the job
-    pub url: String,
-    /// Ball Color for the status of the job
-    pub color: BallColor,
-    /// Is the job buildable?
-    pub buildable: bool,
-    /// Is concurrent build enabled for the job?
-    pub concurrent_build: bool,
-    /// Are dependencies kept for this job?
-    pub keep_dependencies: bool,
-    /// Next build number
-    pub next_build_number: u32,
-    /// Is this job currently in build queue
-    pub in_queue: bool,
-    /// Link to the last build
-    pub last_build: Option<ShortBuild>,
-    /// Link to the first build
-    pub first_build: Option<ShortBuild>,
-    /// Link to the last stable build
-    pub last_stable_build: Option<ShortBuild>,
-    /// Link to the last unstable build
-    pub last_unstable_build: Option<ShortBuild>,
-    /// Link to the last successful build
-    pub last_successful_build: Option<ShortBuild>,
-    /// Link to the last unsucressful build
-    pub last_unsuccessful_build: Option<ShortBuild>,
-    /// Link to the last complete build
-    pub last_completed_build: Option<ShortBuild>,
-    /// Link to the last failed build
-    pub last_failed_build: Option<ShortBuild>,
-    /// List of builds of the job
-    pub builds: Vec<ShortBuild>,
+tagged_enum_or_default!(
+    /// A Jenkins `Job`
+    pub enum Job {
+        /// A free style project
+        FreeStyleProject (_class = "hudson.model.FreeStyleProject") {
+            /// Name of the job
+            name: String,
+            /// Display Name of the job
+            display_name: String,
+            /// Full Display Name of the job
+            full_display_name: String,
+            /// Full Name of the job
+            full_name: String,
+            /// Description of the job
+            description: String,
+            /// URL for the job
+            url: String,
+            /// Ball Color for the status of the job
+            color: BallColor,
+            /// Is the job buildable?
+            buildable: bool,
+            /// Is concurrent build enabled for the job?
+            concurrent_build: bool,
+            /// Are dependencies kept for this job?
+            keep_dependencies: bool,
+            /// Next build number
+            next_build_number: u32,
+            /// Is this job currently in build queue
+            in_queue: bool,
+            /// Link to the last build
+            last_build: Option<ShortBuild>,
+            /// Link to the first build
+            first_build: Option<ShortBuild>,
+            /// Link to the last stable build
+            last_stable_build: Option<ShortBuild>,
+            /// Link to the last unstable build
+            last_unstable_build: Option<ShortBuild>,
+            /// Link to the last successful build
+            last_successful_build: Option<ShortBuild>,
+            /// Link to the last unsucressful build
+            last_unsuccessful_build: Option<ShortBuild>,
+            /// Link to the last complete build
+            last_completed_build: Option<ShortBuild>,
+            /// Link to the last failed build
+            last_failed_build: Option<ShortBuild>,
+            /// List of builds of the job
+            builds: Vec<ShortBuild>,
+        },
+    }
+);
+
+macro_rules! job_common_fields_dispatch {
+    ($field:ident -> $return:ty) => {
+        pub(crate) fn $field(&self) -> Result<$return, Error> {
+            match self {
+                &Job::FreeStyleProject { ref $field, .. } => Ok($field),
+                x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
+                    object_type: client::error::ExpectedType::Job,
+                    action: client::error::Action::GetField(stringify!($field)),
+                    variant_name: x.variant_name().to_string(),
+                }.into()),
+            }
+        }
+    };
+    ($(#[$attr:meta])* pub $field:ident -> $return:ty) => {
+        $(#[$attr])*
+        pub fn $field(&self) -> Result<$return, Error> {
+            match self {
+                &Job::FreeStyleProject { $field, .. } => Ok($field),
+                x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
+                    object_type: client::error::ExpectedType::Job,
+                    action: client::error::Action::GetField(stringify!($field)),
+                    variant_name: x.variant_name().to_string(),
+                }.into()),
+            }
+        }
+    };
+    ($(#[$attr:meta])* pub ref $field:ident -> $return:ty) => {
+        $(#[$attr])*
+        pub fn $field(&self) -> Result<$return, Error> {
+            match self {
+                &Job::FreeStyleProject { ref $field, .. } => Ok($field),
+                x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
+                    object_type: client::error::ExpectedType::Job,
+                    action: client::error::Action::GetField(stringify!($field)),
+                    variant_name: x.variant_name().to_string(),
+                }.into()),
+            }
+        }
+    };
 }
+
 impl Job {
+    job_common_fields_dispatch!(url -> &str);
+    job_common_fields_dispatch!(
+        /// Get the name of the project
+        pub ref name -> &str
+    );
+    job_common_fields_dispatch!(
+        /// Is the project buildable
+        pub buildable -> bool
+    );
+    job_common_fields_dispatch!(
+        /// Is the project buildable
+        pub ref last_build -> &Option<ShortBuild>
+    );
+
     /// Enable a `Job`. It may need to be refreshed as it may have been updated
     pub fn enable(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
-        let path = jenkins_client.url_to_path(&self.url);
+        let path = jenkins_client.url_to_path(&self.url()?);
         if let Path::Job { name } = path {
             jenkins_client.post(&Path::JobEnable { name })?;
             Ok(())
         } else {
             Err(client::Error::InvalidUrl {
-                url: self.url.clone(),
+                url: self.url()?.to_string(),
                 expected: client::error::ExpectedType::Job,
             }.into())
         }
@@ -132,13 +192,13 @@ impl Job {
 
     /// Disable a `Job`. It may need to be refreshed as it may have been updated
     pub fn disable(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
-        let path = jenkins_client.url_to_path(&self.url);
+        let path = jenkins_client.url_to_path(&self.url()?);
         if let Path::Job { name } = path {
             jenkins_client.post(&Path::JobDisable { name })?;
             Ok(())
         } else {
             Err(client::Error::InvalidUrl {
-                url: self.url.clone(),
+                url: self.url()?.to_string(),
                 expected: client::error::ExpectedType::Job,
             }.into())
         }
@@ -146,7 +206,7 @@ impl Job {
 
     /// Add this job to the view `view_name`
     pub fn add_to_view(&self, jenkins_client: &Jenkins, view_name: &str) -> Result<(), Error> {
-        let path = jenkins_client.url_to_path(&self.url);
+        let path = jenkins_client.url_to_path(&self.url()?);
         if let Path::Job { name } = path {
             jenkins_client.post(&Path::AddJobToView {
                 job_name: name,
@@ -155,7 +215,7 @@ impl Job {
             Ok(())
         } else {
             Err(client::Error::InvalidUrl {
-                url: self.url.clone(),
+                url: self.url()?.to_string(),
                 expected: client::error::ExpectedType::Job,
             }.into())
         }
@@ -163,7 +223,7 @@ impl Job {
 
     /// Remove this job from the view `view_name`
     pub fn remove_from_view(&self, jenkins_client: &Jenkins, view_name: &str) -> Result<(), Error> {
-        let path = jenkins_client.url_to_path(&self.url);
+        let path = jenkins_client.url_to_path(&self.url()?);
         if let Path::Job { name } = path {
             jenkins_client.post(&Path::RemoveJobFromView {
                 job_name: name,
@@ -172,7 +232,7 @@ impl Job {
             Ok(())
         } else {
             Err(client::Error::InvalidUrl {
-                url: self.url.clone(),
+                url: self.url()?.to_string(),
                 expected: client::error::ExpectedType::Job,
             }.into())
         }
@@ -193,13 +253,13 @@ impl Job {
 
     /// Poll configured SCM for changes
     pub fn poll_scm(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
-        let path = jenkins_client.url_to_path(&self.url);
+        let path = jenkins_client.url_to_path(&self.url()?);
         if let Path::Job { name } = path {
             jenkins_client.post(&Path::PollSCMJob { name })?;
             Ok(())
         } else {
             Err(client::Error::InvalidUrl {
-                url: self.url.clone(),
+                url: self.url()?.to_string(),
                 expected: client::error::ExpectedType::Job,
             }.into())
         }

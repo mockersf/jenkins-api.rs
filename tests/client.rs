@@ -126,11 +126,12 @@ fn can_get_build_from_job_and_back() {
     let job = jenkins.get_job("normal job");
     assert!(job.is_ok());
     let job_ok = job.unwrap();
-    let build = job_ok.last_build.unwrap().get_full_build(&jenkins);
+    let last_build = job_ok.last_build().unwrap();
+    let build = last_build.as_ref().unwrap().get_full_build(&jenkins);
     assert!(build.is_ok());
     let job_back = build.unwrap().get_job(&jenkins);
     assert!(job_back.is_ok());
-    assert_eq!(job_back.unwrap().name, job_ok.name);
+    assert_eq!(job_back.unwrap().name().unwrap(), job_ok.name().unwrap());
 }
 
 #[test]
@@ -143,21 +144,21 @@ fn can_disable_job_and_reenable() {
     let job = jenkins.get_job("normal job");
     assert!(job.is_ok());
     let job_ok = job.unwrap();
-    assert!(job_ok.buildable);
+    assert!(job_ok.buildable().unwrap());
 
     let disabling = job_ok.disable(&jenkins);
     assert!(disabling.is_ok());
     let job_disabled = jenkins.get_job("normal job");
     assert!(job_disabled.is_ok());
     let job_disabled_ok = job_disabled.unwrap();
-    assert!(!job_disabled_ok.buildable);
+    assert!(!job_disabled_ok.buildable().unwrap());
 
     let enabling = job_disabled_ok.enable(&jenkins);
     assert!(enabling.is_ok());
     let job_enabled = jenkins.get_job("normal job");
     assert!(job_enabled.is_ok());
     let job_enabled_ok = job_enabled.unwrap();
-    assert!(job_enabled_ok.buildable);
+    assert!(job_enabled_ok.buildable().unwrap());
 }
 
 #[test]
@@ -177,7 +178,7 @@ fn can_add_and_remove_job_from_view() {
     assert!(job.is_ok());
     let job_ok = job.unwrap();
 
-    let adding = view_ok.add_job(&jenkins, &job_ok.name);
+    let adding = view_ok.add_job(&jenkins, &job_ok.name().unwrap());
     assert!(adding.is_ok());
 
     let view_with = jenkins.get_view("test view");
