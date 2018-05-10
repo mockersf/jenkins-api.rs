@@ -1,11 +1,11 @@
 use failure::Error;
 use serde::Deserializer;
 
-use job::Job;
-use action::Action;
-use user::ShortUser;
 use Jenkins;
+use action::Action;
 use client::{self, Name, Path};
+use job::Job;
+use user::ShortUser;
 
 /// Short Build that is used in lists and links from other structs
 #[derive(Debug, Deserialize, Clone)]

@@ -4,13 +4,13 @@ use failure::Error;
 
 use reqwest::header::Location;
 
-use serde_urlencoded;
 use serde;
+use serde_urlencoded;
 
 use Jenkins;
+use client::{self, Name, Path};
 use job::Job;
 use queue::ShortQueueItem;
-use client::{self, Name, Path};
 
 /// Helper to build a job
 #[derive(Debug)]
