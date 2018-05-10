@@ -6,6 +6,7 @@
 * Changed `Error::InvalidUrl` `expected` field to an Enum (`error::ExpectedType`)
 * A `Build` can have many variants, for now either a free style or a pipeline
 * Adding `Action` and change set variants
+* Support pipeline `Job`
 
 # 0.2.2 (2018/05/10)
 

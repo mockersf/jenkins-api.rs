@@ -116,6 +116,57 @@ tagged_enum_or_default!(
             last_failed_build: Option<ShortBuild>,
             /// List of builds of the job
             builds: Vec<ShortBuild>,
+            /// HealthReport of the job
+            health_report: Vec<HealthReport>,
+        },
+        /// A pipeline project
+        WorkflowJob (_class = "org.jenkinsci.plugins.workflow.job.WorkflowJob") {
+            /// Name of the job
+            name: String,
+            /// Display Name of the job
+            display_name: String,
+            /// Full Display Name of the job
+            full_display_name: String,
+            /// Full Name of the job
+            full_name: String,
+            /// Description of the job
+            description: String,
+            /// URL for the job
+            url: String,
+            /// Ball Color for the status of the job
+            color: BallColor,
+            /// Is the job buildable?
+            buildable: bool,
+            /// Is concurrent build enabled for the job?
+            concurrent_build: bool,
+            /// Are dependencies kept for this job?
+            keep_dependencies: bool,
+            /// Next build number
+            next_build_number: u32,
+            /// Is this job currently in build queue
+            in_queue: bool,
+            /// Link to the last build
+            last_build: Option<ShortBuild>,
+            /// Link to the first build
+            first_build: Option<ShortBuild>,
+            /// Link to the last stable build
+            last_stable_build: Option<ShortBuild>,
+            /// Link to the last unstable build
+            last_unstable_build: Option<ShortBuild>,
+            /// Link to the last successful build
+            last_successful_build: Option<ShortBuild>,
+            /// Link to the last unsucressful build
+            last_unsuccessful_build: Option<ShortBuild>,
+            /// Link to the last complete build
+            last_completed_build: Option<ShortBuild>,
+            /// Link to the last failed build
+            last_failed_build: Option<ShortBuild>,
+            /// List of builds of the job
+            builds: Vec<ShortBuild>,
+            /// HealthReport of the job
+            health_report: Vec<HealthReport>,
+            /// Can resume blocked build
+            resume_blocked: bool,
         },
     }
 );
@@ -125,6 +176,7 @@ macro_rules! job_common_fields_dispatch {
         pub(crate) fn $field(&self) -> Result<$return, Error> {
             match self {
                 &Job::FreeStyleProject { ref $field, .. } => Ok($field),
+                &Job::WorkflowJob { ref $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -138,6 +190,7 @@ macro_rules! job_common_fields_dispatch {
         pub fn $field(&self) -> Result<$return, Error> {
             match self {
                 &Job::FreeStyleProject { $field, .. } => Ok($field),
+                &Job::WorkflowJob { $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -151,6 +204,7 @@ macro_rules! job_common_fields_dispatch {
         pub fn $field(&self) -> Result<$return, Error> {
             match self {
                 &Job::FreeStyleProject { ref $field, .. } => Ok($field),
+                &Job::WorkflowJob { ref $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -174,6 +228,10 @@ impl Job {
     job_common_fields_dispatch!(
         /// Is the project buildable
         pub ref last_build -> &Option<ShortBuild>
+    );
+    job_common_fields_dispatch!(
+        /// Health report of the project
+        pub ref health_report -> &Vec<HealthReport>
     );
 
     /// Enable a `Job`. It may need to be refreshed as it may have been updated
@@ -295,4 +353,18 @@ impl Jenkins {
         })?;
         Ok(())
     }
+}
+
+/// Health Report of a `Job`
+#[derive(Debug, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct HealthReport {
+    /// Description of the `HealthReport`
+    description: String,
+    /// Icon name
+    icon_class_name: String,
+    /// Icon url
+    icon_url: String,
+    /// Score of the `Job`
+    score: u16,
 }
