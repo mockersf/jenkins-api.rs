@@ -50,8 +50,6 @@ matrix:
 services:
   - docker
 
-cache: cargo
-
 before_install:
 - docker run -d -p 127.0.0.1:8080:8080 mockersf/jenkins-api-rs-tests
 - sleep 10
