@@ -7,33 +7,35 @@ The API docs for the master branch are published [here](https://mockersf.github.
 ## Example
 
 ```rust
+extern crate failure;
+
 extern crate jenkins_api;
 
 use jenkins_api::{JenkinsBuilder, BuildStatus};
 
-fn main() {
+fn main() -> Result<(), failure::Error> {
     let jenkins = JenkinsBuilder::new("http://localhost:8080")
         .with_user("user", Some("password"))
-        .build()
-        .unwrap();
+        .build()?;
 
-    let job = jenkins.get_job("job name").unwrap();
+    let job = jenkins.get_job("job name")?;
 
-    let to_build = if let Some(short_build) = job.last_build().unwrap().clone() {
-        let build = short_build.get_full_build(&jenkins).unwrap();
+    let to_build = if let Some(short_build) = job.last_build()?.clone() {
+        let build = short_build.get_full_build(&jenkins)?;
         println!(
             "last build for job {} at {} was {:?}",
-            job.name().unwrap(), build.timestamp().unwrap(), build.result().unwrap()
+            job.name()?, build.timestamp()?, build.result()?
         );
-        build.result().unwrap() != BuildStatus::Success
+        build.result()? != BuildStatus::Success
     } else {
-        println!("job {} was never built", job.name().unwrap());
+        println!("job {} was never built", job.name()?);
         true
     };
 
     if to_build {
         println!("triggering a new build");
-        job.build(&jenkins).unwrap();
+        job.build(&jenkins)?;
     }
+    Ok(())
 }
 ```
