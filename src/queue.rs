@@ -1,10 +1,10 @@
 use failure::Error;
 
-use job::ShortJob;
-use build::ShortBuild;
-use action::Action;
 use Jenkins;
+use action::Action;
+use build::ShortBuild;
 use client::{self, Path};
+use job::ShortJob;
 
 /// Short Queue Item that is returned when building a job
 #[derive(Debug, Deserialize, Clone)]

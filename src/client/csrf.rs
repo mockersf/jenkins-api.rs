@@ -1,9 +1,9 @@
-use std::fmt;
-use hyper;
 use failure;
+use hyper;
+use std::fmt;
 
-use reqwest::header::{Formatter, Header, Raw};
 use reqwest::RequestBuilder;
+use reqwest::header::{Formatter, Header, Raw};
 
 use super::{errors, Jenkins, Path};
 

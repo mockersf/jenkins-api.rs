@@ -1,11 +1,11 @@
 use failure::Error;
 use serde::Deserializer;
 
-use build::ShortBuild;
-use queue::ShortQueueItem;
 use Jenkins;
+use build::ShortBuild;
 use client::{self, Name, Path};
 use job_builder::JobBuilder;
+use queue::ShortQueueItem;
 
 /// Ball Color corresponding to a `BuildStatus`
 #[derive(Debug, Deserialize, Clone, Copy)]

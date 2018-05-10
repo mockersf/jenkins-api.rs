@@ -1,8 +1,8 @@
-use reqwest::{Body, Client, RequestBuilder, Response, StatusCode};
-use reqwest::header::ContentType;
-use std::fmt::Debug;
 use failure;
 use regex::Regex;
+use reqwest::header::ContentType;
+use reqwest::{Body, Client, RequestBuilder, Response, StatusCode};
+use std::fmt::Debug;
 
 mod errors;
 pub use self::errors::Error;
@@ -14,8 +14,8 @@ mod csrf;
 
 /// Helper type for error management
 pub mod error {
-    pub use super::errors::ExpectedType;
     pub use super::errors::Action;
+    pub use super::errors::ExpectedType;
 }
 
 #[derive(Debug)]

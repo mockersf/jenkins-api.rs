@@ -1,9 +1,9 @@
 use std::fmt;
 use std::marker::PhantomData;
 
+use serde::de::{self, Visitor};
 use serde::de::{Deserialize, DeserializeSeed, Deserializer, EnumAccess, Expected, MapAccess,
                 SeqAccess, Unexpected};
-use serde::de::{self, Visitor};
 
 mod size_hint {
     use std::cmp;
