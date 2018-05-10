@@ -9,12 +9,14 @@ pub enum Error {
         /// Expected URL type
         expected: String,
     },
+
     /// Error thrown when CSRF protection use an unexpected field name
     #[fail(display = "invalid crumbfield '{}', expected 'Jenkins-Crumb'", field_name)]
     InvalidCrumbFieldName {
         /// Field name provided by Jenkins api for crumb
         field_name: String,
     },
+
     /// Error thrown when building a parameterized job with an invalid parameter
     #[fail(display = "illegal argument: '{}'", message)]
     IllegalArgument {
@@ -27,4 +29,8 @@ pub enum Error {
         /// Exception message provided by Jenkins
         message: String,
     },
+
+    /// Error when trying to remotely build a job with parameters
+    #[fail(display = "can't build a job remotely with parameters")]
+    UnsupportedBuildConfiguration,
 }

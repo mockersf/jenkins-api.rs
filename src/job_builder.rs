@@ -79,7 +79,7 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
                     &qps,
                 )?
             }
-            (Some(_token), Some(_parameters)) => unimplemented!(),
+            (Some(_token), Some(_parameters)) => unreachable!(),
             (None, None) => self.jenkins_client.post(&Path::BuildJob {
                 name: self.job_name,
             })?,
@@ -117,21 +117,39 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
     }
 
     /// Trigger the build remotely with a token and a cause
-    pub fn remotely_with_token_and_cause(mut self, token: &'d str, cause: Option<&'c str>) -> Self {
+    /// # Errors
+    /// This methods will return an error if building remotely a build with parameters
+    pub fn remotely_with_token_and_cause(
+        mut self,
+        token: &'d str,
+        cause: Option<&'c str>,
+    ) -> Result<Self, Error> {
+        if self.parameters.is_some() {
+            return Err(client::Error::UnsupportedBuildConfiguration.into());
+        }
         self.token = Some(token);
         self.cause = cause;
-        self
+        Ok(self)
     }
 
     /// Build with parameters
+    ///
     /// Supported parameters type: Boolean, Choice, Multi-line string, Password, Run, String
+    ///
+    /// Unsupported parameters type: File, Credentials
     /// # Errors
-    /// If used on a `Job` without parameters, sending this build will return an [`Error::IllegalState`](../enum.Error.html#variant.IllegalState)
+    /// If used on a `Job` without parameters, sending this build will return an
+    /// [`Error::IllegalState`](../enum.Error.html#variant.IllegalState)
     ///
-    /// If used with invalid parameters type / value, sending this build will return an [`Error::IllegalArgument`](../enum.Error.html#variant.IllegalArgument)
+    /// If used with invalid parameters type / value, sending this build will return an
+    /// [`Error::IllegalArgument`](../enum.Error.html#variant.IllegalArgument)
     ///
-    /// This methods will return an error if serializing `parameters` fails
+    /// This methods will return an error if serializing `parameters` fails, or if passing
+    /// parameters to a remote build.
     pub fn with_parameters<T: serde::Serialize>(mut self, parameters: &T) -> Result<Self, Error> {
+        if self.token.is_some() {
+            return Err(client::Error::UnsupportedBuildConfiguration.into());
+        }
         self.parameters = Some(serde_urlencoded::to_string(parameters)?);
         Ok(self)
     }
