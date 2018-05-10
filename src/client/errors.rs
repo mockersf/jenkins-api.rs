@@ -51,14 +51,16 @@ pub enum Error {
 /// Possible type of URL expected in links between items
 #[derive(Debug, Copy, Clone)]
 pub enum ExpectedType {
-    /// URL to a `Build`
+    /// a `Build`
     Build,
-    /// URL to a `Job`
+    /// a `Job`
     Job,
-    /// URL to a `QueueItem`
+    /// a `QueueItem`
     QueueItem,
-    /// URL to a `View`
+    /// a `View`
     View,
+    /// a `ShortView`
+    ShortView,
 }
 
 impl fmt::Display for ExpectedType {
@@ -68,6 +70,7 @@ impl fmt::Display for ExpectedType {
             &ExpectedType::Job => write!(f, "Job"),
             &ExpectedType::QueueItem => write!(f, "QueueItem"),
             &ExpectedType::View => write!(f, "View"),
+            &ExpectedType::ShortView => write!(f, "ShortView"),
         }
     }
 }
@@ -77,12 +80,15 @@ impl fmt::Display for ExpectedType {
 pub enum Action {
     /// Get a field
     GetField(&'static str),
+    /// Get linked item
+    GetLinkedItem(ExpectedType),
 }
 
 impl fmt::Display for Action {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             &Action::GetField(field) => write!(f, "get field '{}'", field),
+            &Action::GetLinkedItem(item) => write!(f, "get linked item '{}'", item),
         }
     }
 }

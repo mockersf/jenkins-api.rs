@@ -107,12 +107,12 @@ fn can_get_jenkins_view_from_home() {
     let first_view = home_ok
         .views
         .iter()
-        .filter(|view| view.name == "view disabled")
+        .filter(|view| view.name().unwrap() == "view disabled")
         .nth(0)
         .unwrap();
     let full_view = first_view.get_full_view(&jenkins);
     assert!(full_view.is_ok());
-    let full_job = full_view.unwrap().jobs[0].get_full_job(&jenkins);
+    let full_job = full_view.unwrap().jobs().unwrap()[0].get_full_job(&jenkins);
     assert!(full_job.is_ok());
 }
 
@@ -172,7 +172,7 @@ fn can_add_and_remove_job_from_view() {
     let view = jenkins.get_view("test view");
     assert!(view.is_ok());
     let view_ok = view.unwrap();
-    assert_eq!(view_ok.jobs.len(), 0);
+    assert_eq!(view_ok.jobs().unwrap().len(), 0);
 
     let job = jenkins.get_job("normal job");
     assert!(job.is_ok());
@@ -183,14 +183,14 @@ fn can_add_and_remove_job_from_view() {
 
     let view_with = jenkins.get_view("test view");
     assert!(view_with.is_ok());
-    assert_eq!(view_with.unwrap().jobs.len(), 1);
+    assert_eq!(view_with.unwrap().jobs().unwrap().len(), 1);
 
-    let removing = job_ok.remove_from_view(&jenkins, &view_ok.name);
+    let removing = job_ok.remove_from_view(&jenkins, &view_ok.name().unwrap());
     assert!(removing.is_ok());
 
     let view_without = jenkins.get_view("test view");
     assert!(view_without.is_ok());
-    assert_eq!(view_without.unwrap().jobs.len(), 0);
+    assert_eq!(view_without.unwrap().jobs().unwrap().len(), 0);
 }
 
 #[test]

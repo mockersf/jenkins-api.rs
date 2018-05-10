@@ -7,6 +7,7 @@
 * A `Build` can have many variants, for now either a free style or a pipeline
 * Adding `Action` and change set variants
 * Support pipeline `Job`
+* Support more types of `View`
 
 # 0.2.2 (2018/05/10)
 

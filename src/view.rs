@@ -1,4 +1,5 @@
 use failure::Error;
+use serde::Deserializer;
 
 use Jenkins;
 use client::{self, Name, Path};
@@ -42,47 +43,171 @@ pub struct Home {
     pub views: Vec<ShortView>,
 }
 
-/// Short View that is used in lists and links from other structs
-#[derive(Debug, Deserialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct ShortView {
-    /// Name of the view
-    pub name: String,
-    /// URL for the view
-    pub url: String,
+tagged_enum_or_default!{
+    /// Short View that is used in lists and links from other structs
+    pub enum ShortView {
+        /// A view listing jobs
+        ListView (_class = "hudson.model.ListView") {
+            /// Name of the view
+            name: String,
+            /// URL for the view
+            url: String,
+        },
+        /// A view listing all jobs
+        AllView (_class = "hudson.model.AllView") {
+            /// Name of the view
+            name: String,
+            /// URL for the view
+            url: String,
+        },
+    }
 }
+
+macro_rules! shortview_common_fields_dispatch {
+    ($field:ident -> $return:ty) => {
+        pub(crate) fn $field(&self) -> Result<$return, Error> {
+            match self {
+                &ShortView::ListView { ref $field, .. } => Ok($field),
+                &ShortView::AllView { ref $field, .. } => Ok($field),
+                x @ &ShortView::Unknown { .. } => Err(client::Error::InvalidObjectType {
+                    object_type: client::error::ExpectedType::ShortView,
+                    action: client::error::Action::GetField(stringify!($field)),
+                    variant_name: x.variant_name().to_string(),
+                }.into()),
+            }
+        }
+    };
+    ($(#[$attr:meta])* pub $field:ident -> $return:ty) => {
+        $(#[$attr])*
+        pub fn $field(&self) -> Result<$return, Error> {
+            match self {
+                &ShortView::ListView { $field, .. } => Ok($field),
+                &ShortView::AllView { $field, .. } => Ok($field),
+                x @ &ShortView::Unknown { .. } => Err(client::Error::InvalidObjectType {
+                    object_type: client::error::ExpectedType::ShortView,
+                    action: client::error::Action::GetField(stringify!($field)),
+                    variant_name: x.variant_name().to_string(),
+                }.into()),
+            }
+        }
+    };
+    ($(#[$attr:meta])* pub ref $field:ident -> $return:ty) => {
+        $(#[$attr])*
+        pub fn $field(&self) -> Result<$return, Error> {
+            match self {
+                &ShortView::ListView { ref $field, .. } => Ok($field),
+                &ShortView::AllView { ref $field, .. } => Ok($field),
+                x @ &ShortView::Unknown { .. } => Err(client::Error::InvalidObjectType {
+                    object_type: client::error::ExpectedType::ShortView,
+                    action: client::error::Action::GetField(stringify!($field)),
+                    variant_name: x.variant_name().to_string(),
+                }.into()),
+            }
+        }
+    };
+}
+
 impl ShortView {
+    shortview_common_fields_dispatch!(
+        /// Get the name of the view
+        pub ref name -> &str
+    );
+
     /// Get the full details of a `View` matching the `ShortView`
     pub fn get_full_view(&self, jenkins_client: &Jenkins) -> Result<View, Error> {
-        let path = jenkins_client.url_to_path(&self.url);
-        if let Path::View { .. } = path {
-            Ok(jenkins_client.get(&path)?.json()?)
-        } else {
-            Err(client::Error::InvalidUrl {
-                url: self.url.clone(),
-                expected: client::error::ExpectedType::View,
-            }.into())
+        match self {
+            &ShortView::ListView { ref url, .. } => {
+                let path = jenkins_client.url_to_path(url);
+                if let Path::View { .. } = path {
+                    Ok(jenkins_client.get(&path)?.json()?)
+                } else {
+                    Err(client::Error::InvalidUrl {
+                        url: url.to_string(),
+                        expected: client::error::ExpectedType::View,
+                    }.into())
+                }
+            }
+            x @ &ShortView::AllView { .. } | x @ &ShortView::Unknown { .. } => {
+                Err(client::Error::InvalidObjectType {
+                    object_type: client::error::ExpectedType::ShortView,
+                    action: client::error::Action::GetLinkedItem(client::error::ExpectedType::View),
+                    variant_name: x.variant_name().to_string(),
+                }.into())
+            }
         }
     }
 }
 
-/// A Jenkins `View` with a list of `ShortJob`
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct View {
-    /// Description of the view
-    pub description: Option<String>,
-    /// Name of the view
-    pub name: String,
-    /// URL for the view
-    pub url: String,
-    /// List of jobs in the view
-    pub jobs: Vec<ShortJob>,
+tagged_enum_or_default!{
+    /// A Jenkins `View` with a list of `ShortJob`
+    pub enum View {
+        /// A view listing jobs
+        ListView (_class = "hudson.model.ListView") {
+            /// Description of the view
+            description: Option<String>,
+            /// Name of the view
+            name: String,
+            /// URL for the view
+            url: String,
+            /// List of jobs in the view
+            jobs: Vec<ShortJob>,
+        },
+    }
+}
+macro_rules! view_common_fields_dispatch {
+    ($field:ident -> $return:ty) => {
+        pub(crate) fn $field(&self) -> Result<$return, Error> {
+            match self {
+                &View::ListView { ref $field, .. } => Ok($field),
+                x @ &View::Unknown { .. } => Err(client::Error::InvalidObjectType {
+                    object_type: client::error::ExpectedType::View,
+                    action: client::error::Action::GetField(stringify!($field)),
+                    variant_name: x.variant_name().to_string(),
+                }.into()),
+            }
+        }
+    };
+    ($(#[$attr:meta])* pub $field:ident -> $return:ty) => {
+        $(#[$attr])*
+        pub fn $field(&self) -> Result<$return, Error> {
+            match self {
+                &View::ListView { $field, .. } => Ok($field),
+                x @ &View::Unknown { .. } => Err(client::Error::InvalidObjectType {
+                    object_type: client::error::ExpectedType::View,
+                    action: client::error::Action::GetField(stringify!($field)),
+                    variant_name: x.variant_name().to_string(),
+                }.into()),
+            }
+        }
+    };
+    ($(#[$attr:meta])* pub ref $field:ident -> $return:ty) => {
+        $(#[$attr])*
+        pub fn $field(&self) -> Result<$return, Error> {
+            match self {
+                &View::ListView { ref $field, .. } => Ok($field),
+                x @ &View::Unknown { .. } => Err(client::Error::InvalidObjectType {
+                    object_type: client::error::ExpectedType::View,
+                    action: client::error::Action::GetField(stringify!($field)),
+                    variant_name: x.variant_name().to_string(),
+                }.into()),
+            }
+        }
+    };
 }
 impl View {
+    view_common_fields_dispatch!(url -> &str);
+    view_common_fields_dispatch!(
+        /// Get the name of the view
+        pub ref name -> &str
+    );
+    view_common_fields_dispatch!(
+        /// Get the jobs from the view
+        pub ref jobs -> &Vec<ShortJob>
+    );
+
     /// Add the job `job_name` to this view
     pub fn add_job(&self, jenkins_client: &Jenkins, job_name: &str) -> Result<(), Error> {
-        let path = jenkins_client.url_to_path(&self.url);
+        let path = jenkins_client.url_to_path(&self.url()?);
         if let Path::View { name } = path {
             jenkins_client.post(&Path::AddJobToView {
                 job_name: Name::Name(job_name),
@@ -91,7 +216,7 @@ impl View {
             Ok(())
         } else {
             Err(client::Error::InvalidUrl {
-                url: self.url.clone(),
+                url: self.url()?.to_string(),
                 expected: client::error::ExpectedType::View,
             }.into())
         }
@@ -99,7 +224,7 @@ impl View {
 
     /// Remove the job `job_name` from this view
     pub fn remove_job(&self, jenkins_client: &Jenkins, job_name: &str) -> Result<(), Error> {
-        let path = jenkins_client.url_to_path(&self.url);
+        let path = jenkins_client.url_to_path(&self.url()?);
         if let Path::View { name } = path {
             jenkins_client.post(&Path::RemoveJobFromView {
                 job_name: Name::Name(job_name),
@@ -108,7 +233,7 @@ impl View {
             Ok(())
         } else {
             Err(client::Error::InvalidUrl {
-                url: self.url.clone(),
+                url: self.url()?.to_string(),
                 expected: client::error::ExpectedType::View,
             }.into())
         }
