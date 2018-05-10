@@ -62,7 +62,7 @@ impl ShortJob {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: client::error::ExpectedUrl::Job,
+                expected: client::error::ExpectedType::Job,
             }.into())
         }
     }
@@ -125,7 +125,7 @@ impl Job {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: client::error::ExpectedUrl::Job,
+                expected: client::error::ExpectedType::Job,
             }.into())
         }
     }
@@ -139,7 +139,7 @@ impl Job {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: client::error::ExpectedUrl::Job,
+                expected: client::error::ExpectedType::Job,
             }.into())
         }
     }
@@ -156,7 +156,7 @@ impl Job {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: client::error::ExpectedUrl::Job,
+                expected: client::error::ExpectedType::Job,
             }.into())
         }
     }
@@ -173,7 +173,7 @@ impl Job {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: client::error::ExpectedUrl::Job,
+                expected: client::error::ExpectedType::Job,
             }.into())
         }
     }
@@ -200,7 +200,7 @@ impl Job {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: client::error::ExpectedUrl::Job,
+                expected: client::error::ExpectedType::Job,
             }.into())
         }
     }
