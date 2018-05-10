@@ -1,6 +1,6 @@
 # Changes
 
-# 0.2.2
+# 0.2.2 (2018/05/10)
 
 * Can deserialize git informations from a build
 * Can trigger job remotely (GET request with a token)
