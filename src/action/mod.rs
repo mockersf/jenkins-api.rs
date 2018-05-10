@@ -35,5 +35,17 @@ tagged_enum_or_default!(
         /// An action for a git tag
         GitTagAction (_class = "hudson.plugins.git.GitTagAction" ) {
         },
+        /// An action for a repo tag
+        RepoTagAction (_class = "hudson.plugins.repo.TagAction" ) {
+        },
+        /// An action on time in queue
+        TimeInQueueAction (_class = "jenkins.metrics.impl.TimeInQueueAction" ) {
+        },
+        /// An action from pipelines
+        EnvActionImpl (_class = "org.jenkinsci.plugins.workflow.cps.EnvActionImpl" ) {
+        },
+        /// An action from pipelines
+        FlowGraphAction (_class = "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction" ) {
+        },
     }
 );

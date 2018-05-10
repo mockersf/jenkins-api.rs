@@ -191,6 +191,13 @@ pub mod changeset {
                 /// Changes in this list
                 items: Vec<ChangeSet>,
             },
+            /// Changes found from a repo
+            RepoChangeLogSet (_class = "hudson.plugins.repo.RepoChangeLogSet") {
+                /// Origin of the changes
+                kind: String,
+                /// Changes in this list
+                items: Vec<ChangeSet>,
+            },
         }
     );
 
@@ -219,6 +226,19 @@ pub mod changeset {
                 author: ShortUser,
                 /// Files changed in the commit, and how
                 paths: Vec<PathChange>,
+            },
+            /// Changes found from a repo
+            ChangeLogEntry (_class = "hudson.plugins.repo.ChangeLogEntry") {
+                /// ID of the commit
+                commit_id: Option<String>,
+                /// Commit message
+                msg: String,
+                /// Timestamp of the commit
+                timestamp: i64,
+                /// Files changed in the commit
+                affected_paths: Vec<String>,
+                /// Author of the commit
+                author: ShortUser,
             },
         }
     );
