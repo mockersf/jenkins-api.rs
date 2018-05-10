@@ -9,7 +9,7 @@ pub enum Error {
         /// URL found
         url: String,
         /// Expected URL type
-        expected: ExpectedUrl,
+        expected: ExpectedType,
     },
 
     /// Error thrown when CSRF protection use an unexpected field name
@@ -39,7 +39,7 @@ pub enum Error {
 
 /// Possible type of URL expected in links between items
 #[derive(Debug, Copy, Clone)]
-pub enum ExpectedUrl {
+pub enum ExpectedType {
     /// URL to a `Build`
     Build,
     /// URL to a `Job`
@@ -50,10 +50,13 @@ pub enum ExpectedUrl {
     View,
 }
 
-impl fmt::Display for ExpectedUrl {
+impl fmt::Display for ExpectedType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            _ => write!(f, "hohoho"),
+            &ExpectedType::Build => write!(f, "Build"),
+            &ExpectedType::Job => write!(f, "Job"),
+            &ExpectedType::QueueItem => write!(f, "QueueItem"),
+            &ExpectedType::View => write!(f, "View"),
         }
     }
 }

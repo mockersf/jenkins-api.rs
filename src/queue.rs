@@ -21,7 +21,7 @@ impl ShortQueueItem {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: client::error::ExpectedUrl::QueueItem,
+                expected: client::error::ExpectedType::QueueItem,
             }.into())
         }
     }
@@ -67,7 +67,7 @@ impl QueueItem {
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
-                expected: client::error::ExpectedUrl::QueueItem,
+                expected: client::error::ExpectedType::QueueItem,
             }.into())
         }
     }

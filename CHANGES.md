@@ -3,7 +3,7 @@
 # 0.3.0
 
 * Default enum variant renamed to Unknown
-* Changed `Error::InvalidUrl` `expected` field to an Enum (`error::ExpectedUrl`)
+* Changed `Error::InvalidUrl` `expected` field to an Enum (`error::ExpectedType`)
 
 # 0.2.2 (2018/05/10)
 

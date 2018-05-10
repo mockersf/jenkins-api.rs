@@ -14,7 +14,7 @@ mod csrf;
 
 /// Helper type for error management
 pub mod error {
-    pub use super::errors::ExpectedUrl;
+    pub use super::errors::ExpectedType;
 }
 
 #[derive(Debug)]
