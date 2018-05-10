@@ -38,7 +38,7 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
         } else {
             Err(client::Error::InvalidUrl {
                 url: job.url.clone(),
-                expected: client::error::ExpectedUrl::Job,
+                expected: client::error::ExpectedType::Job,
             }.into())
         }
     }
@@ -105,7 +105,7 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
         } else {
             Err(client::Error::InvalidUrl {
                 url: "".to_string(),
-                expected: client::error::ExpectedUrl::QueueItem,
+                expected: client::error::ExpectedType::QueueItem,
             }.into())
         }
     }
