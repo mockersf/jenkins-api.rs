@@ -23,6 +23,18 @@ macro_rules! tagged_enum_or_default {
             }
         }
 
+        impl $name {
+            #[allow(dead_code)]
+            fn variant_name(&self) -> String {
+                match self {
+                    $(&$name::$variant { .. } => stringify!($variant).to_string(),)*
+                    &$name::Unknown { class: Some(ref class), .. } => format!("Unknown({})", class),
+                    &$name::Unknown { .. } => "Unknown".to_string(),
+
+                }
+            }
+        }
+
         impl<'de> ::serde::de::Deserialize<'de> for $name {
             fn deserialize<D>(deserializer: D) -> Result<$name, D::Error>
             where

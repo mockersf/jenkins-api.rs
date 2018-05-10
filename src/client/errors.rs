@@ -36,11 +36,15 @@ pub enum Error {
     #[fail(display = "can't build a job remotely with parameters")]
     UnsupportedBuildConfiguration,
 
-    /// Error when trying to act on an object of Unknown variant
-    #[fail(display = "can't use an Unknown object as a {}", object_type)]
-    UnknownType {
-        /// Object type of the Unknown variant
+    /// Error when trying to do an action on an object not supporting it
+    #[fail(display = "can't do '{}' on a {} of type {}", action, object_type, variant_name)]
+    InvalidObjectType {
+        /// Object type
         object_type: ExpectedType,
+        /// Variant name
+        variant_name: String,
+        /// Action
+        action: Action,
     },
 }
 
@@ -64,6 +68,21 @@ impl fmt::Display for ExpectedType {
             &ExpectedType::Job => write!(f, "Job"),
             &ExpectedType::QueueItem => write!(f, "QueueItem"),
             &ExpectedType::View => write!(f, "View"),
+        }
+    }
+}
+
+/// Possible action done on an object
+#[derive(Debug, Copy, Clone)]
+pub enum Action {
+    /// Get a field
+    GetField(&'static str),
+}
+
+impl fmt::Display for Action {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            &Action::GetField(field) => write!(f, "get field '{}'", field),
         }
     }
 }
