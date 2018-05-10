@@ -17,7 +17,7 @@ macro_rules! tagged_enum_or_default {
                 },
             )*
             /// Default case used when none other matched
-            Default {
+            Unknown {
                 /// _class provided by Jenkins
                 class: Option<String>,
             }
@@ -98,7 +98,7 @@ macro_rules! tagged_enum_or_default {
                             lifetime: ::std::marker::PhantomData,
                         })
                     },)*
-                    x => Ok($name::Default { class: x.tag }),
+                    x => Ok($name::Unknown { class: x.tag }),
                 }
             }
         }

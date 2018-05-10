@@ -1,5 +1,9 @@
 # Changes
 
+# 0.3.0
+
+* Default enum variant renamed to Unknown
+
 # 0.2.2 (2018/05/10)
 
 * Can deserialize git informations from a build
