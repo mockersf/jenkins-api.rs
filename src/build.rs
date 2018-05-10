@@ -57,6 +57,8 @@ tagged_enum_or_default!(
             url: String,
             /// Build number for this job
             number: u32,
+            /// Duration
+            duration: u32,
             /// Estimated duration
             estimated_duration: u32,
             /// Timestamp of the build start
@@ -120,16 +122,68 @@ tagged_enum_or_default!(
     }
 );
 
-impl Build {
-    pub(crate) fn url(&self) -> Result<&str, Error> {
-        match self {
-            &Build::FreeStyleBuild { ref url, .. } => Ok(url),
-            &Build::WorkflowRun { ref url, .. } => Ok(url),
-            &Build::Unknown { .. } => Err(client::Error::UnknownType {
-                object_type: client::error::ExpectedType::Build,
-            }.into()),
+macro_rules! build_common_fields_dispatch {
+    ($field:ident -> $return:ty) => {
+        pub(crate) fn $field(&self) -> Result<$return, Error> {
+            match self {
+                &Build::FreeStyleBuild { ref $field, .. } => Ok($field),
+                &Build::WorkflowRun { ref $field, .. } => Ok($field),
+                x @ &Build::Unknown { .. } => Err(client::Error::InvalidObjectType {
+                    object_type: client::error::ExpectedType::Build,
+                    action: client::error::Action::GetField(stringify!($field)),
+                    variant_name: x.variant_name().to_string(),
+                }.into()),
+            }
         }
-    }
+    };
+    ($(#[$attr:meta])* pub $field:ident -> $return:ty) => {
+        $(#[$attr])*
+        pub fn $field(&self) -> Result<$return, Error> {
+            match self {
+                &Build::FreeStyleBuild { $field, .. } => Ok($field),
+                &Build::WorkflowRun { $field, .. } => Ok($field),
+                x @ &Build::Unknown { .. } => Err(client::Error::InvalidObjectType {
+                    object_type: client::error::ExpectedType::Build,
+                    action: client::error::Action::GetField(stringify!($field)),
+                    variant_name: x.variant_name().to_string(),
+                }.into()),
+            }
+        }
+    };
+    ($(#[$attr:meta])* pub ref $field:ident -> $return:ty) => {
+        $(#[$attr])*
+        pub fn $field(&self) -> Result<$return, Error> {
+            match self {
+                &Build::FreeStyleBuild { ref $field, .. } => Ok($field),
+                &Build::WorkflowRun { ref $field, .. } => Ok($field),
+                x @ &Build::Unknown { .. } => Err(client::Error::InvalidObjectType {
+                    object_type: client::error::ExpectedType::Build,
+                    action: client::error::Action::GetField(stringify!($field)),
+                    variant_name: x.variant_name().to_string(),
+                }.into()),
+            }
+        }
+    };
+}
+
+impl Build {
+    build_common_fields_dispatch!(url -> &str);
+    build_common_fields_dispatch!(
+        /// Get timestamp of a build
+        pub timestamp -> u64
+    );
+    build_common_fields_dispatch!(
+        /// Get result of a build
+        pub result -> BuildStatus
+    );
+    build_common_fields_dispatch!(
+        /// Get number of a build
+        pub number -> u32
+    );
+    build_common_fields_dispatch!(
+        /// Get duration of a build
+        pub duration -> u32
+    );
 
     /// Get the `Job` from a `Build`
     pub fn get_job(&self, jenkins_client: &Jenkins) -> Result<Job, Error> {
