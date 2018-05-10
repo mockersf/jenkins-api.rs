@@ -119,6 +119,37 @@ tagged_enum_or_default!(
             /// Previous build
             previous_build: Option<ShortBuild>,
         },
+        /// A `Build` from a MatrixProject
+        MatrixBuild (_class = "hudson.matrix.MatrixBuild") {
+            /// URL for the build
+            url: String,
+            /// Build number for this job
+            number: u32,
+            /// Duration
+            duration: u32,
+            /// Estimated duration
+            estimated_duration: u32,
+            /// Timestamp of the build start
+            timestamp: u64,
+            /// Are the logs kept?
+            keep_log: bool,
+            /// Build result
+            result: BuildStatus,
+            /// Display name, usually "#" followed by the build number
+            display_name: String,
+            /// Full display name: job name followed by the build display name
+            full_display_name: String,
+            /// Is this build currently running
+            building: bool,
+            /// Build number in string format
+            id: String,
+            /// ID while in the build queue
+            queue_id: u32,
+            /// Build actions
+            actions: Vec<Action>,
+            /// Change set for this build
+            change_sets: Vec<changeset::ChangeSetList>,            
+        },
     }
 );
 
@@ -128,6 +159,7 @@ macro_rules! build_common_fields_dispatch {
             match self {
                 &Build::FreeStyleBuild { ref $field, .. } => Ok($field),
                 &Build::WorkflowRun { ref $field, .. } => Ok($field),
+                &Build::MatrixBuild { ref $field, .. } => Ok($field),
                 x @ &Build::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Build,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -142,6 +174,7 @@ macro_rules! build_common_fields_dispatch {
             match self {
                 &Build::FreeStyleBuild { $field, .. } => Ok($field),
                 &Build::WorkflowRun { $field, .. } => Ok($field),
+                &Build::MatrixBuild { $field, .. } => Ok($field),
                 x @ &Build::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Build,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -156,6 +189,7 @@ macro_rules! build_common_fields_dispatch {
             match self {
                 &Build::FreeStyleBuild { ref $field, .. } => Ok($field),
                 &Build::WorkflowRun { ref $field, .. } => Ok($field),
+                &Build::MatrixBuild { ref $field, .. } => Ok($field),
                 x @ &Build::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Build,
                     action: client::error::Action::GetField(stringify!($field)),

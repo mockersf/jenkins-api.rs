@@ -8,6 +8,7 @@
 * Adding `Action` and change set variants
 * Support pipeline `Job`
 * Support more types of `View`
+* Support matrix projects
 
 # 0.2.2 (2018/05/10)
 
