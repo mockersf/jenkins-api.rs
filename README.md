@@ -19,15 +19,15 @@ fn main() {
 
     let job = jenkins.get_job("job name").unwrap();
 
-    let to_build = if let Some(short_build) = job.last_build.clone() {
+    let to_build = if let Some(short_build) = job.last_build().unwrap().clone() {
         let build = short_build.get_full_build(&jenkins).unwrap();
         println!(
             "last build for job {} at {} was {:?}",
-            job.name, build.timestamp, build.result
+            job.name().unwrap(), build.timestamp().unwrap(), build.result().unwrap()
         );
-        build.result != BuildStatus::Success
+        build.result().unwrap() != BuildStatus::Success
     } else {
-        println!("job {} was never built", job.name);
+        println!("job {} was never built", job.name().unwrap());
         true
     };
 
