@@ -286,6 +286,10 @@ impl Job {
         pub ref last_build -> &Option<ShortBuild>
     );
     job_common_fields_dispatch!(
+        /// List of builds of the job
+        pub ref builds -> &Vec<ShortBuild>
+    );
+    job_common_fields_dispatch!(
         /// Health report of the project
         pub ref health_report -> &Vec<HealthReport>
     );
