@@ -1,4 +1,4 @@
-/// Short user that is used in list and links from other structs
+/// Short User that is used in list and links from other structs
 #[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ShortUser {

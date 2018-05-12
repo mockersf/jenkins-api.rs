@@ -493,13 +493,13 @@ impl Jenkins {
 #[serde(rename_all = "camelCase")]
 pub struct HealthReport {
     /// Description of the `HealthReport`
-    description: String,
+    pub description: String,
     /// Icon name
-    icon_class_name: String,
+    pub icon_class_name: String,
     /// Icon url
-    icon_url: String,
+    pub icon_url: String,
     /// Score of the `Job`
-    score: u16,
+    pub score: u16,
 }
 
 tagged_enum_or_default!(
