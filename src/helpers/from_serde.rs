@@ -73,15 +73,15 @@ impl<'de> Content<'de> {
     fn unexpected(&self) -> Unexpected {
         match *self {
             Content::Bool(b) => Unexpected::Bool(b),
-            Content::U8(n) => Unexpected::Unsigned(n as u64),
-            Content::U16(n) => Unexpected::Unsigned(n as u64),
-            Content::U32(n) => Unexpected::Unsigned(n as u64),
+            Content::U8(n) => Unexpected::Unsigned(u64::from(n)),
+            Content::U16(n) => Unexpected::Unsigned(u64::from(n)),
+            Content::U32(n) => Unexpected::Unsigned(u64::from(n)),
             Content::U64(n) => Unexpected::Unsigned(n),
-            Content::I8(n) => Unexpected::Signed(n as i64),
-            Content::I16(n) => Unexpected::Signed(n as i64),
-            Content::I32(n) => Unexpected::Signed(n as i64),
+            Content::I8(n) => Unexpected::Signed(i64::from(n)),
+            Content::I16(n) => Unexpected::Signed(i64::from(n)),
+            Content::I32(n) => Unexpected::Signed(i64::from(n)),
             Content::I64(n) => Unexpected::Signed(n),
-            Content::F32(f) => Unexpected::Float(f as f64),
+            Content::F32(f) => Unexpected::Float(f64::from(f)),
             Content::F64(f) => Unexpected::Float(f),
             Content::Char(c) => Unexpected::Char(c),
             Content::String(ref s) => Unexpected::Str(s),
@@ -423,7 +423,7 @@ struct TagOrContentVisitor<'de> {
 impl<'de> TagOrContentVisitor<'de> {
     fn new(name: &'static str) -> Self {
         TagOrContentVisitor {
-            name: name,
+            name,
             value: PhantomData,
         }
     }
@@ -1123,7 +1123,7 @@ impl<'de, E> ContentDeserializer<'de, E> {
     /// private API, don't use
     pub fn new(content: Content<'de>) -> Self {
         ContentDeserializer {
-            content: content,
+            content,
             err: PhantomData,
         }
     }
@@ -1155,8 +1155,8 @@ where
 {
     pub fn new(variant: Content<'de>, value: Option<Content<'de>>) -> EnumDeserializer<'de, E> {
         EnumDeserializer {
-            variant: variant,
-            value: value,
+            variant,
+            value,
             err: PhantomData,
         }
     }

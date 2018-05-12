@@ -5,6 +5,7 @@ macro_rules! tagged_enum_or_default {
         },)*
     }) => {
         $(#[$attr])*
+        #[cfg_attr(feature = "cargo-clippy", allow(large_enum_variant))]
         #[derive(Debug)]
         pub enum $name {
             $(
