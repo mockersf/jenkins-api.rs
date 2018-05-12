@@ -1,5 +1,9 @@
 # Changes
 
+# 0.3.1
+
+
+
 # 0.3.0 (2018/05/13)
 
 * Default enum variant renamed to Unknown
