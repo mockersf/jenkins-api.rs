@@ -87,7 +87,9 @@ macro_rules! tagged_enum_or_default {
                                             $field = Some(
                                                 ::serde::de::MapAccess::next_value::<$type>(
                                                     &mut map,
-                                                )?
+                                                ).map_err(|err| ::serde::de::Error::custom(
+                                                    format!("{}.{}", stringify!($field), err)
+                                                ))?
                                             );
                                         },)*
                                         "this_value_should_never_match_directly" | _ => {
