@@ -385,7 +385,7 @@ pub mod changeset {
                 /// Timestamp of the commit
                 timestamp: i64,
                 /// Files changed in the commit
-                affected_paths: Vec<String>,
+                affected_paths: Option<Vec<String>>,
                 /// Author of the commit
                 author: ShortUser,
             },
