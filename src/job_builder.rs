@@ -26,7 +26,11 @@ pub struct JobBuilder<'a, 'b, 'c, 'd> {
 impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
     pub(crate) fn new(job: &'a Job, jenkins_client: &'b Jenkins) -> Result<Self, Error> {
         let path = jenkins_client.url_to_path(&job.url()?);
-        if let Path::Job { name } = path {
+        if let Path::Job {
+            name,
+            configuration: None,
+        } = path
+        {
             Ok(JobBuilder {
                 job_name: name,
                 jenkins_client,

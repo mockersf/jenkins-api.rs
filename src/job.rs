@@ -219,7 +219,56 @@ tagged_enum_or_default!(
             /// SCM configured for the job
             scm: SCM,
             /// Configurations for the job
-            active_configurations: Vec<ShortConfiguration>,
+            active_configurations: Vec<ShortJob>,
+        },
+        /// A matrix configuration
+        MatrixConfiguration (_class = "hudson.matrix.MatrixConfiguration") {
+            /// Name of the job
+            name: String,
+            /// Display Name of the job
+            display_name: String,
+            /// Full Display Name of the job
+            full_display_name: String,
+            /// Full Name of the job
+            full_name: String,
+            /// Description of the job
+            description: Option<String>,
+            /// URL for the job
+            url: String,
+            /// Ball Color for the status of the job
+            color: BallColor,
+            /// Is the job buildable?
+            buildable: bool,
+            /// Is concurrent build enabled for the job?
+            concurrent_build: bool,
+            /// Are dependencies kept for this job?
+            keep_dependencies: bool,
+            /// Next build number
+            next_build_number: u32,
+            /// Is this job currently in build queue
+            in_queue: bool,
+            /// Link to the last build
+            last_build: Option<ShortBuild>,
+            /// Link to the first build
+            first_build: Option<ShortBuild>,
+            /// Link to the last stable build
+            last_stable_build: Option<ShortBuild>,
+            /// Link to the last unstable build
+            last_unstable_build: Option<ShortBuild>,
+            /// Link to the last successful build
+            last_successful_build: Option<ShortBuild>,
+            /// Link to the last unsucressful build
+            last_unsuccessful_build: Option<ShortBuild>,
+            /// Link to the last complete build
+            last_completed_build: Option<ShortBuild>,
+            /// Link to the last failed build
+            last_failed_build: Option<ShortBuild>,
+            /// List of builds of the job
+            builds: Vec<ShortBuild>,
+            /// HealthReport of the job
+            health_report: Vec<HealthReport>,
+            /// SCM configured for the job
+            scm: SCM,
         },
     }
 );
@@ -231,6 +280,7 @@ macro_rules! job_common_fields_dispatch {
                 &Job::FreeStyleProject { ref $field, .. } => Ok($field),
                 &Job::WorkflowJob { ref $field, .. } => Ok($field),
                 &Job::MatrixProject { ref $field, .. } => Ok($field),
+                &Job::MatrixConfiguration { ref $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -246,6 +296,7 @@ macro_rules! job_common_fields_dispatch {
                 &Job::FreeStyleProject { $field, .. } => Ok($field),
                 &Job::WorkflowJob { $field, .. } => Ok($field),
                 &Job::MatrixProject { $field, .. } => Ok($field),
+                &Job::MatrixConfiguration { $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -261,6 +312,7 @@ macro_rules! job_common_fields_dispatch {
                 &Job::FreeStyleProject { ref $field, .. } => Ok($field),
                 &Job::WorkflowJob { ref $field, .. } => Ok($field),
                 &Job::MatrixProject { ref $field, .. } => Ok($field),
+                &Job::MatrixConfiguration { ref $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -297,7 +349,11 @@ impl Job {
     /// Enable a `Job`. It may need to be refreshed as it may have been updated
     pub fn enable(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
         let path = jenkins_client.url_to_path(&self.url()?);
-        if let Path::Job { name } = path {
+        if let Path::Job {
+            name,
+            configuration: None,
+        } = path
+        {
             jenkins_client.post(&Path::JobEnable { name })?;
             Ok(())
         } else {
@@ -311,7 +367,11 @@ impl Job {
     /// Disable a `Job`. It may need to be refreshed as it may have been updated
     pub fn disable(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
         let path = jenkins_client.url_to_path(&self.url()?);
-        if let Path::Job { name } = path {
+        if let Path::Job {
+            name,
+            configuration: None,
+        } = path
+        {
             jenkins_client.post(&Path::JobDisable { name })?;
             Ok(())
         } else {
@@ -325,7 +385,11 @@ impl Job {
     /// Add this job to the view `view_name`
     pub fn add_to_view(&self, jenkins_client: &Jenkins, view_name: &str) -> Result<(), Error> {
         let path = jenkins_client.url_to_path(&self.url()?);
-        if let Path::Job { name } = path {
+        if let Path::Job {
+            name,
+            configuration: None,
+        } = path
+        {
             jenkins_client.post(&Path::AddJobToView {
                 job_name: name,
                 view_name: Name::Name(view_name),
@@ -342,7 +406,11 @@ impl Job {
     /// Remove this job from the view `view_name`
     pub fn remove_from_view(&self, jenkins_client: &Jenkins, view_name: &str) -> Result<(), Error> {
         let path = jenkins_client.url_to_path(&self.url()?);
-        if let Path::Job { name } = path {
+        if let Path::Job {
+            name,
+            configuration: None,
+        } = path
+        {
             jenkins_client.post(&Path::RemoveJobFromView {
                 job_name: name,
                 view_name: Name::Name(view_name),
@@ -372,7 +440,11 @@ impl Job {
     /// Poll configured SCM for changes
     pub fn poll_scm(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
         let path = jenkins_client.url_to_path(&self.url()?);
-        if let Path::Job { name } = path {
+        if let Path::Job {
+            name,
+            configuration: None,
+        } = path
+        {
             jenkins_client.post(&Path::PollSCMJob { name })?;
             Ok(())
         } else {
@@ -389,6 +461,7 @@ impl Jenkins {
     pub fn get_job(&self, job_name: &str) -> Result<Job, Error> {
         Ok(self.get(&Path::Job {
             name: Name::Name(job_name),
+            configuration: None,
         })?
             .json()?)
     }
@@ -438,15 +511,3 @@ tagged_enum_or_default!(
         GitSCM (_class = "hudson.plugins.git.GitSCM") {},
     }
 );
-
-/// A configuration of a matrix project
-#[derive(Debug, Deserialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct ShortConfiguration {
-    /// Name of the configuration, listing the values of the matrix
-    name: String,
-    /// Url to this configuration
-    url: String,
-    /// Ball Color for the status of the configuration
-    color: BallColor,
-}

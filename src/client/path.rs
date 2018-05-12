@@ -33,6 +33,7 @@ pub(crate) enum Path<'a> {
     },
     Job {
         name: Name<'a>,
+        configuration: Option<Name<'a>>,
     },
     BuildJob {
         name: Name<'a>,
@@ -52,10 +53,12 @@ pub(crate) enum Path<'a> {
     Build {
         job_name: Name<'a>,
         number: u32,
+        configuration: Option<Name<'a>>,
     },
     ConsoleText {
         job_name: Name<'a>,
         number: u32,
+        configuration: Option<Name<'a>>,
     },
     Queue,
     QueueItem {
@@ -88,7 +91,14 @@ impl<'a> ToString for Path<'a> {
                 view_name.to_string(),
                 job_name.to_string()
             ),
-            Path::Job { ref name } => format!("/job/{}", name.to_string()),
+            Path::Job {
+                ref name,
+                configuration: Some(ref configuration),
+            } => format!("/job/{}/{}", name.to_string(), configuration.to_string()),
+            Path::Job {
+                ref name,
+                configuration: None,
+            } => format!("/job/{}", name.to_string()),
             Path::BuildJob { ref name } => format!("/job/{}/build", name.to_string()),
             Path::BuildJobWithParameters { ref name } => {
                 format!("/job/{}/buildWithParameters", name.to_string())
@@ -99,11 +109,33 @@ impl<'a> ToString for Path<'a> {
             Path::Build {
                 ref job_name,
                 ref number,
+                configuration: None,
             } => format!("/job/{}/{}", job_name.to_string(), number),
+            Path::Build {
+                ref job_name,
+                ref number,
+                configuration: Some(ref configuration),
+            } => format!(
+                "/job/{}/{}/{}",
+                job_name.to_string(),
+                configuration.to_string(),
+                number
+            ),
             Path::ConsoleText {
                 ref job_name,
                 ref number,
+                configuration: None,
             } => format!("/job/{}/{}/consoleText", job_name.to_string(), number),
+            Path::ConsoleText {
+                ref job_name,
+                ref number,
+                configuration: Some(ref configuration),
+            } => format!(
+                "/job/{}/{}/{}/consoleText",
+                job_name.to_string(),
+                configuration.to_string(),
+                number
+            ),
             Path::Queue => "/queue".to_string(),
             Path::QueueItem { ref id } => format!("/queue/item/{}", id),
             Path::Raw { path } => path.to_string(),
@@ -119,40 +151,43 @@ impl Jenkins {
         } else {
             url
         };
-        let first_slash = path.char_indices().filter(|c| c.1 == '/').nth(1).unwrap().0;
-        match (
-            &path[0..first_slash],
-            path.chars().filter(|c| *c == '/').count(),
-        ) {
+        let slashes: Vec<usize> = path.char_indices()
+            .filter(|c| c.1 == '/')
+            .map(|c| c.0)
+            .collect();
+
+        match (&path[0..slashes[1]], slashes.len()) {
             ("/view", 3) => Path::View {
                 name: Name::UrlEncodedName(&path[6..(path.len() - 1)]),
             },
             ("/job", 3) => Path::Job {
                 name: Name::UrlEncodedName(&path[5..(path.len() - 1)]),
+                configuration: None,
             },
             ("/job", 4) => {
-                let last_slash = path.char_indices()
-                    .rev()
-                    .filter(|c| c.1 == '/')
-                    .nth(1)
-                    .unwrap()
-                    .0;
-                Path::Build {
-                    job_name: Name::UrlEncodedName(&path[5..last_slash]),
-                    number: path[(last_slash + 1)..(path.len() - 1)].parse().unwrap(),
+                let last_part = &path[(slashes[2] + 1)..(path.len() - 1)];
+                let number = last_part.parse();
+                if let Ok(number) = number {
+                    Path::Build {
+                        job_name: Name::UrlEncodedName(&path[5..slashes[2]]),
+                        number: number,
+                        configuration: None,
+                    }
+                } else {
+                    Path::Job {
+                        name: Name::UrlEncodedName(&path[5..slashes[2]]),
+                        configuration: Some(Name::UrlEncodedName(last_part)),
+                    }
                 }
             }
-            ("/queue", 4) => {
-                let last_slash = path.char_indices()
-                    .rev()
-                    .filter(|c| c.1 == '/')
-                    .nth(1)
-                    .unwrap()
-                    .0;
-                Path::QueueItem {
-                    id: path[(last_slash + 1)..(path.len() - 1)].parse().unwrap(),
-                }
-            }
+            ("/job", 5) => Path::Build {
+                job_name: Name::UrlEncodedName(&path[5..slashes[2]]),
+                number: path[(slashes[3] + 1)..(path.len() - 1)].parse().unwrap(),
+                configuration: Some(Name::UrlEncodedName(&path[(slashes[2] + 1)..slashes[3]])),
+            },
+            ("/queue", 4) => Path::QueueItem {
+                id: path[(slashes[2] + 1)..(path.len() - 1)].parse().unwrap(),
+            },
             (_, _) => Path::Raw { path },
         }
     }
