@@ -305,16 +305,11 @@ impl Build {
 
 impl Jenkins {
     /// Get a build from a `job_name` and `build_number`
-    pub fn get_build(
-        &self,
-        job_name: &str,
-        build_number: u32,
-        configuration: Option<&str>,
-    ) -> Result<Build, Error> {
+    pub fn get_build(&self, job_name: &str, build_number: u32) -> Result<Build, Error> {
         Ok(self.get(&Path::Build {
             job_name: Name::Name(job_name),
             number: build_number,
-            configuration: configuration.map(|v| Name::Name(v)),
+            configuration: None,
         })?
             .json()?)
     }
