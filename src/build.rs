@@ -181,7 +181,7 @@ tagged_enum_or_default!(
             /// Build actions
             actions: Vec<Action>,
             /// Change set for this build
-            change_set: changeset::ChangeSetList,            
+            change_set: changeset::ChangeSetList,
         },
     }
 );
