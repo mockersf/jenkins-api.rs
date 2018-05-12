@@ -65,12 +65,12 @@ pub enum ExpectedType {
 
 impl fmt::Display for ExpectedType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            &ExpectedType::Build => write!(f, "Build"),
-            &ExpectedType::Job => write!(f, "Job"),
-            &ExpectedType::QueueItem => write!(f, "QueueItem"),
-            &ExpectedType::View => write!(f, "View"),
-            &ExpectedType::ShortView => write!(f, "ShortView"),
+        match *self {
+            ExpectedType::Build => write!(f, "Build"),
+            ExpectedType::Job => write!(f, "Job"),
+            ExpectedType::QueueItem => write!(f, "QueueItem"),
+            ExpectedType::View => write!(f, "View"),
+            ExpectedType::ShortView => write!(f, "ShortView"),
         }
     }
 }
@@ -86,9 +86,9 @@ pub enum Action {
 
 impl fmt::Display for Action {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            &Action::GetField(field) => write!(f, "get field '{}'", field),
-            &Action::GetLinkedItem(item) => write!(f, "get linked item '{}'", item),
+        match *self {
+            Action::GetField(field) => write!(f, "get field '{}'", field),
+            Action::GetLinkedItem(item) => write!(f, "get linked item '{}'", item),
         }
     }
 }

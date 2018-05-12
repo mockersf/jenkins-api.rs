@@ -170,7 +170,7 @@ impl Jenkins {
                 if let Ok(number) = number {
                     Path::Build {
                         job_name: Name::UrlEncodedName(&path[5..slashes[2]]),
-                        number: number,
+                        number,
                         configuration: None,
                     }
                 } else {
