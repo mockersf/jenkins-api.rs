@@ -382,7 +382,7 @@ impl Job {
         pub buildable -> bool
     );
     job_common_fields_dispatch!(
-        /// Is the project buildable
+        /// Link to the last build
         pub ref last_build -> &Option<ShortBuild>
     );
     job_common_fields_dispatch!(
