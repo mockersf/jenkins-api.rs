@@ -228,7 +228,7 @@ macro_rules! tagged_enum_or_default {
                 $(#[$variant_attr:meta])*
                 $variant:ident (_class = $key:expr) {
                     $(
-                        $(#[$field_attr:meta])* 
+                        $(#[$field_attr:meta])*
                         $field:ident: $type:ty,
                     )*
                 } {

@@ -162,7 +162,7 @@ tagged_enum_or_default!(
             /// Is concurrent build enabled for the job?
             concurrent_build: bool,
             /// List of modules
-            modules: Vec<ShortJob>,            
+            modules: Vec<ShortJob>,
         },
     }
 );
