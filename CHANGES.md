@@ -4,6 +4,7 @@
 
 * Get artifacts of a build
 * Support external jobs
+* Support maven projects
 
 # 0.3.0 (2018/05/13)
 

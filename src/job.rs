@@ -155,6 +155,14 @@ tagged_enum_or_default!(
             /// Description of the job
             description: String,
         },
+        /// A maven project
+        MavenModuleSet (_class = "hudson.maven.MavenModuleSet") {
+            /// Description of the job
+            description: String,
+            /// Is concurrent build enabled for the job?
+            concurrent_build: bool,
+            /// List of modules
+            modules: Vec<ShortJob>,            
         },
     }
 );
@@ -168,6 +176,7 @@ macro_rules! job_common_fields_dispatch {
                 &Job::MatrixProject { ref $field, .. } => Ok($field),
                 &Job::MatrixConfiguration { ref $field, .. } => Ok($field),
                 &Job::ExternalJob { ref $field, .. } => Ok($field),
+                &Job::MavenModuleSet { ref $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -185,6 +194,7 @@ macro_rules! job_common_fields_dispatch {
                 &Job::MatrixProject { $field, .. } => Ok($field),
                 &Job::MatrixConfiguration { $field, .. } => Ok($field),
                 &Job::ExternalJob { $field, .. } => Ok($field),
+                &Job::MavenModuleSet { $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -202,6 +212,7 @@ macro_rules! job_common_fields_dispatch {
                 &Job::MatrixProject { ref $field, .. } => Ok($field),
                 &Job::MatrixConfiguration { ref $field, .. } => Ok($field),
                 &Job::ExternalJob { ref $field, .. } => Ok($field),
+                &Job::MavenModuleSet { ref $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
