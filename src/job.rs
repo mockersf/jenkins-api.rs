@@ -270,6 +270,51 @@ tagged_enum_or_default!(
             /// SCM configured for the job
             scm: SCM,
         },
+        /// An external job
+        ExternalJob (_class = "hudson.model.ExternalJob") {
+            /// Name of the job
+            name: String,
+            /// Display Name of the job
+            display_name: String,
+            /// Full Display Name of the job
+            full_display_name: String,
+            /// Full Name of the job
+            full_name: String,
+            /// Description of the job
+            description: String,
+            /// URL for the job
+            url: String,
+            /// Ball Color for the status of the job
+            color: BallColor,
+            /// Is the job buildable?
+            buildable: bool,
+            /// Are dependencies kept for this job?
+            keep_dependencies: bool,
+            /// Next build number
+            next_build_number: u32,
+            /// Is this job currently in build queue
+            in_queue: bool,
+            /// Link to the last build
+            last_build: Option<ShortBuild>,
+            /// Link to the first build
+            first_build: Option<ShortBuild>,
+            /// Link to the last stable build
+            last_stable_build: Option<ShortBuild>,
+            /// Link to the last unstable build
+            last_unstable_build: Option<ShortBuild>,
+            /// Link to the last successful build
+            last_successful_build: Option<ShortBuild>,
+            /// Link to the last unsucressful build
+            last_unsuccessful_build: Option<ShortBuild>,
+            /// Link to the last complete build
+            last_completed_build: Option<ShortBuild>,
+            /// Link to the last failed build
+            last_failed_build: Option<ShortBuild>,
+            /// List of builds of the job
+            builds: Vec<ShortBuild>,
+            /// HealthReport of the job
+            health_report: Vec<HealthReport>,
+        },
     }
 );
 
@@ -281,6 +326,7 @@ macro_rules! job_common_fields_dispatch {
                 &Job::WorkflowJob { ref $field, .. } => Ok($field),
                 &Job::MatrixProject { ref $field, .. } => Ok($field),
                 &Job::MatrixConfiguration { ref $field, .. } => Ok($field),
+                &Job::ExternalJob { ref $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -297,6 +343,7 @@ macro_rules! job_common_fields_dispatch {
                 &Job::WorkflowJob { $field, .. } => Ok($field),
                 &Job::MatrixProject { $field, .. } => Ok($field),
                 &Job::MatrixConfiguration { $field, .. } => Ok($field),
+                &Job::ExternalJob { $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -313,6 +360,7 @@ macro_rules! job_common_fields_dispatch {
                 &Job::WorkflowJob { ref $field, .. } => Ok($field),
                 &Job::MatrixProject { ref $field, .. } => Ok($field),
                 &Job::MatrixConfiguration { ref $field, .. } => Ok($field),
+                &Job::ExternalJob { ref $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
