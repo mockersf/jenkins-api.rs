@@ -2,7 +2,7 @@
 
 # 0.3.1
 
-
+* Get artifacts of a build
 
 # 0.3.0 (2018/05/13)
 

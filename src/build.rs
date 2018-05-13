@@ -83,6 +83,8 @@ tagged_enum_or_default!(
             actions: Vec<Action>,
             /// Change set for this build
             change_set: changeset::ChangeSetList,
+            /// Artifacts saved by archived by this build
+            artifacts: Vec<Artifact>,
         },
         /// A `Build` from a WorkflowJob
         WorkflowRun (_class = "org.jenkinsci.plugins.workflow.job.WorkflowRun") {
@@ -118,6 +120,8 @@ tagged_enum_or_default!(
             culprits: Vec<ShortUser>,
             /// Previous build
             previous_build: Option<ShortBuild>,
+            /// Artifacts saved by archived by this build
+            artifacts: Vec<Artifact>,
         },
         /// A `Build` from a MatrixProject
         MatrixBuild (_class = "hudson.matrix.MatrixBuild") {
@@ -151,6 +155,8 @@ tagged_enum_or_default!(
             change_set: changeset::ChangeSetList,
             /// Runs of each configuration
             runs: Vec<ShortBuild>,
+            /// Artifacts saved by archived by this build
+            artifacts: Vec<Artifact>,
         },
         /// A `Build` of a matric configuration
         MatrixRun (_class = "hudson.matrix.MatrixRun") {
@@ -182,6 +188,8 @@ tagged_enum_or_default!(
             actions: Vec<Action>,
             /// Change set for this build
             change_set: changeset::ChangeSetList,
+            /// Artifacts saved by archived by this build
+            artifacts: Vec<Artifact>,
         },
     }
 );
@@ -315,6 +323,18 @@ impl Jenkins {
     }
 }
 
+/// A fie archived by a `Build`
+#[derive(Debug, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct Artifact {
+    /// Displayed path
+    pub display_path: String,
+    /// File name
+    pub file_name: String,
+    /// Path to the file
+    pub relative_path: String,
+}
+
 pub mod changeset {
     //! Types describing changes between two builds
 
@@ -410,3 +430,4 @@ pub mod changeset {
     }
 
 }
+
