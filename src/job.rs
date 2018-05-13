@@ -72,8 +72,7 @@ impl ShortJob {
 tagged_enum_or_default!(
     /// A Jenkins `Job`
     pub enum Job {
-        /// A free style project
-        FreeStyleProject (_class = "hudson.model.FreeStyleProject") {
+        common_fields {
             /// Name of the job
             name: String,
             /// Display Name of the job
@@ -82,16 +81,12 @@ tagged_enum_or_default!(
             full_display_name: String,
             /// Full Name of the job
             full_name: String,
-            /// Description of the job
-            description: String,
             /// URL for the job
             url: String,
             /// Ball Color for the status of the job
             color: BallColor,
             /// Is the job buildable?
             buildable: bool,
-            /// Is concurrent build enabled for the job?
-            concurrent_build: bool,
             /// Are dependencies kept for this job?
             keep_dependencies: bool,
             /// Next build number
@@ -118,104 +113,29 @@ tagged_enum_or_default!(
             builds: Vec<ShortBuild>,
             /// HealthReport of the job
             health_report: Vec<HealthReport>,
+        };
+        /// A free style project
+        FreeStyleProject (_class = "hudson.model.FreeStyleProject") {
+            /// Description of the job
+            description: String,
+            /// Is concurrent build enabled for the job?
+            concurrent_build: bool,
             /// SCM configured for the job
             scm: SCM,
         },
         /// A pipeline project
         WorkflowJob (_class = "org.jenkinsci.plugins.workflow.job.WorkflowJob") {
-            /// Name of the job
-            name: String,
-            /// Display Name of the job
-            display_name: String,
-            /// Full Display Name of the job
-            full_display_name: String,
-            /// Full Name of the job
-            full_name: String,
             /// Description of the job
             description: String,
-            /// URL for the job
-            url: String,
-            /// Ball Color for the status of the job
-            color: BallColor,
-            /// Is the job buildable?
-            buildable: bool,
             /// Is concurrent build enabled for the job?
             concurrent_build: bool,
-            /// Are dependencies kept for this job?
-            keep_dependencies: bool,
-            /// Next build number
-            next_build_number: u32,
-            /// Is this job currently in build queue
-            in_queue: bool,
-            /// Link to the last build
-            last_build: Option<ShortBuild>,
-            /// Link to the first build
-            first_build: Option<ShortBuild>,
-            /// Link to the last stable build
-            last_stable_build: Option<ShortBuild>,
-            /// Link to the last unstable build
-            last_unstable_build: Option<ShortBuild>,
-            /// Link to the last successful build
-            last_successful_build: Option<ShortBuild>,
-            /// Link to the last unsucressful build
-            last_unsuccessful_build: Option<ShortBuild>,
-            /// Link to the last complete build
-            last_completed_build: Option<ShortBuild>,
-            /// Link to the last failed build
-            last_failed_build: Option<ShortBuild>,
-            /// List of builds of the job
-            builds: Vec<ShortBuild>,
-            /// HealthReport of the job
-            health_report: Vec<HealthReport>,
-            /// Can resume blocked build
-            resume_blocked: bool,
         },
         /// A matrix project
         MatrixProject (_class = "hudson.matrix.MatrixProject") {
-            /// Name of the job
-            name: String,
-            /// Display Name of the job
-            display_name: String,
-            /// Full Display Name of the job
-            full_display_name: String,
-            /// Full Name of the job
-            full_name: String,
             /// Description of the job
             description: String,
-            /// URL for the job
-            url: String,
-            /// Ball Color for the status of the job
-            color: BallColor,
-            /// Is the job buildable?
-            buildable: bool,
             /// Is concurrent build enabled for the job?
             concurrent_build: bool,
-            /// Are dependencies kept for this job?
-            keep_dependencies: bool,
-            /// Next build number
-            next_build_number: u32,
-            /// Is this job currently in build queue
-            in_queue: bool,
-            /// Link to the last build
-            last_build: Option<ShortBuild>,
-            /// Link to the first build
-            first_build: Option<ShortBuild>,
-            /// Link to the last stable build
-            last_stable_build: Option<ShortBuild>,
-            /// Link to the last unstable build
-            last_unstable_build: Option<ShortBuild>,
-            /// Link to the last successful build
-            last_successful_build: Option<ShortBuild>,
-            /// Link to the last unsucressful build
-            last_unsuccessful_build: Option<ShortBuild>,
-            /// Link to the last complete build
-            last_completed_build: Option<ShortBuild>,
-            /// Link to the last failed build
-            last_failed_build: Option<ShortBuild>,
-            /// List of builds of the job
-            builds: Vec<ShortBuild>,
-            /// HealthReport of the job
-            health_report: Vec<HealthReport>,
             /// SCM configured for the job
             scm: SCM,
             /// Configurations for the job
@@ -223,97 +143,18 @@ tagged_enum_or_default!(
         },
         /// A matrix configuration
         MatrixConfiguration (_class = "hudson.matrix.MatrixConfiguration") {
-            /// Name of the job
-            name: String,
-            /// Display Name of the job
-            display_name: String,
-            /// Full Display Name of the job
-            full_display_name: String,
-            /// Full Name of the job
-            full_name: String,
             /// Description of the job
             description: Option<String>,
-            /// URL for the job
-            url: String,
-            /// Ball Color for the status of the job
-            color: BallColor,
-            /// Is the job buildable?
-            buildable: bool,
             /// Is concurrent build enabled for the job?
             concurrent_build: bool,
-            /// Are dependencies kept for this job?
-            keep_dependencies: bool,
-            /// Next build number
-            next_build_number: u32,
-            /// Is this job currently in build queue
-            in_queue: bool,
-            /// Link to the last build
-            last_build: Option<ShortBuild>,
-            /// Link to the first build
-            first_build: Option<ShortBuild>,
-            /// Link to the last stable build
-            last_stable_build: Option<ShortBuild>,
-            /// Link to the last unstable build
-            last_unstable_build: Option<ShortBuild>,
-            /// Link to the last successful build
-            last_successful_build: Option<ShortBuild>,
-            /// Link to the last unsucressful build
-            last_unsuccessful_build: Option<ShortBuild>,
-            /// Link to the last complete build
-            last_completed_build: Option<ShortBuild>,
-            /// Link to the last failed build
-            last_failed_build: Option<ShortBuild>,
-            /// List of builds of the job
-            builds: Vec<ShortBuild>,
-            /// HealthReport of the job
-            health_report: Vec<HealthReport>,
             /// SCM configured for the job
             scm: SCM,
         },
         /// An external job
         ExternalJob (_class = "hudson.model.ExternalJob") {
-            /// Name of the job
-            name: String,
-            /// Display Name of the job
-            display_name: String,
-            /// Full Display Name of the job
-            full_display_name: String,
-            /// Full Name of the job
-            full_name: String,
             /// Description of the job
             description: String,
-            /// URL for the job
-            url: String,
-            /// Ball Color for the status of the job
-            color: BallColor,
-            /// Is the job buildable?
-            buildable: bool,
-            /// Are dependencies kept for this job?
-            keep_dependencies: bool,
-            /// Next build number
-            next_build_number: u32,
-            /// Is this job currently in build queue
-            in_queue: bool,
-            /// Link to the last build
-            last_build: Option<ShortBuild>,
-            /// Link to the first build
-            first_build: Option<ShortBuild>,
-            /// Link to the last stable build
-            last_stable_build: Option<ShortBuild>,
-            /// Link to the last unstable build
-            last_unstable_build: Option<ShortBuild>,
-            /// Link to the last successful build
-            last_successful_build: Option<ShortBuild>,
-            /// Link to the last unsucressful build
-            last_unsuccessful_build: Option<ShortBuild>,
-            /// Link to the last complete build
-            last_completed_build: Option<ShortBuild>,
-            /// Link to the last failed build
-            last_failed_build: Option<ShortBuild>,
-            /// List of builds of the job
-            builds: Vec<ShortBuild>,
-            /// HealthReport of the job
-            health_report: Vec<HealthReport>,
+        },
         },
     }
 );

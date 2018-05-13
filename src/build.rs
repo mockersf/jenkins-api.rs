@@ -5,7 +5,6 @@ use Jenkins;
 use action::Action;
 use client::{self, Name, Path};
 use job::Job;
-use user::ShortUser;
 
 /// Short Build that is used in lists and links from other structs
 #[derive(Debug, Deserialize, Clone)]
@@ -48,11 +47,9 @@ pub enum BuildStatus {
 }
 
 tagged_enum_or_default!(
-
     /// A `Build` of a `Job`
     pub enum Build {
-        /// A `Build` from a FreeStyleProject
-        FreeStyleBuild (_class = "hudson.model.FreeStyleBuild") {
+        common_fields {
             /// URL for the build
             url: String,
             /// Build number for this job
@@ -73,123 +70,40 @@ tagged_enum_or_default!(
             full_display_name: String,
             /// Is this build currently running
             building: bool,
-            /// Which slave was it build on
-            built_on: String,
             /// Build number in string format
             id: String,
             /// ID while in the build queue
             queue_id: u32,
             /// Build actions
             actions: Vec<Action>,
-            /// Change set for this build
-            change_set: changeset::ChangeSetList,
             /// Artifacts saved by archived by this build
             artifacts: Vec<Artifact>,
+        };
+        /// A `Build` from a FreeStyleProject
+        FreeStyleBuild (_class = "hudson.model.FreeStyleBuild") {
+            /// Which slave was it build on
+            built_on: String,
+            /// Change set for this build
+            change_set: changeset::ChangeSetList,
         },
         /// A `Build` from a WorkflowJob
         WorkflowRun (_class = "org.jenkinsci.plugins.workflow.job.WorkflowRun") {
-            /// URL for the build
-            url: String,
-            /// Build number for this job
-            number: u32,
-            /// Duration
-            duration: u32,
-            /// Estimated duration
-            estimated_duration: u32,
-            /// Timestamp of the build start
-            timestamp: u64,
-            /// Are the logs kept?
-            keep_log: bool,
-            /// Build result
-            result: BuildStatus,
-            /// Display name, usually "#" followed by the build number
-            display_name: String,
-            /// Full display name: job name followed by the build display name
-            full_display_name: String,
-            /// Is this build currently running
-            building: bool,
-            /// Build number in string format
-            id: String,
-            /// ID while in the build queue
-            queue_id: u32,
-            /// Build actions
-            actions: Vec<Action>,
             /// Change set for this build
             change_sets: Vec<changeset::ChangeSetList>,
-            /// Culprits
-            culprits: Vec<ShortUser>,
             /// Previous build
             previous_build: Option<ShortBuild>,
-            /// Artifacts saved by archived by this build
-            artifacts: Vec<Artifact>,
         },
         /// A `Build` from a MatrixProject
         MatrixBuild (_class = "hudson.matrix.MatrixBuild") {
-            /// URL for the build
-            url: String,
-            /// Build number for this job
-            number: u32,
-            /// Duration
-            duration: u32,
-            /// Estimated duration
-            estimated_duration: u32,
-            /// Timestamp of the build start
-            timestamp: u64,
-            /// Are the logs kept?
-            keep_log: bool,
-            /// Build result
-            result: BuildStatus,
-            /// Display name, usually "#" followed by the build number
-            display_name: String,
-            /// Full display name: job name followed by the build display name
-            full_display_name: String,
-            /// Is this build currently running
-            building: bool,
-            /// Build number in string format
-            id: String,
-            /// ID while in the build queue
-            queue_id: u32,
-            /// Build actions
-            actions: Vec<Action>,
             /// Change set for this build
             change_set: changeset::ChangeSetList,
             /// Runs of each configuration
             runs: Vec<ShortBuild>,
-            /// Artifacts saved by archived by this build
-            artifacts: Vec<Artifact>,
         },
         /// A `Build` of a matric configuration
         MatrixRun (_class = "hudson.matrix.MatrixRun") {
-            /// URL for the build
-            url: String,
-            /// Build number for this job
-            number: u32,
-            /// Duration
-            duration: u32,
-            /// Estimated duration
-            estimated_duration: u32,
-            /// Timestamp of the build start
-            timestamp: u64,
-            /// Are the logs kept?
-            keep_log: bool,
-            /// Build result
-            result: BuildStatus,
-            /// Display name, usually "#" followed by the build number
-            display_name: String,
-            /// Full display name: job name followed by the build display name
-            full_display_name: String,
-            /// Is this build currently running
-            building: bool,
-            /// Build number in string format
-            id: String,
-            /// ID while in the build queue
-            queue_id: u32,
-            /// Build actions
-            actions: Vec<Action>,
             /// Change set for this build
             change_set: changeset::ChangeSetList,
-            /// Artifacts saved by archived by this build
-            artifacts: Vec<Artifact>,
         },
     }
 );

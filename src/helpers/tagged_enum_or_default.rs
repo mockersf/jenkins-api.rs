@@ -1,9 +1,20 @@
 macro_rules! tagged_enum_or_default {
-    ($(#[$attr:meta])* pub enum $name:ident {
-        $($(#[$variant_attr:meta])* $variant:ident (_class = $key:expr) {
-            $($(#[$field_attr:meta])* $field:ident: $type:ty,)*
-        },)*
-    }) => {
+    // entry point when no common fields specified
+    // exit point implementing deserialization
+    (
+        $(#[$attr:meta])*
+        pub enum $name:ident {
+            $(
+                $(#[$variant_attr:meta])*
+                $variant:ident (_class = $key:expr) {
+                    $(
+                        $(#[$field_attr:meta])*
+                        $field:ident: $type:ty,
+                    )*
+                },
+            )*
+        }
+    ) => {
         $(#[$attr])*
         #[cfg_attr(feature = "cargo-clippy", allow(large_enum_variant))]
         #[derive(Debug)]
@@ -117,5 +128,132 @@ macro_rules! tagged_enum_or_default {
                 }
             }
         }
-    }
+    };
+
+    // entry point for no common fields
+    (
+        $(#[$attr:meta])*
+        pub enum $name:ident {
+            common_fields {};
+            $(
+                $(#[$variant_attr:meta])*
+                $variant:ident (_class = $key:expr) $variant_fields:tt,
+            )*
+        }
+    ) => {
+        tagged_enum_or_default!(
+            $(#[$attr])*
+            pub enum $name {
+                $(
+                    $(#[$variant_attr])*
+                    $variant (_class = $key) $variant_fields,
+                )*
+            }
+        );
+    };
+
+    // entry point for one common field
+    (
+        $(#[$attr:meta])*
+        pub enum $name:ident {
+            common_fields {
+                #[doc=$first_common_doc:expr]
+                $first_common_field:ident: $first_common_type:ty $(,)*
+            };
+            $(
+                $(#[$variant_attr:meta])*
+                $variant:ident (_class = $key:expr) $variant_fields:tt,
+            )*
+        }
+    ) => {
+        tagged_enum_or_default!(
+            $(#[$attr])*
+            pub enum $name {
+                common_fields {};
+                $(
+                    $(#[$variant_attr])*
+                    $variant (_class = $key) $variant_fields {
+                        #[doc=$first_common_doc]
+                        $first_common_field: $first_common_type
+                    },
+                )*
+            }
+        );
+    };
+
+    // entry point for multiple common fields
+    (
+        $(#[$attr:meta])*
+        pub enum $name:ident {
+            common_fields {
+                #[doc=$first_common_doc:expr]
+                $first_common_field:ident: $first_common_type:ty,
+                $(
+                    #[doc=$common_doc:expr]
+                    $common_field:ident: $common_type:ty
+                ),+ $(,)*
+            };
+            $(
+                $(#[$variant_attr:meta])*
+                $variant:ident (_class = $key:expr) $variant_fields:tt,
+            )*
+        }
+    ) => {
+        tagged_enum_or_default!(
+            $(#[$attr])*
+            pub enum $name {
+                common_fields {
+                    $(
+                        #[doc=$common_doc]
+                        $common_field: $common_type,
+                    )*
+                };
+                $(
+                    $(#[$variant_attr])*
+                    $variant (_class = $key) $variant_fields {
+                        #[doc=$first_common_doc]
+                        $first_common_field: $first_common_type
+                    },
+                )*
+            }
+        );
+    };
+
+    // internal part of the macro, called to add common fields to each variant one by one
+    (
+        $(#[$attr:meta])*
+        pub enum $name:ident {
+            common_fields $common_fields:tt;
+            $(
+                $(#[$variant_attr:meta])*
+                $variant:ident (_class = $key:expr) {
+                    $(
+                        $(#[$field_attr:meta])* 
+                        $field:ident: $type:ty,
+                    )*
+                } {
+                    #[doc=$adding_doc:expr]
+                    $adding_field:ident: $adding_type:ty
+                },
+            )*
+        }
+    ) => {
+        tagged_enum_or_default!(
+            $(#[$attr])*
+            pub enum $name {
+                common_fields $common_fields;
+                $(
+                    $(#[$variant_attr])*
+                    $variant (_class = $key) {
+                        $(
+                            $(#[$field_attr])*
+                            $field: $type,
+                        )*
+                        #[doc=$adding_doc]
+                        $adding_field: $adding_type,
+                    },
+                )*
+            }
+        );
+    };
 }
