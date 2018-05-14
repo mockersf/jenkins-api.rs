@@ -38,15 +38,19 @@ fn should_be_forbidden() {
     assert!(response.is_err());
     assert_eq!(
         format!("{:?}", response),
-        format!("Err(Error {{ kind: ClientError(Unauthorized), url: Some(\"{}/api/json\") }})",
-            JENKINS_URL)
+        format!(
+            "Err(Error {{ kind: ClientError(Unauthorized), url: Some(\"{}/api/json\") }})",
+            JENKINS_URL
+        )
     );
 }
 
 #[test]
 fn should_be_connection_error() {
     setup();
-    let jenkins = JenkinsBuilder::new("http://localhost:1234").build().unwrap();
+    let jenkins = JenkinsBuilder::new("http://localhost:1234")
+        .build()
+        .unwrap();
     let response = jenkins.get_home();
     assert!(response.is_err());
 }
@@ -72,8 +76,10 @@ fn should_get_view_not_found() {
     assert!(response.is_err());
     assert_eq!(
         format!("{:?}", response),
-        format!("Err(Error {{ kind: ClientError(NotFound), url: Some(\"{}/view/zut/api/json\") }})",
-            JENKINS_URL)
+        format!(
+            "Err(Error {{ kind: ClientError(NotFound), url: Some(\"{}/view/zut/api/json\") }})",
+            JENKINS_URL
+        )
     );
 }
 
