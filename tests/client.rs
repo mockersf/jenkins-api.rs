@@ -255,5 +255,3 @@ fn can_get_pipeline() {
     let build = jenkins.get_build("pipeline job", 1);
     assert!(build.is_ok());
 }
-
-
