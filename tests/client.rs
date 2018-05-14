@@ -242,6 +242,27 @@ fn can_get_queue_item() {
 }
 
 #[test]
+fn can_get_console() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+
+    let job = jenkins.get_job("pipeline job");
+    assert!(job.is_ok());
+
+    let job_ok = job.unwrap();
+    let last_build = job_ok.last_build().unwrap();
+    let build = last_build.as_ref().unwrap().get_full_build(&jenkins);
+    assert!(build.is_ok());
+
+    let build_ok = build.unwrap();
+    let console = build_ok.get_console(&jenkins);
+    assert!(console.is_ok());
+}
+
+#[test]
 fn can_get_pipeline() {
     setup();
     let jenkins = JenkinsBuilder::new(JENKINS_URL)
