@@ -360,3 +360,36 @@ fn can_get_pipeline() {
     let build = jenkins.get_build("pipeline job", 1);
     assert!(build.is_ok());
 }
+
+#[test]
+fn can_build_job_with_delay() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+
+    // wait for test disabling the job to be done
+    thread::sleep(time::Duration::from_secs(2));
+
+    let triggered = jenkins
+        .job_builder("normal job")
+        .unwrap()
+        .with_delay(5000)
+        .send();
+    let triggered_ok = triggered.unwrap();
+
+    let queue = jenkins.get_queue();
+    assert!(queue.is_ok());
+
+    thread::sleep(time::Duration::from_secs(2));
+    let queue_item = triggered_ok.get_full_queue_item(&jenkins);
+    assert!(queue_item.is_ok());
+    assert!(queue_item.unwrap().why.is_some());
+
+    thread::sleep(time::Duration::from_secs(10));
+
+    let queue_item = triggered_ok.get_full_queue_item(&jenkins);
+    assert!(queue_item.is_ok());
+    assert!(queue_item.unwrap().why.is_none());
+}
