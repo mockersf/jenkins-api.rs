@@ -257,3 +257,90 @@ macro_rules! tagged_enum_or_default {
         );
     };
 }
+
+#[cfg(test)]
+mod tests {
+    use serde::Deserializer;
+
+    #[test]
+    fn enum_no_common_fields() {
+        tagged_enum_or_default!(
+            pub enum Test {
+                Variant1 (_class = "variant1") {
+                    v1: u8,
+                    v2: u8,
+                },
+            }
+        );
+
+        Test::Variant1 {
+            v1: 0,
+            v2: 1,
+        };
+    }
+
+    #[test]
+    fn enum_empty_common_fields() {
+        tagged_enum_or_default!(
+            pub enum Test {
+                common_fields {};
+                Variant1 (_class = "variant1") {
+                    v1: u8,
+                    v2: u8,
+                },
+            }
+        );
+
+        Test::Variant1 {
+            v1: 0,
+            v2: 1,
+        };
+    }
+
+    #[test]
+    fn enum_one_common_field() {
+        tagged_enum_or_default!(
+            pub enum Test {
+                common_fields {
+                    /// my first common field
+                    c1: u8,
+                };
+                Variant1 (_class = "variant1") {
+                    v1: u8,
+                    v2: u8,
+                },
+            }
+        );
+
+        Test::Variant1 {
+            v1: 0,
+            v2: 1,
+            c1: 2,
+        };
+    }
+
+    #[test]
+    fn enum_many_common_fields() {
+        tagged_enum_or_default!(
+            pub enum Test {
+                common_fields {
+                    /// my first common field
+                    c1: u8,
+                    /// my second common field
+                    c2: u8,
+                };
+                Variant1 (_class = "variant1") {
+                    v1: u8,
+                    v2: u8,
+                },
+            }
+        );
+
+        Test::Variant1 {
+            v1: 0,
+            v2: 1,
+            c1: 2,
+            c2: 3,
+        };
+    }
+}
