@@ -158,10 +158,93 @@ mod tests {
 
         let response =
             jenkins_client.post_with_body(&super::Path::Raw { path: "/mypath" }, "body", &[]);
-        println!("{:?}", response);
 
         assert!(response.is_ok());
         assert_eq!(response.unwrap().text().unwrap(), "ok");
+    }
+
+    #[test]
+    fn can_post_with_body_and_get_error_state() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL)
+            .disable_csrf()
+            .build()
+            .unwrap();
+
+        let _mock = mockito::mock("POST", "/error-IllegalStateException?")
+            .with_status(500)
+            .with_body("hviqsuvnqsodjfsqjdgo java.lang.IllegalStateException: my error\nvzfjsd")
+            .create();
+
+        let response = jenkins_client.post_with_body(
+            &super::Path::Raw {
+                path: "/error-IllegalStateException",
+            },
+            "body",
+            &[],
+        );
+
+        assert!(response.is_err());
+        assert_eq!(
+            format!("{:?}", response),
+            r#"Err(IllegalState { message: "my error" })"#
+        );
+    }
+
+    #[test]
+    fn can_post_with_body_and_get_error_argument() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL)
+            .disable_csrf()
+            .build()
+            .unwrap();
+
+        let _mock = mockito::mock("POST", "/error-IllegalArgumentException?")
+            .with_status(500)
+            .with_body("hviqsuvnqsodjfsqjdgo java.lang.IllegalArgumentException: my error\nvzfjsd")
+            .create();
+
+        let response = jenkins_client.post_with_body(
+            &super::Path::Raw {
+                path: "/error-IllegalArgumentException",
+            },
+            "body",
+            &[],
+        );
+
+        assert!(response.is_err());
+        assert_eq!(
+            format!("{:?}", response),
+            r#"Err(IllegalArgument { message: "my error" })"#
+        );
+    }
+
+    #[test]
+    fn can_post_with_body_and_get_error_new() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL)
+            .disable_csrf()
+            .build()
+            .unwrap();
+
+        let _mock = mockito::mock("POST", "/error-NewException?")
+            .with_status(500)
+            .with_body("hviqsuvnqsodjfsqjdgo java.lang.NewException: my error\nvzfjsd")
+            .create();
+
+        let response = jenkins_client.post_with_body(
+            &super::Path::Raw {
+                path: "/error-NewException",
+            },
+            "body",
+            &[],
+        );
+
+        assert!(response.is_err());
+        assert_eq!(
+            format!("{:?}", response),
+            concat!(
+                r#"Err(Error { kind: ServerError(InternalServerError), "#,
+                r#"url: Some("http://127.0.0.1:1234/error-NewException?") })"#
+            )
+        );
     }
 
 }
