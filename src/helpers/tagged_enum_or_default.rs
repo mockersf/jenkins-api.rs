@@ -9,10 +9,10 @@ macro_rules! tagged_enum_or_default {
                 $variant:ident (_class = $key:expr) {
                     $(
                         $(#[$field_attr:meta])*
-                        $field:ident: $type:ty,
-                    )*
-                },
-            )*
+                        $field:ident: $type:ty
+                    ),* $(,)*
+                }
+            ),* $(,)*
         }
     ) => {
         $(#[$attr])*
@@ -137,8 +137,8 @@ macro_rules! tagged_enum_or_default {
             common_fields {};
             $(
                 $(#[$variant_attr:meta])*
-                $variant:ident (_class = $key:expr) $variant_fields:tt,
-            )*
+                $variant:ident (_class = $key:expr) $variant_fields:tt
+            ),* $(,)*
         }
     ) => {
         tagged_enum_or_default!(
@@ -162,8 +162,8 @@ macro_rules! tagged_enum_or_default {
             };
             $(
                 $(#[$variant_attr:meta])*
-                $variant:ident (_class = $key:expr) $variant_fields:tt,
-            )*
+                $variant:ident (_class = $key:expr) $variant_fields:tt
+            ),* $(,)*
         }
     ) => {
         tagged_enum_or_default!(
@@ -195,8 +195,8 @@ macro_rules! tagged_enum_or_default {
             };
             $(
                 $(#[$variant_attr:meta])*
-                $variant:ident (_class = $key:expr) $variant_fields:tt,
-            )*
+                $variant:ident (_class = $key:expr) $variant_fields:tt
+            ),* $(,)*
         }
     ) => {
         tagged_enum_or_default!(
@@ -229,8 +229,8 @@ macro_rules! tagged_enum_or_default {
                 $variant:ident (_class = $key:expr) {
                     $(
                         $(#[$field_attr:meta])*
-                        $field:ident: $type:ty,
-                    )*
+                        $field:ident: $type:ty
+                    ),* $(,)*
                 } {
                     #[doc=$adding_doc:expr]
                     $adding_field:ident: $adding_type:ty
@@ -356,6 +356,31 @@ mod tests {
                     v1: u8,
                     v2: u8,
                 },
+            }
+        );
+
+        Test::Variant1 {
+            v1: 0,
+            v2: 1,
+            c1: 2,
+            c2: 3,
+        };
+    }
+
+    #[test]
+    fn enum_no_trailing_commas() {
+        tagged_enum_or_default!(
+            pub enum Test {
+                common_fields {
+                    /// my first common field
+                    c1: u8,
+                    /// my second common field
+                    c2: u8
+                };
+                Variant1 (_class = "variant1") {
+                    v1: u8,
+                    v2: u8
+                }
             }
         );
 
