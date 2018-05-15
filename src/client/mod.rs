@@ -247,4 +247,26 @@ mod tests {
         );
     }
 
+    #[test]
+    fn can_post_with_query_params() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL)
+            .disable_csrf()
+            .build()
+            .unwrap();
+
+        let mock = mockito::mock("POST", "/mypath?a=1")
+            .with_body("ok")
+            .create();
+
+        let response = jenkins_client.post_with_body(
+            &super::Path::Raw { path: "/mypath" },
+            "body",
+            &[("a", "1")],
+        );
+
+        assert!(response.is_ok());
+        assert_eq!(response.unwrap().text().unwrap(), "ok");
+        mock.assert()
+    }
+
 }
