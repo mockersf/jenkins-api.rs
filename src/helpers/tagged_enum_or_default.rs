@@ -263,6 +263,29 @@ mod tests {
     use serde::Deserializer;
 
     #[test]
+    fn enum_can_be_debugged() {
+        tagged_enum_or_default!(
+            pub enum Test {
+                common_fields {
+                    /// my first common field
+                    c1: u8,
+                };
+                Variant1 (_class = "variant1") {
+                    v1: u8,
+                    v2: u8,
+                },
+            }
+        );
+
+        let t1 = Test::Variant1 {
+            v1: 0,
+            v2: 1,
+            c1: 2,
+        };
+        assert_eq!(format!("{:?}", t1), "Variant1 { v1: 0, v2: 1, c1: 2 }");
+    }
+
+    #[test]
     fn enum_no_common_fields() {
         tagged_enum_or_default!(
             pub enum Test {
