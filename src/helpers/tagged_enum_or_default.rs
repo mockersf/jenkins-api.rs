@@ -415,4 +415,29 @@ mod tests {
         let variant_ok = variant.unwrap();
         assert_eq!(variant_ok.variant_name(), "Variant1");
     }
+
+    #[test]
+    fn can_fail_deserialisation_with_helpful_message() {
+        tagged_enum_or_default!(
+            pub enum Test {
+                common_fields {
+                    /// my first common field
+                    c1: u8,
+                };
+                Variant1 (_class = "variant1") {
+                    v1: u8,
+                },
+            }
+        );
+
+        let variant =
+            ::serde_json::from_str::<Test>(r#"{"_class": "variant1", "c1": 0, "v1": "test"}"#);
+        println!("{:?}", variant);
+        assert!(variant.is_err());
+        let err = variant.unwrap_err();
+        assert_eq!(
+            format!("{:?}", err),
+            r#"Error("v1.invalid type: string \"test\", expected u8", line: 0, column: 0)"#
+        );
+    }
 }
