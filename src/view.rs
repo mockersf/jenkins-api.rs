@@ -272,3 +272,22 @@ impl Jenkins {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    static JENKINS_URL: &'static str = "http://none:8080";
+
+    #[test]
+    fn get_unknown_view() {
+        let _jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+
+        let view = ::serde_json::from_str::<View>(r#"{}"#);
+        assert!(view.is_ok());
+        let view_ok = view.unwrap();
+
+        assert!(view_ok.name().is_err());
+        assert!(view_ok.jobs().is_err());
+    }
+}
