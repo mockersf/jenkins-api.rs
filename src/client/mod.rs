@@ -140,3 +140,28 @@ impl Jenkins {
         Ok(Self::error_for_status(response)?)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    extern crate mockito;
+
+    static JENKINS_URL: &'static str = mockito::SERVER_URL;
+
+    #[test]
+    fn can_post_with_body() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL)
+            .disable_csrf()
+            .build()
+            .unwrap();
+
+        let _mock = mockito::mock("POST", "/mypath?").with_body("ok").create();
+
+        let response =
+            jenkins_client.post_with_body(&super::Path::Raw { path: "/mypath" }, "body", &[]);
+        println!("{:?}", response);
+
+        assert!(response.is_ok());
+        assert_eq!(response.unwrap().text().unwrap(), "ok");
+    }
+
+}
