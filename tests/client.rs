@@ -172,7 +172,7 @@ fn can_disable_job_and_reenable() {
 }
 
 #[test]
-fn can_add_and_remove_job_from_view() {
+fn can_add_and_remove_job_from_view_through_view() {
     setup();
     let jenkins = JenkinsBuilder::new(JENKINS_URL)
         .with_user("user", Some("password"))
@@ -182,7 +182,15 @@ fn can_add_and_remove_job_from_view() {
     let view = jenkins.get_view("test view");
     assert!(view.is_ok());
     let view_ok = view.unwrap();
-    assert_eq!(view_ok.jobs().unwrap().len(), 0);
+    assert!(
+        view_ok
+            .jobs()
+            .unwrap()
+            .iter()
+            .map(|job| &job.name)
+            .find(|job_name| *job_name == "normal job")
+            .is_none()
+    );
 
     let job = jenkins.get_job("normal job");
     assert!(job.is_ok());
@@ -193,14 +201,90 @@ fn can_add_and_remove_job_from_view() {
 
     let view_with = jenkins.get_view("test view");
     assert!(view_with.is_ok());
-    assert_eq!(view_with.unwrap().jobs().unwrap().len(), 1);
+    assert!(
+        view_with
+            .unwrap()
+            .jobs()
+            .unwrap()
+            .iter()
+            .map(|job| &job.name)
+            .find(|job_name| *job_name == "normal job")
+            .is_some()
+    );
+
+    let removing = view_ok.remove_job(&jenkins, &job_ok.name().unwrap());
+    assert!(removing.is_ok());
+
+    let view_without = jenkins.get_view("test view");
+    assert!(view_without.is_ok());
+    assert!(
+        view_without
+            .unwrap()
+            .jobs()
+            .unwrap()
+            .iter()
+            .map(|job| &job.name)
+            .find(|job_name| *job_name == "normal job")
+            .is_none()
+    );
+}
+
+#[test]
+fn can_add_and_remove_job_from_view_through_job() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+
+    let view = jenkins.get_view("test view");
+    assert!(view.is_ok());
+    let view_ok = view.unwrap();
+    assert!(
+        view_ok
+            .jobs()
+            .unwrap()
+            .iter()
+            .map(|job| &job.name)
+            .find(|job_name| *job_name == "pipeline job")
+            .is_none()
+    );
+
+    let job = jenkins.get_job("pipeline job");
+    assert!(job.is_ok());
+    let job_ok = job.unwrap();
+
+    let adding = job_ok.add_to_view(&jenkins, &view_ok.name().unwrap());
+    assert!(adding.is_ok());
+
+    let view_with = jenkins.get_view("test view");
+    assert!(view_with.is_ok());
+    assert!(
+        view_with
+            .unwrap()
+            .jobs()
+            .unwrap()
+            .iter()
+            .map(|job| &job.name)
+            .find(|job_name| *job_name == "pipeline job")
+            .is_some()
+    );
 
     let removing = job_ok.remove_from_view(&jenkins, &view_ok.name().unwrap());
     assert!(removing.is_ok());
 
     let view_without = jenkins.get_view("test view");
     assert!(view_without.is_ok());
-    assert_eq!(view_without.unwrap().jobs().unwrap().len(), 0);
+    assert!(
+        view_without
+            .unwrap()
+            .jobs()
+            .unwrap()
+            .iter()
+            .map(|job| &job.name)
+            .find(|job_name| *job_name == "pipeline job")
+            .is_none()
+    );
 }
 
 #[test]
