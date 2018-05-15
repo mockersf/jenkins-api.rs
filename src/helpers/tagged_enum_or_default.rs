@@ -296,10 +296,7 @@ mod tests {
             }
         );
 
-        Test::Variant1 {
-            v1: 0,
-            v2: 1,
-        };
+        Test::Variant1 { v1: 0, v2: 1 };
     }
 
     #[test]
@@ -314,10 +311,7 @@ mod tests {
             }
         );
 
-        Test::Variant1 {
-            v1: 0,
-            v2: 1,
-        };
+        Test::Variant1 { v1: 0, v2: 1 };
     }
 
     #[test]
