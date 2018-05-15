@@ -84,9 +84,20 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
                 )?
             }
             (Some(_token), Some(_parameters)) => unreachable!(),
-            (None, None) => self.jenkins_client.post(&Path::BuildJob {
-                name: self.job_name,
-            })?,
+            (None, None) => {
+                let bound_delay = format!("{}", self.delay.unwrap_or(0));
+                let mut qps: Vec<(&str, &str)> = Vec::new();
+                if self.delay.is_some() {
+                    qps.push(("delay", &bound_delay));
+                }
+                self.jenkins_client.post_with_body(
+                    &Path::BuildJob {
+                        name: self.job_name,
+                    },
+                    "",
+                    &qps,
+                )?
+            }
             (None, Some(parameters)) => {
                 let bound_delay = format!("{}", self.delay.unwrap_or(0));
                 let mut qps: Vec<(&str, &str)> = Vec::new();
