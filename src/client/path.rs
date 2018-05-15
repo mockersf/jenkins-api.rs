@@ -2,7 +2,7 @@ use urlencoding;
 
 use super::Jenkins;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub(crate) enum Name<'a> {
     Name(&'a str),
     UrlEncodedName(&'a str),
@@ -17,7 +17,7 @@ impl<'a> ToString for Name<'a> {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub(crate) enum Path<'a> {
     Home,
     View {
@@ -190,5 +190,111 @@ impl Jenkins {
             },
             (_, _) => Path::Raw { path },
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    static JENKINS_URL: &'static str = "http://none:8080";
+
+    #[test]
+    fn can_parse_view_path() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+
+        let path = jenkins_client.url_to_path("/view/myview/");
+        assert_eq!(
+            path,
+            Path::View {
+                name: Name::UrlEncodedName("myview")
+            }
+        );
+    }
+
+    #[test]
+    fn can_parse_job_path() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+
+        let path = jenkins_client.url_to_path("/job/myjob/");
+        assert_eq!(
+            path,
+            Path::Job {
+                name: Name::UrlEncodedName("myjob"),
+                configuration: None
+            }
+        );
+    }
+
+    #[test]
+    fn can_parse_job_with_config_path() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+
+        let path = jenkins_client.url_to_path("/job/myjob/config/");
+        assert_eq!(
+            path,
+            Path::Job {
+                name: Name::UrlEncodedName("myjob"),
+                configuration: Some(Name::UrlEncodedName("config"))
+            }
+        );
+    }
+
+    #[test]
+    fn can_parse_build_path() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+
+        let path = jenkins_client.url_to_path("/job/myjob/1/");
+        assert_eq!(
+            path,
+            Path::Build {
+                job_name: Name::UrlEncodedName("myjob"),
+                number: 1,
+                configuration: None
+            }
+        );
+    }
+
+    #[test]
+    fn can_parse_build_with_config_path() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+
+        let path = jenkins_client.url_to_path("/job/myjob/config/1/");
+        assert_eq!(
+            path,
+            Path::Build {
+                job_name: Name::UrlEncodedName("myjob"),
+                number: 1,
+                configuration: Some(Name::UrlEncodedName("config"))
+            }
+        );
+    }
+
+    #[test]
+    fn can_parse_unknown_path() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+
+        let path = jenkins_client.url_to_path("/unknown/path/");
+        assert_eq!(
+            path,
+            Path::Raw {
+                path: "/unknown/path/"
+            }
+        );
+    }
+
+    #[test]
+    fn can_parse_job_path_with_jenkins_url() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+
+        let path_url = format!("{}/job/myjob/", JENKINS_URL);
+        let path = jenkins_client.url_to_path(&path_url);
+        assert_eq!(
+            path,
+            Path::Job {
+                name: Name::UrlEncodedName("myjob"),
+                configuration: None
+            }
+        );
     }
 }
