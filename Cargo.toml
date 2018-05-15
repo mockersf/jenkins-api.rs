@@ -36,3 +36,4 @@ skeptic = "0.13"
 [dev-dependencies]
 skeptic = "0.13"
 env_logger = "0.5"
+mockito = "0.10.0"
