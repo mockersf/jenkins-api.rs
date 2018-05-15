@@ -18,7 +18,7 @@ pub mod error {
     pub use super::errors::ExpectedType;
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 struct User {
     username: String,
     password: Option<String>,

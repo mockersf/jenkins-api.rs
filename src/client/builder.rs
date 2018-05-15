@@ -74,3 +74,36 @@ impl JenkinsBuilder {
         self
     }
 }
+
+#[cfg(test)]
+mod tests {
+    static JENKINS_URL: &'static str = "http://none:8080";
+
+    #[test]
+    fn create_builder() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL);
+
+        assert_eq!(jenkins_client.url, JENKINS_URL);
+        assert_eq!(jenkins_client.user, None);
+        assert_eq!(jenkins_client.csrf_enabled, true);
+    }
+
+    #[test]
+    fn create_builder_with_trailing_slash() {
+        let jenkins_client = ::JenkinsBuilder::new(&format!("{}/", JENKINS_URL));
+
+        assert_eq!(jenkins_client.url, JENKINS_URL);
+        assert_eq!(jenkins_client.user, None);
+        assert_eq!(jenkins_client.csrf_enabled, true);
+    }
+
+    #[test]
+    fn disable_csrf() {
+        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).disable_csrf();
+
+        assert_eq!(jenkins_client.url, JENKINS_URL);
+        assert_eq!(jenkins_client.user, None);
+        assert_eq!(jenkins_client.csrf_enabled, false);
+    }
+
+}
