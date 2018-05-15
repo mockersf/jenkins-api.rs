@@ -23,6 +23,14 @@ pub struct Revision {
     /// Branch information
     pub branch: Vec<Branch>,
 }
+impl Default for Revision {
+    fn default() -> Self {
+        Revision {
+            sha1: "".to_string(),
+            branch: vec![],
+        }
+    }
+}
 
 tagged_enum_or_default!(
     /// Information about a build related to a branch
@@ -47,4 +55,12 @@ pub struct BuildsByBranch {
     /// HashMap of builds by branch name
     #[serde(flatten)]
     pub branches: HashMap<String, BranchBuild>,
+}
+
+impl Default for BuildsByBranch {
+    fn default() -> Self {
+        BuildsByBranch {
+            branches: HashMap::new(),
+        }
+    }
 }

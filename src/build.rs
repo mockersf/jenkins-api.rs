@@ -45,6 +45,11 @@ pub enum BuildStatus {
     /// Aborted build
     Aborted,
 }
+impl Default for BuildStatus {
+    fn default() -> Self {
+        BuildStatus::NotBuilt
+    }
+}
 
 tagged_enum_or_default!(
     /// A `Build` of a `Job`
@@ -278,6 +283,12 @@ pub mod changeset {
             },
         }
     );
+
+    impl Default for ChangeSetList {
+        fn default() -> Self {
+            ChangeSetList::EmptyChangeSet {}
+        }
+    }
 
     tagged_enum_or_default!(
         /// Changes found

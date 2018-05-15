@@ -97,9 +97,13 @@ macro_rules! tagged_enum_or_default {
                                     match ::helpers::to_snake_case(&key).as_ref() {
                                         $(stringify!($field) => {
                                             $field = Some(
-                                                ::serde::de::MapAccess::next_value::<$type>(
+                                                ::serde::de::MapAccess::next_value::<Option<$type>>(
                                                     &mut map,
-                                                ).map_err(|err| ::serde::de::Error::custom(
+                                                ).map(|v| if let Some(v) = v {
+                                                    v
+                                                } else {
+                                                    <$type as Default>::default()
+                                                }).map_err(|err| ::serde::de::Error::custom(
                                                     format!("{}.{}", stringify!($field), err)
                                                 ))?
                                             );

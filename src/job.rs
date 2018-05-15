@@ -42,6 +42,11 @@ pub enum BallColor {
     #[serde(rename = "notbuilt_anime")]
     NotBuiltAnime,
 }
+impl Default for BallColor {
+    fn default() -> Self {
+        BallColor::NotBuilt
+    }
+}
 
 /// Short Job that is used in lists and links from other structs
 #[derive(Debug, Deserialize, Clone)]
@@ -411,3 +416,9 @@ tagged_enum_or_default!(
         GitSCM (_class = "hudson.plugins.git.GitSCM") {},
     }
 );
+
+impl Default for SCM {
+    fn default() -> Self {
+        SCM::NullSCM {}
+    }
+}

@@ -7,3 +7,11 @@ pub struct ShortUser {
     /// Absolute URL to the user profile
     pub absolute_url: String,
 }
+impl Default for ShortUser {
+    fn default() -> Self {
+        ShortUser {
+            full_name: "unknown".to_string(),
+            absolute_url: "".to_string(),
+        }
+    }
+}
