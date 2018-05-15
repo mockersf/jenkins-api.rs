@@ -391,4 +391,34 @@ mod tests {
             c2: 3,
         };
     }
+
+    #[test]
+    fn enum_can_get_variant_name() {
+        tagged_enum_or_default!(
+            pub enum Test {
+                common_fields {
+                    /// my first common field
+                    c1: u8,
+                };
+                Variant1 (_class = "variant1") {
+                    v1: u8,
+                },
+            }
+        );
+
+        let unknown = ::serde_json::from_str::<Test>(r#"{}"#);
+        assert!(unknown.is_ok());
+        let unknown_ok = unknown.unwrap();
+        assert_eq!(unknown_ok.variant_name(), "Unknown");
+
+        let unknown_class = ::serde_json::from_str::<Test>(r#"{"_class": "test"}"#);
+        assert!(unknown_class.is_ok());
+        let unknown_class_ok = unknown_class.unwrap();
+        assert_eq!(unknown_class_ok.variant_name(), "Unknown(test)");
+
+        let variant = ::serde_json::from_str::<Test>(r#"{"_class": "variant1", "c1": 0, "v1": 1}"#);
+        assert!(variant.is_ok());
+        let variant_ok = variant.unwrap();
+        assert_eq!(variant_ok.variant_name(), "Variant1");
+    }
 }
