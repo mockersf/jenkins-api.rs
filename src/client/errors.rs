@@ -61,6 +61,8 @@ pub enum ExpectedType {
     View,
     /// a `ShortView`
     ShortView,
+    /// a `MavenArtifactRecord`
+    MavenArtifactRecord,
 }
 
 impl fmt::Display for ExpectedType {
@@ -71,6 +73,7 @@ impl fmt::Display for ExpectedType {
             ExpectedType::QueueItem => write!(f, "QueueItem"),
             ExpectedType::View => write!(f, "View"),
             ExpectedType::ShortView => write!(f, "ShortView"),
+            ExpectedType::MavenArtifactRecord => write!(f, "MavenArtifactRecord"),
         }
     }
 }

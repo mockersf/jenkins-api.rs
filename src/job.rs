@@ -159,6 +159,13 @@ tagged_enum_or_default!(
             /// List of modules
             modules: Vec<ShortJob>,
         },
+        /// A maven module
+        MavenModule (_class = "hudson.maven.MavenModule") {
+            /// Is concurrent build enabled for the job?
+            concurrent_build: bool,
+            /// SCM configured for the job
+            scm: SCM,
+        }
     }
 );
 
@@ -172,6 +179,7 @@ macro_rules! job_common_fields_dispatch {
                 &Job::MatrixConfiguration { ref $field, .. } => Ok($field),
                 &Job::ExternalJob { ref $field, .. } => Ok($field),
                 &Job::MavenModuleSet { ref $field, .. } => Ok($field),
+                &Job::MavenModule { ref $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -190,6 +198,7 @@ macro_rules! job_common_fields_dispatch {
                 &Job::MatrixConfiguration { $field, .. } => Ok($field),
                 &Job::ExternalJob { $field, .. } => Ok($field),
                 &Job::MavenModuleSet { $field, .. } => Ok($field),
+                &Job::MavenModule { $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -208,6 +217,7 @@ macro_rules! job_common_fields_dispatch {
                 &Job::MatrixConfiguration { ref $field, .. } => Ok($field),
                 &Job::ExternalJob { ref $field, .. } => Ok($field),
                 &Job::MavenModuleSet { ref $field, .. } => Ok($field),
+                &Job::MavenModule { ref $field, .. } => Ok($field),
                 x @ &Job::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Job,
                     action: client::error::Action::GetField(stringify!($field)),

@@ -7,6 +7,7 @@ pub use self::parameters::Parameter;
 mod causes;
 pub use self::causes::Cause;
 pub mod git;
+pub mod maven;
 
 tagged_enum_or_default!(
     /// An `Action` of a `Build`
@@ -47,5 +48,35 @@ tagged_enum_or_default!(
         /// An action from pipelines
         FlowGraphAction (_class = "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction" ) {
         },
+        /// An action with maven artifacts
+        MavenArtifactRecord (_class = "hudson.maven.reporters.MavenArtifactRecord" ) {
+            /// URL to the artifacts
+            url: String,
+        },
+        /// An action with maven artifacts
+        MavenAggregatedArtifactRecord (_class = "hudson.maven.reporters.MavenAggregatedArtifactRecord" ) {
+        },
+        /// An action with a surefire test report
+        SurefireReport (_class = "hudson.maven.reporters.SurefireReport" ) {
+            /// Number of tests failed
+            fail_count: u32,
+            /// Number of tests skipped
+            skip_count: u32,
+            /// Number of tests
+            total_count: u32,
+            /// URL to the report
+            url_name: String,
+        },
+        /// An action with a surefire test report aggregated from other reports
+        SurefireAggregatedReport (_class = "hudson.maven.reporters.SurefireAggregatedReport" ) {
+            /// Number of tests failed
+            fail_count: u32,
+            /// Number of tests skipped
+            skip_count: u32,
+            /// Number of tests
+            total_count: u32,
+            /// URL to the report
+            url_name: String,
+        }
     }
 );

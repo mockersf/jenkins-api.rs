@@ -78,7 +78,7 @@ tagged_enum_or_default!(
             /// Build number in string format
             id: String,
             /// ID while in the build queue
-            queue_id: u32,
+            queue_id: i32,
             /// Build actions
             actions: Vec<Action>,
             /// Artifacts saved by archived by this build
@@ -110,6 +110,24 @@ tagged_enum_or_default!(
             /// Change set for this build
             change_set: changeset::ChangeSetList,
         },
+        /// A `Build` of a MavenModuleSet
+        MavenModuleSetBuild (_class = "hudson.maven.MavenModuleSetBuild") {
+            /// Change set for this build
+            change_set: changeset::ChangeSetList,
+            /// Version of maven
+            maven_version_used: String,
+            /// Which slave was it build on
+            built_on: String,
+        },
+        /// A `Build` of a MavenModule
+        MavenBuild (_class = "hudson.maven.MavenBuild") {
+            /// Change set for this build
+            change_set: changeset::ChangeSetList,
+            /// Which slave was it build on
+            built_on: String,
+            /// Artifacts from maven
+            maven_artifacts: ::action::maven::ShortMavenArtifactRecord,
+        },
     }
 );
 
@@ -121,6 +139,8 @@ macro_rules! build_common_fields_dispatch {
                 &Build::WorkflowRun { ref $field, .. } => Ok($field),
                 &Build::MatrixBuild { ref $field, .. } => Ok($field),
                 &Build::MatrixRun { ref $field, .. } => Ok($field),
+                &Build::MavenModuleSetBuild { ref $field, .. } => Ok($field),
+                &Build::MavenBuild { ref $field, .. } => Ok($field),
                 x @ &Build::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Build,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -137,6 +157,8 @@ macro_rules! build_common_fields_dispatch {
                 &Build::WorkflowRun { $field, .. } => Ok($field),
                 &Build::MatrixBuild { $field, .. } => Ok($field),
                 &Build::MatrixRun { $field, .. } => Ok($field),
+                &Build::MavenModuleSetBuild { $field, .. } => Ok($field),
+                &Build::MavenBuild { $field, .. } => Ok($field),
                 x @ &Build::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Build,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -153,6 +175,8 @@ macro_rules! build_common_fields_dispatch {
                 &Build::WorkflowRun { ref $field, .. } => Ok($field),
                 &Build::MatrixBuild { ref $field, .. } => Ok($field),
                 &Build::MatrixRun { ref $field, .. } => Ok($field),
+                &Build::MavenModuleSetBuild { ref $field, .. } => Ok($field),
+                &Build::MavenBuild { ref $field, .. } => Ok($field),
                 x @ &Build::Unknown { .. } => Err(client::Error::InvalidObjectType {
                     object_type: client::error::ExpectedType::Build,
                     action: client::error::Action::GetField(stringify!($field)),
@@ -278,6 +302,13 @@ pub mod changeset {
             RepoChangeLogSet (_class = "hudson.plugins.repo.RepoChangeLogSet") {
                 /// Origin of the changes
                 kind: String,
+                /// Changes in this list
+                items: Vec<ChangeSet>,
+            },
+            /// Changes filter by maven module
+            FilteredChangeLogSet (_class = "hudson.maven.FilteredChangeLogSet") {
+                /// Origin of the changes
+                kind: Option<String>,
                 /// Changes in this list
                 items: Vec<ChangeSet>,
             },

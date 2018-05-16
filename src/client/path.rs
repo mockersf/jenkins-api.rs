@@ -64,6 +64,11 @@ pub(crate) enum Path<'a> {
     QueueItem {
         id: u32,
     },
+    MavenArtifactRecord {
+        job_name: Name<'a>,
+        number: u32,
+        configuration: Option<Name<'a>>,
+    },
     Raw {
         path: &'a str,
     },
@@ -138,6 +143,21 @@ impl<'a> ToString for Path<'a> {
             ),
             Path::Queue => "/queue".to_string(),
             Path::QueueItem { ref id } => format!("/queue/item/{}", id),
+            Path::MavenArtifactRecord {
+                ref job_name,
+                ref number,
+                configuration: None,
+            } => format!("/job/{}/{}/mavenArtifacts", job_name.to_string(), number),
+            Path::MavenArtifactRecord {
+                ref job_name,
+                ref number,
+                configuration: Some(ref configuration),
+            } => format!(
+                "/job/{}/{}/{}/mavenArtifacts",
+                job_name.to_string(),
+                configuration.to_string(),
+                number
+            ),
             Path::Raw { path } => path.to_string(),
             Path::CrumbIssuer => "/crumbIssuer".to_string(),
         }
@@ -180,9 +200,26 @@ impl Jenkins {
                     }
                 }
             }
-            ("/job", 5) => Path::Build {
+            ("/job", 5) => {
+                if &path[slashes[3]..slashes[4]] == "mavenArtifacts" {
+                    Path::MavenArtifactRecord {
+                        job_name: Name::UrlEncodedName(&path[5..slashes[2]]),
+                        number: path[(slashes[3] + 1)..(path.len() - 1)].parse().unwrap(),
+                        configuration: None,
+                    }
+                } else {
+                    Path::Build {
+                        job_name: Name::UrlEncodedName(&path[5..slashes[2]]),
+                        number: path[(slashes[3] + 1)..(path.len() - 1)].parse().unwrap(),
+                        configuration: Some(Name::UrlEncodedName(
+                            &path[(slashes[2] + 1)..slashes[3]],
+                        )),
+                    }
+                }
+            }
+            ("/job", 6) => Path::MavenArtifactRecord {
                 job_name: Name::UrlEncodedName(&path[5..slashes[2]]),
-                number: path[(slashes[3] + 1)..(path.len() - 1)].parse().unwrap(),
+                number: path[(slashes[3] + 1)..slashes[4]].parse().unwrap(),
                 configuration: Some(Name::UrlEncodedName(&path[(slashes[2] + 1)..slashes[3]])),
             },
             ("/queue", 4) => Path::QueueItem {
