@@ -418,9 +418,41 @@ fn can_get_build_with_git() {
         .with_user("user", Some("password"))
         .build()
         .unwrap();
-    
+
     let job = jenkins.get_job("git triggered");
     assert!(job.is_ok());
     let build = jenkins.get_build("git triggered", 2);
     assert!(build.is_ok());
+}
+
+#[test]
+fn can_get_matrix_job() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+
+    let job = jenkins.get_job("matrix job");
+    assert!(job.is_ok());
+
+    if let Ok(jenkins_api::Job::MatrixProject {
+        active_configurations,
+        ..
+    }) = job
+    {
+        let config = active_configurations[0].get_full_job(&jenkins);
+        assert!(config.is_ok());
+    } else {
+        assert!(false);
+    }
+
+    let build = jenkins.get_build("matrix job", 1);
+    assert!(build.is_ok());
+
+    if let Ok(jenkins_api::Build::MatrixBuild { runs, .. }) = build {
+        assert!(runs[0].get_full_build(&jenkins).is_ok());
+    } else {
+        assert!(false);
+    }
 }
