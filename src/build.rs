@@ -105,7 +105,7 @@ tagged_enum_or_default!(
             /// Runs of each configuration
             runs: Vec<ShortBuild>,
         },
-        /// A `Build` of a matric configuration
+        /// A `Build` of a matrix configuration
         MatrixRun (_class = "hudson.matrix.MatrixRun") {
             /// Change set for this build
             change_set: changeset::ChangeSetList,
