@@ -86,6 +86,8 @@ tagged_enum_or_default!(
             full_display_name: String,
             /// Full Name of the job
             full_name: String,
+            /// Description of the job
+            description: String,
             /// URL for the job
             url: String,
             /// Ball Color for the status of the job
@@ -121,8 +123,6 @@ tagged_enum_or_default!(
         };
         /// A free style project
         FreeStyleProject (_class = "hudson.model.FreeStyleProject") {
-            /// Description of the job
-            description: String,
             /// Is concurrent build enabled for the job?
             concurrent_build: bool,
             /// SCM configured for the job
@@ -130,15 +130,11 @@ tagged_enum_or_default!(
         },
         /// A pipeline project
         WorkflowJob (_class = "org.jenkinsci.plugins.workflow.job.WorkflowJob") {
-            /// Description of the job
-            description: String,
             /// Is concurrent build enabled for the job?
             concurrent_build: bool,
         },
         /// A matrix project
         MatrixProject (_class = "hudson.matrix.MatrixProject") {
-            /// Description of the job
-            description: String,
             /// Is concurrent build enabled for the job?
             concurrent_build: bool,
             /// SCM configured for the job
@@ -148,8 +144,6 @@ tagged_enum_or_default!(
         },
         /// A matrix configuration
         MatrixConfiguration (_class = "hudson.matrix.MatrixConfiguration") {
-            /// Description of the job
-            description: Option<String>,
             /// Is concurrent build enabled for the job?
             concurrent_build: bool,
             /// SCM configured for the job
@@ -157,13 +151,9 @@ tagged_enum_or_default!(
         },
         /// An external job
         ExternalJob (_class = "hudson.model.ExternalJob") {
-            /// Description of the job
-            description: String,
         },
         /// A maven project
         MavenModuleSet (_class = "hudson.maven.MavenModuleSet") {
-            /// Description of the job
-            description: String,
             /// Is concurrent build enabled for the job?
             concurrent_build: bool,
             /// List of modules
