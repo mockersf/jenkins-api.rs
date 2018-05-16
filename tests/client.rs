@@ -525,3 +525,20 @@ fn can_build_job_with_parameters() {
     assert!(found_param2);
     assert!(found_param3);
 }
+
+#[test]
+fn can_poll_scm() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+
+    let job = jenkins.get_job("git triggered");
+    assert!(job.is_ok());
+
+    let poll = job.unwrap().poll_scm(&jenkins);
+    assert!(poll.is_ok());
+
+    assert!(jenkins.poll_scm_job("git triggered").is_ok());
+}
