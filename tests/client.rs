@@ -410,3 +410,17 @@ fn can_build_job_remotely() {
     let queue_item = triggered_ok.get_full_queue_item(&jenkins);
     assert!(queue_item.is_ok());
 }
+
+#[test]
+fn can_get_build_with_git() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+    
+    let job = jenkins.get_job("git triggered");
+    assert!(job.is_ok());
+    let build = jenkins.get_build("git triggered", 2);
+    assert!(build.is_ok());
+}
