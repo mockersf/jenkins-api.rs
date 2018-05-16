@@ -393,3 +393,23 @@ fn can_build_job_with_delay() {
     assert!(queue_item.is_ok());
     assert!(queue_item.unwrap().why.is_none());
 }
+
+#[test]
+fn can_build_job_remotely() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+
+    let triggered = jenkins
+        .job_builder("remote job")
+        .unwrap()
+        .remotely_with_token_and_cause("remote_token", None)
+        .unwrap()
+        .send();
+    let triggered_ok = triggered.unwrap();
+
+    let queue_item = triggered_ok.get_full_queue_item(&jenkins);
+    assert!(queue_item.is_ok());
+}
