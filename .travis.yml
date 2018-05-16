@@ -1,5 +1,9 @@
 language: rust
 
+cache:
+  directories:
+  - $HOME/.cargo
+
 rust:
   - stable
   - beta
