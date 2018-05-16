@@ -542,3 +542,45 @@ fn can_poll_scm() {
 
     assert!(jenkins.poll_scm_job("git triggered").is_ok());
 }
+
+#[test]
+fn can_get_maven_job() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+
+    let job = jenkins.get_job("maven job");
+    assert!(job.is_ok());
+
+    if let Ok(jenkins_api::Job::MavenModuleSet { modules, .. }) = job {
+        let module = modules[0].get_full_job(&jenkins);
+        if let Ok(jenkins_api::Job::MavenModule { last_build, .. }) = module {
+            let build = last_build.unwrap().get_full_build(&jenkins);
+            assert!(build.is_ok());
+            if let Ok(jenkins_api::Build::MavenBuild {
+                maven_artifacts, ..
+            }) = build
+            {
+                let artifacts = maven_artifacts.get_full_artifact_record(&jenkins);
+                assert!(artifacts.is_ok());
+            } else {
+                assert!(false);
+            }
+        } else {
+            assert!(false);
+        }
+    } else {
+        assert!(false);
+    }
+
+    let build = jenkins.get_build("maven job", 1);
+    assert!(build.is_ok());
+
+    if let Ok(jenkins_api::Build::MavenModuleSetBuild { .. }) = build {
+        assert!(true);
+    } else {
+        assert!(false);
+    }
+}
