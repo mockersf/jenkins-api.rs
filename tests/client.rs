@@ -1,4 +1,6 @@
 extern crate env_logger;
+#[macro_use]
+extern crate serde_derive;
 
 extern crate jenkins_api;
 
@@ -455,4 +457,71 @@ fn can_get_matrix_job() {
     } else {
         assert!(false);
     }
+}
+
+#[test]
+fn can_build_job_with_parameters() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+
+    #[derive(Serialize)]
+    struct Parameters {
+        #[serde(rename = "bool-param")]
+        bool_param: bool,
+        #[serde(rename = "choose between")]
+        choose_between: String,
+        #[serde(rename = "free string param")]
+        free_string_param: String,
+    }
+
+    let params = Parameters {
+        bool_param: true,
+        choose_between: "value2".to_string(),
+        free_string_param: "my string param".to_string(),
+    };
+
+    let triggered = jenkins
+        .job_builder("parameterized job")
+        .unwrap()
+        .with_parameters(&params)
+        .unwrap()
+        .send();
+    assert!(triggered.is_ok());
+
+    let queue_item = triggered.unwrap().get_full_queue_item(&jenkins);
+    assert!(queue_item.is_ok());
+
+    let queue_item_ok = queue_item.unwrap();
+
+    let mut found_param1 = false;
+    let mut found_param2 = false;
+    let mut found_param3 = false;
+
+    for action in queue_item_ok.actions {
+        if let jenkins_api::action::Action::ParametersAction { parameters } = action {
+            for param in parameters {
+                if let jenkins_api::action::Parameter::BooleanParameterValue {
+                    value: true, ..
+                } = param
+                {
+                    found_param1 = true;
+                }
+                if let jenkins_api::action::Parameter::StringParameterValue { value, .. } = param {
+                    if value == params.choose_between {
+                        found_param2 = true;
+                    }
+                    if value == params.free_string_param {
+                        found_param3 = true;
+                    }
+                }
+            }
+        }
+    }
+
+    assert!(found_param1);
+    assert!(found_param2);
+    assert!(found_param3);
 }
