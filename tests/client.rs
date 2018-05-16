@@ -370,7 +370,7 @@ fn can_build_job_with_delay() {
         .unwrap();
 
     // wait for test disabling the job to be done
-    thread::sleep(time::Duration::from_secs(2));
+    thread::sleep(time::Duration::from_secs(5));
 
     let triggered = jenkins
         .job_builder("normal job")
