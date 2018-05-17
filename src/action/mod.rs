@@ -47,14 +47,26 @@ tagged_enum_or_default!(
         },
         /// An action from pipelines
         FlowGraphAction (_class = "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction" ) {
+            /// Nodes of the pipeline
+            nodes: Vec<PipelineNode>,
         },
         /// An action with maven artifacts
         MavenArtifactRecord (_class = "hudson.maven.reporters.MavenArtifactRecord" ) {
             /// URL to the artifacts
             url: String,
+            /// List of the artifacts
+            attached_artifacts: Vec<maven::Artifact>,
+            /// Main artifact
+            main_artifact: maven::Artifact,
+            /// Parent build
+            parent: ::build::ShortBuild,
+            /// POM artifact
+            pom_artifact: maven::Artifact,
         },
         /// An action with maven artifacts
         MavenAggregatedArtifactRecord (_class = "hudson.maven.reporters.MavenAggregatedArtifactRecord" ) {
+            /// List of artifact records
+            module_records: Vec<maven::MavenArtifactRecord>,
         },
         /// An action with a surefire test report
         SurefireReport (_class = "hudson.maven.reporters.SurefireReport" ) {
@@ -77,6 +89,27 @@ tagged_enum_or_default!(
             total_count: u32,
             /// URL to the report
             url_name: String,
-        }
+        },
+        /// An action marking an approval on a pipeline
+        PipelineApproverAction (_class = "org.jenkinsci.plugins.workflow.support.steps.input.ApproverAction" ) {
+            /// User ID
+            user_id: String,
+        },
+    }
+);
+
+tagged_enum_or_default!(
+    /// A node of a pipeline
+    pub enum PipelineNode {
+        /// Beginning of a flow
+        FlowStartNode (_class = "org.jenkinsci.plugins.workflow.graph.FlowStartNode") {},
+        /// Beginning of a step
+        StepStartNode (_class = "org.jenkinsci.plugins.workflow.cps.nodes.StepStartNode") {},
+        /// A step
+        StepAtomNode (_class = "org.jenkinsci.plugins.workflow.cps.nodes.StepAtomNode") {},
+        /// End of a step
+        StepEndNode (_class = "org.jenkinsci.plugins.workflow.cps.nodes.StepEndNode") {},
+        /// End of a flow
+        FlowEndNode (_class = "org.jenkinsci.plugins.workflow.graph.FlowEndNode") {},
     }
 );

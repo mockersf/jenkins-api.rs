@@ -27,6 +27,11 @@ pub struct Artifact {
     /// Version
     pub version: String,
 }
+impl Default for Artifact {
+    fn default() -> Self {
+        unimplemented!()
+    }
+}
 
 /// Short Maven Artifact Record that is returned when getting a maven build
 #[derive(Deserialize, Debug)]

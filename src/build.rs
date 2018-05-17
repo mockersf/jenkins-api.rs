@@ -32,6 +32,14 @@ impl ShortBuild {
         }
     }
 }
+impl Default for ShortBuild {
+    fn default() -> Self {
+        ShortBuild {
+            url: "".to_string(),
+            number: 0,
+        }
+    }
+}
 
 /// Status of a build
 #[derive(Debug, Deserialize, Clone, Copy, PartialEq)]

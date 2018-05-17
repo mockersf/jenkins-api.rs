@@ -452,15 +452,25 @@ tagged_enum_or_default!(
     /// An SCM
     pub enum SCM {
         /// No SCM
-        NullSCM (_class = "hudson.scm.NullSCM") {},
+        NullSCM (_class = "hudson.scm.NullSCM") {
+            /// Browser
+            browser: Option<Browser>,
+        },
         /// Git SCM
-        GitSCM (_class = "hudson.plugins.git.GitSCM") {},
+        GitSCM (_class = "hudson.plugins.git.GitSCM") {
+            /// Browser
+            browser: Option<Browser>,
+            /// Merge options
+            merge_options: MergeOptions,
+        },
     }
 );
 
 impl Default for SCM {
     fn default() -> Self {
-        SCM::NullSCM {}
+        SCM::NullSCM {
+            browser: None,
+        }
     }
 }
 
@@ -475,3 +485,31 @@ tagged_enum_or_default!(
         BuildDiscarderProperty (_class = "jenkins.model.BuildDiscarderProperty") {},
     }
 );
+
+tagged_enum_or_default!(
+    /// A browser
+    pub enum Browser {
+        /// Github web browser
+        GithubWeb (_class = "hudson.plugins.git.browser.GithubWeb") {},
+    }
+);
+
+impl Default for Browser {
+    fn default() -> Self {
+        Browser::Unknown { class: None }
+    }
+}
+
+/// SCM merge options
+#[derive(Default, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct MergeOptions {
+    /// Merge strategy
+    merge_strategy: String,
+    /// Fast forward mode
+    fast_forward_mode: String,
+    /// Merge target
+    merge_target: Option<String>,
+    /// Remote branch
+    remote_branch_name: Option<String>,
+}

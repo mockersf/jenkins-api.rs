@@ -60,7 +60,7 @@ mod tests {
     fn get_invalid_crumb() {
         let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
 
-        let _mock = mockito::mock("GET", "/crumbIssuer/api/json")
+        let _mock = mockito::mock("GET", "/crumbIssuer/api/json?depth=1")
             .with_body(
                 r#"
 {

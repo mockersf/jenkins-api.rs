@@ -57,8 +57,7 @@ impl Jenkins {
     }
 
     pub(crate) fn get(&self, path: &Path) -> Result<Response, failure::Error> {
-        let query = self.client.get(&self.url_api_json(&path.to_string()));
-        Ok(Self::error_for_status(self.send(query)?)?)
+        self.get_with_params(path, &[("depth", "1")])
     }
 
     pub(crate) fn get_with_params(

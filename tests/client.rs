@@ -41,7 +41,7 @@ fn should_be_forbidden() {
     assert_eq!(
         format!("{:?}", response),
         format!(
-            "Err(Error {{ kind: ClientError(Unauthorized), url: Some(\"{}/api/json\") }})",
+            "Err(Error {{ kind: ClientError(Unauthorized), url: Some(\"{}/api/json?depth=1\") }})",
             JENKINS_URL
         )
     );
@@ -79,7 +79,7 @@ fn should_get_view_not_found() {
     assert_eq!(
         format!("{:?}", response),
         format!(
-            "Err(Error {{ kind: ClientError(NotFound), url: Some(\"{}/view/zut/api/json\") }})",
+            "Err(Error {{ kind: ClientError(NotFound), url: Some(\"{}/view/zut/api/json?depth=1\") }})",
             JENKINS_URL
         )
     );
