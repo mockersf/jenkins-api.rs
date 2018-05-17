@@ -2,6 +2,7 @@ use failure::Error;
 use serde::Deserializer;
 
 use Jenkins;
+use action::Action;
 use build::ShortBuild;
 use client::{self, Name, Path};
 use job_builder::JobBuilder;
@@ -86,6 +87,8 @@ tagged_enum_or_default!(
             full_display_name: String,
             /// Full Name of the job
             full_name: String,
+            /// Display Name of the job
+            display_name_or_null: Option<String>,
             /// Description of the job
             description: String,
             /// URL for the job
@@ -100,6 +103,8 @@ tagged_enum_or_default!(
             next_build_number: u32,
             /// Is this job currently in build queue
             in_queue: bool,
+            /// Actions of a job
+            actions: Vec<Action>,
             /// Link to the last build
             last_build: Option<ShortBuild>,
             /// Link to the first build
@@ -120,6 +125,10 @@ tagged_enum_or_default!(
             builds: Vec<ShortBuild>,
             /// HealthReport of the job
             health_report: Vec<HealthReport>,
+            /// Queue item of this job if it's waiting
+            queue_item: Option<ShortQueueItem>,
+            /// Properties of the job
+            property: Vec<Property>
         };
         /// A free style project
         FreeStyleProject (_class = "hudson.model.FreeStyleProject") {
@@ -127,6 +136,12 @@ tagged_enum_or_default!(
             concurrent_build: bool,
             /// SCM configured for the job
             scm: SCM,
+            /// List of the upstream projects
+            upstream_projects: Vec<ShortJob>,
+            /// List of the downstream projects
+            downstream_projects: Vec<ShortJob>,
+            /// Label expression
+            label_expression: Option<String>
         },
         /// A pipeline project
         WorkflowJob (_class = "org.jenkinsci.plugins.workflow.job.WorkflowJob") {
@@ -141,6 +156,12 @@ tagged_enum_or_default!(
             scm: SCM,
             /// Configurations for the job
             active_configurations: Vec<ShortJob>,
+            /// List of the upstream projects
+            upstream_projects: Vec<ShortJob>,
+            /// List of the downstream projects
+            downstream_projects: Vec<ShortJob>,
+            /// Label expression
+            label_expression: Option<String>
         },
         /// A matrix configuration
         MatrixConfiguration (_class = "hudson.matrix.MatrixConfiguration") {
@@ -148,6 +169,12 @@ tagged_enum_or_default!(
             concurrent_build: bool,
             /// SCM configured for the job
             scm: SCM,
+            /// List of the upstream projects
+            upstream_projects: Vec<ShortJob>,
+            /// List of the downstream projects
+            downstream_projects: Vec<ShortJob>,
+            /// Label expression
+            label_expression: Option<String>
         },
         /// An external job
         ExternalJob (_class = "hudson.model.ExternalJob") {
@@ -156,8 +183,16 @@ tagged_enum_or_default!(
         MavenModuleSet (_class = "hudson.maven.MavenModuleSet") {
             /// Is concurrent build enabled for the job?
             concurrent_build: bool,
+            /// SCM configured for the job
+            scm: SCM,
             /// List of modules
             modules: Vec<ShortJob>,
+            /// List of the upstream projects
+            upstream_projects: Vec<ShortJob>,
+            /// List of the downstream projects
+            downstream_projects: Vec<ShortJob>,
+            /// Label expression
+            label_expression: Option<String>
         },
         /// A maven module
         MavenModule (_class = "hudson.maven.MavenModule") {
@@ -165,6 +200,12 @@ tagged_enum_or_default!(
             concurrent_build: bool,
             /// SCM configured for the job
             scm: SCM,
+            /// List of the upstream projects
+            upstream_projects: Vec<ShortJob>,
+            /// List of the downstream projects
+            downstream_projects: Vec<ShortJob>,
+            /// Label expression
+            label_expression: Option<String>
         }
     }
 );
@@ -422,3 +463,15 @@ impl Default for SCM {
         SCM::NullSCM {}
     }
 }
+
+tagged_enum_or_default!(
+    /// A property of a job
+    pub enum Property {
+        /// Job is a GitHub project
+        GithubProjectProperty (_class = "com.coravy.hudson.plugins.github.GithubProjectProperty") {},
+        /// Job is limited in number of builds
+        RateLimitBranchProperty (_class = "jenkins.branch.RateLimitBranchProperty$JobPropertyImpl") {},
+        /// Old builds of job are discarded
+        BuildDiscarderProperty (_class = "jenkins.model.BuildDiscarderProperty") {},
+    }
+);

@@ -73,6 +73,8 @@ tagged_enum_or_default!(
             display_name: String,
             /// Full display name: job name followed by the build display name
             full_display_name: String,
+            /// Build description
+            description: String,
             /// Is this build currently running
             building: bool,
             /// Build number in string format
@@ -90,6 +92,8 @@ tagged_enum_or_default!(
             built_on: String,
             /// Change set for this build
             change_set: changeset::ChangeSetList,
+            /// List of user ids who made a change since the last non-broken build
+            culprits: Vec<String>,
         },
         /// A `Build` from a WorkflowJob
         WorkflowRun (_class = "org.jenkinsci.plugins.workflow.job.WorkflowRun") {
@@ -104,11 +108,15 @@ tagged_enum_or_default!(
             change_set: changeset::ChangeSetList,
             /// Runs of each configuration
             runs: Vec<ShortBuild>,
+            /// List of user ids who made a change since the last non-broken build
+            culprits: Vec<String>,
         },
         /// A `Build` of a matrix configuration
         MatrixRun (_class = "hudson.matrix.MatrixRun") {
             /// Change set for this build
             change_set: changeset::ChangeSetList,
+            /// List of user ids who made a change since the last non-broken build
+            culprits: Vec<String>,
         },
         /// A `Build` of a MavenModuleSet
         MavenModuleSetBuild (_class = "hudson.maven.MavenModuleSetBuild") {
@@ -118,6 +126,8 @@ tagged_enum_or_default!(
             maven_version_used: String,
             /// Which slave was it build on
             built_on: String,
+            /// List of user ids who made a change since the last non-broken build
+            culprits: Vec<String>,
         },
         /// A `Build` of a MavenModule
         MavenBuild (_class = "hudson.maven.MavenBuild") {
@@ -127,6 +137,8 @@ tagged_enum_or_default!(
             built_on: String,
             /// Artifacts from maven
             maven_artifacts: ::action::maven::ShortMavenArtifactRecord,
+            /// List of user ids who made a change since the last non-broken build
+            culprits: Vec<String>,
         },
     }
 );
@@ -288,36 +300,33 @@ pub mod changeset {
     tagged_enum_or_default!(
         /// List of changes found
         pub enum ChangeSetList {
+            common_fields {
+                /// Origin of the changes
+                kind: Option<String>,
+                /// Changes in this list
+                items: Vec<ChangeSet>,
+            };
             /// No changes recorded
             EmptyChangeSet (_class = "hudson.scm.EmptyChangeLogSet") {
             },
             /// Changes found from git
             GitChangeSetList (_class = "hudson.plugins.git.GitChangeSetList") {
-                /// Origin of the changes
-                kind: String,
-                /// Changes in this list
-                items: Vec<ChangeSet>,
             },
             /// Changes found from a repo
             RepoChangeLogSet (_class = "hudson.plugins.repo.RepoChangeLogSet") {
-                /// Origin of the changes
-                kind: String,
-                /// Changes in this list
-                items: Vec<ChangeSet>,
             },
             /// Changes filter by maven module
             FilteredChangeLogSet (_class = "hudson.maven.FilteredChangeLogSet") {
-                /// Origin of the changes
-                kind: Option<String>,
-                /// Changes in this list
-                items: Vec<ChangeSet>,
             },
         }
     );
 
     impl Default for ChangeSetList {
         fn default() -> Self {
-            ChangeSetList::EmptyChangeSet {}
+            ChangeSetList::EmptyChangeSet {
+                kind: None,
+                items: vec![],
+            }
         }
     }
 
