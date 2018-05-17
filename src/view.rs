@@ -3,7 +3,7 @@ use serde::Deserializer;
 
 use Jenkins;
 use client::{self, Name, Path};
-use job::ShortJob;
+use job::{Property, ShortJob};
 
 /// Describe how Jenkins allocates jobs to agents
 #[derive(Debug, Deserialize, Clone, Copy)]
@@ -151,6 +151,8 @@ tagged_enum_or_default!{
             url: String,
             /// List of jobs in the view
             jobs: Vec<ShortJob>,
+            /// Properties of the view
+            property: Vec<Property>
         },
     }
 }

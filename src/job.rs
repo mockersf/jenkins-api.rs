@@ -104,7 +104,7 @@ tagged_enum_or_default!(
             /// Is this job currently in build queue
             in_queue: bool,
             /// Actions of a job
-            actions: Vec<Action>,
+            actions: Vec<Option<Action>>,
             /// Link to the last build
             last_build: Option<ShortBuild>,
             /// Link to the first build

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use failure::Error;
 use serde::Deserializer;
 
@@ -5,6 +7,7 @@ use Jenkins;
 use action::Action;
 use client::{self, Name, Path};
 use job::Job;
+use user::ShortUser;
 
 /// Short Build that is used in lists and links from other structs
 #[derive(Debug, Deserialize, Clone)]
@@ -93,7 +96,7 @@ tagged_enum_or_default!(
             /// Change set for this build
             change_set: changeset::ChangeSetList,
             /// List of user ids who made a change since the last non-broken build
-            culprits: Vec<String>,
+            culprits: Vec<ShortUser>,
         },
         /// A `Build` from a WorkflowJob
         WorkflowRun (_class = "org.jenkinsci.plugins.workflow.job.WorkflowRun") {
@@ -109,14 +112,14 @@ tagged_enum_or_default!(
             /// Runs of each configuration
             runs: Vec<ShortBuild>,
             /// List of user ids who made a change since the last non-broken build
-            culprits: Vec<String>,
+            culprits: Vec<ShortUser>,
         },
         /// A `Build` of a matrix configuration
         MatrixRun (_class = "hudson.matrix.MatrixRun") {
             /// Change set for this build
             change_set: changeset::ChangeSetList,
             /// List of user ids who made a change since the last non-broken build
-            culprits: Vec<String>,
+            culprits: Vec<ShortUser>,
         },
         /// A `Build` of a MavenModuleSet
         MavenModuleSetBuild (_class = "hudson.maven.MavenModuleSetBuild") {
@@ -126,8 +129,10 @@ tagged_enum_or_default!(
             maven_version_used: String,
             /// Which slave was it build on
             built_on: String,
+            /// Artifacts from maven
+            maven_artifacts: HashMap<String, Vec<::action::maven::ShortMavenArtifactRecord>>,
             /// List of user ids who made a change since the last non-broken build
-            culprits: Vec<String>,
+            culprits: Vec<ShortUser>,
         },
         /// A `Build` of a MavenModule
         MavenBuild (_class = "hudson.maven.MavenBuild") {
@@ -138,7 +143,7 @@ tagged_enum_or_default!(
             /// Artifacts from maven
             maven_artifacts: ::action::maven::ShortMavenArtifactRecord,
             /// List of user ids who made a change since the last non-broken build
-            culprits: Vec<String>,
+            culprits: Vec<ShortUser>,
         },
     }
 );
