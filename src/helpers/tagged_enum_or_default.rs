@@ -102,13 +102,38 @@ macro_rules! tagged_enum_or_default {
                                                 ).map(|v| if let Some(v) = v {
                                                     v
                                                 } else {
+                                                    trace!(
+                                                        "using {}::default() for '{}' in {}::{}",
+                                                        stringify!($type),
+                                                        stringify!($field),
+                                                        stringify!($name),
+                                                        stringify!($variant)
+                                                    );
                                                     <$type as Default>::default()
-                                                }).map_err(|err| ::serde::de::Error::custom(
-                                                    format!("{}.{}", stringify!($field), err)
-                                                ))?
+                                                }).or_else(|err| {
+                                                    error!(
+                                                        "{}::{} {}: {}",
+                                                        stringify!($name),
+                                                        stringify!($variant),
+                                                        stringify!($field),
+                                                        err
+                                                    );
+                                                    #[cfg(feature = "strict-jenkins-json")]
+                                                    return Err(::serde::de::Error::custom(
+                                                        format!("{}.{}", stringify!($field), err)
+                                                    ));
+                                                    #[cfg(not(feature = "strict-jenkins-json"))]
+                                                    Ok(<$type as Default>::default())
+                                                })?
                                             );
                                         },)*
-                                        "this_value_should_never_match_directly" | _ => {
+                                        key @ "this_value_should_never_match_directly" | key @ _ => {
+                                            debug!(
+                                                "found unused key '{}' in {}::{}",
+                                                key,
+                                                stringify!($name),
+                                                stringify!($variant)
+                                            );
                                             let _ = try!(::serde::de::MapAccess::next_value::<
                                                 ::serde::de::IgnoredAny,
                                             >(&mut map));
@@ -420,6 +445,7 @@ mod tests {
         assert_eq!(variant_ok.variant_name(), "Variant1");
     }
 
+    #[cfg(feature = "strict-jenkins-json")]
     #[test]
     fn can_fail_deserialisation_with_helpful_message() {
         tagged_enum_or_default!(
@@ -444,4 +470,26 @@ mod tests {
             r#"Error("v1.invalid type: string \"test\", expected u8", line: 0, column: 0)"#
         );
     }
+
+    #[cfg(not(feature = "strict-jenkins-json"))]
+    #[test]
+    fn can_ignore_deserialization_errors() {
+        tagged_enum_or_default!(
+            pub enum Test {
+                common_fields {
+                    /// my first common field
+                    c1: u8,
+                };
+                Variant1 (_class = "variant1") {
+                    v1: u8,
+                },
+            }
+        );
+
+        let variant =
+            ::serde_json::from_str::<Test>(r#"{"_class": "variant1", "c1": 0, "v1": "test"}"#);
+        println!("{:?}", variant);
+        assert!(variant.is_ok());
+    }
+
 }

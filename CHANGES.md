@@ -5,6 +5,7 @@
 * Get artifacts of a build
 * Support external jobs
 * Support maven projects
+* Feature to toggle between permissive/strict json parsing for Jenkins responses
 
 # 0.3.0 (2018/05/13)
 
