@@ -44,7 +44,7 @@ impl Jenkins {
 
     fn send(&self, mut request_builder: RequestBuilder) -> Result<Response, failure::Error> {
         let query = request_builder.build()?;
-        debug!("sending {} {}", query.method(), query.url());
+        info!("sending {} {}", query.method(), query.url());
         Ok(self.client.execute(query)?)
     }
 
