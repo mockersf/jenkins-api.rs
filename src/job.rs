@@ -468,9 +468,7 @@ tagged_enum_or_default!(
 
 impl Default for SCM {
     fn default() -> Self {
-        SCM::NullSCM {
-            browser: None,
-        }
+        SCM::NullSCM { browser: None }
     }
 }
 
