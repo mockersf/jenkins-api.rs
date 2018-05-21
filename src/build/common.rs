@@ -4,10 +4,10 @@ use serde_json;
 
 use helpers::Class;
 
-use Jenkins;
 use action::CommonAction;
 use client::{self, Path};
 use job::CommonJob;
+use Jenkins;
 
 /// Short Build that is used in lists and links from other structs
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -69,6 +69,15 @@ impl From<u32> for BuildNumber {
         BuildNumber(v)
     }
 }
+macro_rules! safe_into_buildnumber {
+    ($type_from:ty) => {
+        impl From<$type_from> for BuildNumber {
+            fn from(v: $type_from) -> BuildNumber {
+                BuildNumber(u32::from(v))
+            }
+        }
+    };
+}
 macro_rules! into_buildnumber {
     ($type_from:ty) => {
         impl From<$type_from> for BuildNumber {
@@ -78,8 +87,8 @@ macro_rules! into_buildnumber {
         }
     };
 }
-into_buildnumber!(u8);
-into_buildnumber!(u16);
+safe_into_buildnumber!(u8);
+safe_into_buildnumber!(u16);
 into_buildnumber!(u64);
 into_buildnumber!(i8);
 into_buildnumber!(i16);
