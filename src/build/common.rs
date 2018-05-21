@@ -4,10 +4,10 @@ use serde_json;
 
 use helpers::Class;
 
+use Jenkins;
 use action::CommonAction;
 use client::{self, Path};
 use job::CommonJob;
-use Jenkins;
 
 /// Short Build that is used in lists and links from other structs
 #[derive(Debug, Serialize, Deserialize, Clone)]
