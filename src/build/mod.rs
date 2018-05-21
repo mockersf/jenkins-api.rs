@@ -21,11 +21,11 @@ pub use self::maven::{MavenBuild, MavenModuleSetBuild};
 
 impl Jenkins {
     /// Get a build from a `job_name` and `build_number`
-    pub fn get_build<'a>(
-        &self,
-        job_name: impl Into<JobName<'a>>,
-        build_number: impl Into<BuildNumber>,
-    ) -> Result<CommonBuild, Error> {
+    pub fn get_build<'a, J, B>(&self, job_name: J, build_number: B) -> Result<CommonBuild, Error>
+    where
+        J: Into<JobName<'a>>,
+        B: Into<BuildNumber>,
+    {
         Ok(self.get(&Path::Build {
             job_name: Name::Name(job_name.into().0),
             number: build_number.into().0,

@@ -117,11 +117,10 @@ impl View for ListView {
 
 impl ListView {
     /// Add the job `job_name` to this view
-    pub fn add_job<'a>(
-        &self,
-        jenkins_client: &Jenkins,
-        job_name: impl Into<JobName<'a>>,
-    ) -> Result<(), Error> {
+    pub fn add_job<'a, J>(&self, jenkins_client: &Jenkins, job_name: J) -> Result<(), Error>
+    where
+        J: Into<JobName<'a>>,
+    {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::View { name } = path {
             jenkins_client.post(&Path::AddJobToView {
@@ -138,11 +137,10 @@ impl ListView {
     }
 
     /// Remove the job `job_name` from this view
-    pub fn remove_job<'a>(
-        &self,
-        jenkins_client: &Jenkins,
-        job_name: impl Into<JobName<'a>>,
-    ) -> Result<(), Error> {
+    pub fn remove_job<'a, J>(&self, jenkins_client: &Jenkins, job_name: J) -> Result<(), Error>
+    where
+        J: Into<JobName<'a>>,
+    {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::View { name } = path {
             jenkins_client.post(&Path::RemoveJobFromView {
@@ -161,7 +159,10 @@ impl ListView {
 
 impl Jenkins {
     /// Get a `View`
-    pub fn get_view<'a>(&self, view_name: impl Into<ViewName<'a>>) -> Result<CommonView, Error> {
+    pub fn get_view<'a, V>(&self, view_name: V) -> Result<CommonView, Error>
+    where
+        V: Into<ViewName<'a>>,
+    {
         Ok(self.get(&Path::View {
             name: Name::Name(&view_name.into().0),
         })?
@@ -169,11 +170,11 @@ impl Jenkins {
     }
 
     /// Add the job `job_name` to the view `view_name`
-    pub fn add_job<'a, 'b>(
-        &self,
-        view_name: impl Into<ViewName<'a>>,
-        job_name: impl Into<JobName<'b>>,
-    ) -> Result<(), Error> {
+    pub fn add_job_to_view<'a, 'b, V, J>(&self, view_name: V, job_name: J) -> Result<(), Error>
+    where
+        V: Into<ViewName<'a>>,
+        J: Into<JobName<'a>>,
+    {
         self.post(&Path::AddJobToView {
             job_name: Name::Name(&job_name.into().0),
             view_name: Name::Name(&view_name.into().0),
@@ -182,11 +183,11 @@ impl Jenkins {
     }
 
     /// Remove the job `job_name` from the view `view_name`
-    pub fn remove_job<'a, 'b>(
-        &self,
-        view_name: impl Into<ViewName<'a>>,
-        job_name: impl Into<JobName<'b>>,
-    ) -> Result<(), Error> {
+    pub fn remove_job_from_view<'a, 'b, V, J>(&self, view_name: V, job_name: J) -> Result<(), Error>
+    where
+        V: Into<ViewName<'a>>,
+        J: Into<JobName<'a>>,
+    {
         self.post(&Path::AddJobToView {
             job_name: Name::Name(&job_name.into().0),
             view_name: Name::Name(&view_name.into().0),

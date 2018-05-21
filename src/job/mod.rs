@@ -25,7 +25,10 @@ pub use self::external::ExternalJob;
 
 impl Jenkins {
     /// Get a `Job` from it's `job_name`
-    pub fn get_job<'a>(&self, job_name: impl Into<JobName<'a>>) -> Result<CommonJob, Error> {
+    pub fn get_job<'a, J>(&self, job_name: J) -> Result<CommonJob, Error>
+    where
+        J: Into<JobName<'a>>,
+    {
         Ok(self.get(&Path::Job {
             name: Name::Name(job_name.into().0),
             configuration: None,
@@ -34,7 +37,10 @@ impl Jenkins {
     }
 
     /// Build a `Job` from it's `job_name`
-    pub fn build_job<'a>(&self, job_name: impl Into<JobName<'a>>) -> Result<ShortQueueItem, Error> {
+    pub fn build_job<'a, J>(&self, job_name: J) -> Result<ShortQueueItem, Error>
+    where
+        J: Into<JobName<'a>>,
+    {
         JobBuilder::new_from_job_name(job_name.into().0, self)?.send()
     }
 
@@ -47,7 +53,10 @@ impl Jenkins {
     }
 
     /// Poll SCM of a `Job` from it's `job_name`
-    pub fn poll_scm_job<'a>(&self, job_name: impl Into<JobName<'a>>) -> Result<(), Error> {
+    pub fn poll_scm_job<'a, J>(&self, job_name: J) -> Result<(), Error>
+    where
+        J: Into<JobName<'a>>,
+    {
         self.post(&Path::PollSCMJob {
             name: Name::Name(job_name.into().0),
         })?;

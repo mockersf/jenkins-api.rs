@@ -50,10 +50,10 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
         }
     }
 
-    pub(crate) fn new_from_job_name(
-        name: impl Into<JobName<'a>>,
-        jenkins_client: &'b Jenkins,
-    ) -> Result<Self, Error> {
+    pub(crate) fn new_from_job_name<J>(name: J, jenkins_client: &'b Jenkins) -> Result<Self, Error>
+    where
+        J: Into<JobName<'a>>,
+    {
         Ok(JobBuilder {
             job_name: client::Name::Name(name.into().0),
             jenkins_client,

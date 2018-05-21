@@ -164,11 +164,10 @@ pub trait Job {
     }
 
     /// Add this job to the view `view_name`
-    fn add_to_view<'a>(
-        &self,
-        jenkins_client: &Jenkins,
-        view_name: impl Into<ViewName<'a>>,
-    ) -> Result<(), Error> {
+    fn add_to_view<'a, V>(&self, jenkins_client: &Jenkins, view_name: V) -> Result<(), Error>
+    where
+        V: Into<ViewName<'a>>,
+    {
         let path = jenkins_client.url_to_path(&self.url());
         if let Path::Job {
             name,
@@ -189,11 +188,10 @@ pub trait Job {
     }
 
     /// Remove this job from the view `view_name`
-    fn remove_from_view<'a>(
-        &self,
-        jenkins_client: &Jenkins,
-        view_name: impl Into<ViewName<'a>>,
-    ) -> Result<(), Error> {
+    fn remove_from_view<'a, V>(&self, jenkins_client: &Jenkins, view_name: V) -> Result<(), Error>
+    where
+        V: Into<ViewName<'a>>,
+    {
         let path = jenkins_client.url_to_path(&self.url());
         if let Path::Job {
             name,
