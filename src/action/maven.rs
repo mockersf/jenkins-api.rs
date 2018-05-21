@@ -27,11 +27,6 @@ pub struct Artifact {
     /// Version
     pub version: String,
 }
-impl Default for Artifact {
-    fn default() -> Self {
-        unimplemented!()
-    }
-}
 
 /// Short Maven Artifact Record that is returned when getting a maven build
 #[derive(Deserialize, Debug)]
@@ -39,13 +34,6 @@ impl Default for Artifact {
 pub struct ShortMavenArtifactRecord {
     /// URL to the full report
     pub url: String,
-}
-impl Default for ShortMavenArtifactRecord {
-    fn default() -> Self {
-        Self {
-            url: "".to_string(),
-        }
-    }
 }
 impl ShortMavenArtifactRecord {
     /// Get the full report of a `MavenArtifactRecord` matching the `ShortMavenArtifactRecord`

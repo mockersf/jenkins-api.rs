@@ -9,7 +9,7 @@ use serde_urlencoded;
 
 use Jenkins;
 use client::{self, Name, Path};
-use job::Job;
+use job::{Job, JobName};
 use queue::ShortQueueItem;
 
 /// Helper to build a job
@@ -24,8 +24,11 @@ pub struct JobBuilder<'a, 'b, 'c, 'd> {
 }
 
 impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
-    pub(crate) fn new(job: &'a Job, jenkins_client: &'b Jenkins) -> Result<Self, Error> {
-        let path = jenkins_client.url_to_path(&job.url()?);
+    pub(crate) fn new<T>(job: &'a T, jenkins_client: &'b Jenkins) -> Result<Self, Error>
+    where
+        T: Job,
+    {
+        let path = jenkins_client.url_to_path(&job.url());
         if let Path::Job {
             name,
             configuration: None,
@@ -41,18 +44,18 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
             })
         } else {
             Err(client::Error::InvalidUrl {
-                url: job.url()?.to_string(),
+                url: job.url().to_string(),
                 expected: client::error::ExpectedType::Job,
             }.into())
         }
     }
 
     pub(crate) fn new_from_job_name(
-        name: &'a str,
+        name: impl Into<JobName<'a>>,
         jenkins_client: &'b Jenkins,
     ) -> Result<Self, Error> {
         Ok(JobBuilder {
-            job_name: client::Name::Name(name),
+            job_name: client::Name::Name(name.into().0),
             jenkins_client,
             delay: None,
             cause: None,

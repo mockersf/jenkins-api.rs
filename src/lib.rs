@@ -19,11 +19,11 @@
 //!         .build()?;
 //!
 //!     let job = jenkins.get_job("job name")?;
-//!     let build = job.last_build()?.as_ref().unwrap().get_full_build(&jenkins)?;
+//!     let build = job.last_build.as_ref().unwrap().get_full_build(&jenkins)?;
 //!
 //!     println!(
 //!         "last build for job {} at {} was {:?}",
-//!         job.name()?, build.timestamp()?, build.result()?
+//!         job.name, build.timestamp, build.result
 //!     );
 //!     Ok(())
 //! }
@@ -36,7 +36,6 @@ extern crate reqwest;
 #[macro_use]
 extern crate serde_derive;
 
-#[macro_use]
 extern crate serde;
 extern crate serde_json;
 extern crate serde_urlencoded;
@@ -54,17 +53,15 @@ mod client;
 pub use client::{error, Error, Jenkins, JenkinsBuilder};
 
 #[macro_use]
-mod helpers;
+pub mod helpers;
 
-mod view;
-pub use view::*;
-mod job;
-pub use job::*;
 pub mod action;
-mod build;
-pub mod job_builder;
-pub use build::*;
-mod queue;
-pub use queue::*;
-mod user;
-pub use user::*;
+pub mod build;
+pub mod changeset;
+pub mod home;
+pub mod job;
+pub mod property;
+pub mod queue;
+pub mod scm;
+pub mod user;
+pub mod view;

@@ -2,6 +2,8 @@
 
 # 0.4.0
 
+* Change all data structures to extendable trait / struct instead of enum
+
 # 0.3.1 (2018/05/21)
 
 * Get artifacts of a build

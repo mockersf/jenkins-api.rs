@@ -1,13 +1,15 @@
+//! Jenkins build queue
+
 use failure::Error;
 
 use Jenkins;
-use action::Action;
+use action::CommonAction;
 use build::ShortBuild;
 use client::{self, Path};
 use job::ShortJob;
 
 /// Short Queue Item that is returned when building a job
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ShortQueueItem {
     /// URL to this queued item
     pub url: String,
@@ -56,7 +58,7 @@ pub struct QueueItem {
     /// Link to the build once it has started
     pub executable: Option<ShortBuild>,
     /// Build actions
-    pub actions: Vec<Action>,
+    pub actions: Vec<CommonAction>,
 }
 impl QueueItem {
     /// Refresh a `QueueItem`, consuming the existing one and returning a new `QueueItem`

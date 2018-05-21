@@ -37,9 +37,3 @@ skeptic = "0.13"
 skeptic = "0.13"
 env_logger = "0.5"
 mockito = "0.10.0"
-
-[features]
-default = []
-
-# if enabled, will return an error when Jenkins reply has an unexpected type
-strict-jenkins-json = []

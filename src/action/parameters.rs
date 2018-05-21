@@ -1,49 +1,95 @@
 //! Types to parse the parameters of a `Build`
 
-use serde::Deserializer;
+use serde;
+use serde_json;
 
-tagged_enum_or_default!(
-    /// A `Parameter` on a `ParametersAction`
-    pub enum Parameter {
-        /// A boolean parameter
-        BooleanParameterValue (_class = "hudson.model.BooleanParameterValue") {
-            /// The parameter name
-            name: String,
-            /// The parameter value
-            value: bool,
-        },
-        /// A file parameter
-        FileParameterValue (_class = "hudson.model.FileParameterValue") {
-            /// The parameter name
-            name: String,
-        },
-        /// A password parameter
-        PasswordParameterValue (_class = "hudson.model.PasswordParameterValue") {
-            /// The parameter name
-            name: String,
-        },
-        /// A run parameter
-        RunParameterValue (_class = "hudson.model.RunParameterValue") {
-            /// The parameter name
-            name: String,
-            /// Name of the `Job` for this parameter
-            job_name: String,
-            /// Number of the `Build` passed
-            number: String,
-        },
-        /// A string parameter
-        StringParameterValue (_class = "hudson.model.StringParameterValue") {
-            /// The parameter name
-            name: String,
-            /// The parameter value
-            value: String,
-        },
-        /// A text parameter
-        TextParameterValue (_class = "hudson.model.TextParameterValue") {
-            /// The parameter name
-            name: String,
-            /// The parameter value
-            value: String,
-        },
-    }
-);
+use helpers::Class;
+
+/// Trait implemented by specialization of Parameter
+pub trait Parameter {}
+
+/// A node of a pipeline
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct CommonParameter {
+    /// _class provided by Jenkins
+    #[serde(rename = "_class")]
+    pub class: Option<String>,
+    /// The parameter name
+    pub name: String,
+
+    #[serde(flatten)]
+    other_fields: serde_json::Value,
+}
+specialize!(CommonParameter => Parameter);
+impl Parameter for CommonParameter {}
+
+/// A boolean parameter
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct BooleanParameterValue {
+    /// The parameter name
+    pub name: String,
+    /// The parameter value
+    pub value: bool,
+}
+register_class!("hudson.model.BooleanParameterValue" => BooleanParameterValue);
+impl Parameter for BooleanParameterValue {}
+
+/// A file parameter
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct FileParameterValue {
+    /// The parameter name
+    pub name: String,
+}
+register_class!("hudson.model.FileParameterValue" => FileParameterValue);
+impl Parameter for FileParameterValue {}
+
+/// A password parameter
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct PasswordParameterValue {
+    /// The parameter name
+    pub name: String,
+}
+register_class!("hudson.model.PasswordParameterValue" => PasswordParameterValue);
+impl Parameter for PasswordParameterValue {}
+
+/// A run parameter
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct RunParameterValue {
+    /// The parameter name
+    pub name: String,
+    /// Name of the `Job` for this parameter
+    pub job_name: String,
+    /// Number of the `Build` passed
+    pub number: String,
+}
+register_class!("hudson.model.RunParameterValue" => RunParameterValue);
+impl Parameter for RunParameterValue {}
+
+/// A string parameter
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct StringParameterValue {
+    /// The parameter name
+    pub name: String,
+    /// The parameter value
+    pub value: String,
+}
+register_class!("hudson.model.StringParameterValue" => StringParameterValue);
+impl Parameter for StringParameterValue {}
+
+/// A text parameter
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct TextParameterValue {
+    /// The parameter name
+    pub name: String,
+    /// The parameter value
+    pub value: String,
+}
+register_class!("hudson.model.TextParameterValue" => TextParameterValue);
+impl Parameter for TextParameterValue {}

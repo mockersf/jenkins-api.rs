@@ -11,7 +11,8 @@ extern crate failure;
 
 extern crate jenkins_api;
 
-use jenkins_api::{JenkinsBuilder, BuildStatus};
+use jenkins_api::JenkinsBuilder;
+use jenkins_api::build::BuildStatus;
 
 fn main() -> Result<(), failure::Error> {
     let jenkins = JenkinsBuilder::new("http://localhost:8080")
@@ -20,21 +21,21 @@ fn main() -> Result<(), failure::Error> {
 
     let job = jenkins.get_job("job name")?;
 
-    let to_build = if let Some(short_build) = job.last_build()?.clone() {
+    let to_build = if let Some(short_build) = job.last_build.clone() {
         let build = short_build.get_full_build(&jenkins)?;
         println!(
             "last build for job {} at {} was {:?}",
-            job.name()?, build.timestamp()?, build.result()?
+            job.name, build.timestamp, build.result
         );
-        build.result()? != BuildStatus::Success
+        build.result != BuildStatus::Success
     } else {
-        println!("job {} was never built", job.name()?);
+        println!("job {} was never built", job.name);
         true
     };
 
     if to_build {
         println!("triggering a new build");
-        job.build(&jenkins)?;
+        job.as_variant::<jenkins_api::job::FreeStyleProject>()?.build(&jenkins)?;
     }
     Ok(())
 }

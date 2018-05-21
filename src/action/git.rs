@@ -1,8 +1,11 @@
 //! Types related to git
 
-use serde::Deserializer;
-
 use std::collections::HashMap;
+
+use serde;
+use serde_json;
+
+use helpers::Class;
 
 /// Describe a git branch
 #[derive(Deserialize, Debug)]
@@ -23,44 +26,43 @@ pub struct Revision {
     /// Branch information
     pub branch: Vec<Branch>,
 }
-impl Default for Revision {
-    fn default() -> Self {
-        Revision {
-            sha1: "".to_string(),
-            branch: vec![],
-        }
-    }
-}
 
-tagged_enum_or_default!(
-    /// Information about a build related to a branch
-    pub enum BranchBuild {
-        /// Build from a git branch
-        GitBuild (_class = "hudson.plugins.git.util.Build") {
-            /// Revision
-            revision: Revision,
-            /// Build number
-            build_number: u32,
-            /// Build result
-            build_result: Option<::build::BuildStatus>,
-            /// Marked revision
-            marked: Revision,
-        },
-    }
-);
+/// Trait implemented by specialization of BranchBuild
+pub trait BranchBuild {}
+
+/// Information about a build related to a branch
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct CommonBranchBuild {
+    /// _class provided by Jenkins
+    #[serde(rename = "_class")]
+    pub class: Option<String>,
+    #[serde(flatten)]
+    other_fields: serde_json::Value,
+}
+specialize!(CommonBranchBuild => BranchBuild);
+impl BranchBuild for CommonBranchBuild {}
+
+/// Build from a git branch
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct GitBranchBuild {
+    /// Revision
+    pub revision: Revision,
+    /// Build number
+    pub build_number: u32,
+    /// Build result
+    pub build_result: Option<::build::BuildStatus>,
+    /// Marked revision
+    pub marked: Revision,
+}
+register_class!("hudson.plugins.git.util.Build" => GitBranchBuild);
+impl BranchBuild for GitBranchBuild {}
 
 /// HashMap of builds by branch name
 #[derive(Deserialize, Debug)]
 pub struct BuildsByBranch {
     /// HashMap of builds by branch name
     #[serde(flatten)]
-    pub branches: HashMap<String, BranchBuild>,
-}
-
-impl Default for BuildsByBranch {
-    fn default() -> Self {
-        BuildsByBranch {
-            branches: HashMap::new(),
-        }
-    }
+    pub branches: HashMap<String, CommonBranchBuild>,
 }
