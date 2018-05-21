@@ -16,6 +16,8 @@ job_build_with_common_fields_and_impl!(/// A free style project
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct FreeStyleProject {
+    /// Description of the job
+    pub description: String,
     /// Is concurrent build enabled for the job?
     pub concurrent_build: bool,
     /// SCM configured for the job

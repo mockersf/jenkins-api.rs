@@ -242,8 +242,6 @@ macro_rules! job_build_with_common_fields_and_impl {
             pub full_name: String,
             /// Display Name of the job
             pub display_name_or_null: Option<String>,
-            /// Description of the job
-            pub description: String,
             /// URL for the job
             pub url: String,
             /// Ball Color for the status of the job

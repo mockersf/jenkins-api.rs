@@ -16,6 +16,8 @@ job_build_with_common_fields_and_impl!(/// A matrix project
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct MatrixProject {
+    /// Description of the job
+    pub description: String,
     /// Is concurrent build enabled for the job?
     pub concurrent_build: bool,
     /// SCM configured for the job
@@ -68,6 +70,8 @@ job_build_with_common_fields_and_impl!(/// A matrix configuration
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct MatrixConfiguration {
+    /// Description of the job
+    pub description: Option<String>,
     /// Is concurrent build enabled for the job?
     pub concurrent_build: bool,
     /// SCM configured for the job

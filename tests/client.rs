@@ -1,8 +1,13 @@
+#[macro_use]
+extern crate spectral;
+
 extern crate env_logger;
 #[macro_use]
 extern crate serde_derive;
 
 extern crate jenkins_api;
+
+use spectral::prelude::*;
 
 use jenkins_api::JenkinsBuilder;
 use jenkins_api::build::Build;
@@ -445,7 +450,7 @@ fn can_get_build_with_git() {
     let build = jenkins.get_build("git triggered", 2);
     assert!(build.is_ok());
 }
-/*
+
 #[test]
 fn can_get_matrix_job() {
     setup();
@@ -457,27 +462,29 @@ fn can_get_matrix_job() {
     let job = jenkins.get_job("matrix job");
     assert!(job.is_ok());
 
-    if let Ok(jenkins_api::Job::MatrixProject {
-        active_configurations,
-        ..
-    }) = job
-    {
-        let config = active_configurations[0].get_full_job(&jenkins);
-        assert!(config.is_ok());
+    println!("{:?}", job);
+    if let Ok(matrix_project) = job.unwrap().as_variant::<jenkins_api::job::MatrixProject>() {
+        println!("{:?}", matrix_project);
+        let config = matrix_project.active_configurations[0].get_full_job(&jenkins);
+        assert_that!(config)
+            .named("getting configuration of a matrix")
+            .is_ok();
     } else {
         assert!(false);
     }
 
     let build = jenkins.get_build("matrix job", 1);
-    assert!(build.is_ok());
+    assert_that!(build).is_ok();
 
-    if let Ok(jenkins_api::Build::MatrixBuild { runs, .. }) = build {
-        assert!(runs[0].get_full_build(&jenkins).is_ok());
+    if let Ok(matrix_build) = build
+        .unwrap()
+        .as_variant::<jenkins_api::build::MatrixBuild>()
+    {
+        assert!(matrix_build.runs[0].get_full_build(&jenkins).is_ok());
     } else {
         assert!(false);
     }
 }
-*/
 
 #[test]
 fn can_build_job_with_parameters() {
@@ -566,7 +573,7 @@ fn can_poll_scm() {
 
     assert!(jenkins.poll_scm_job("git triggered").is_ok());
 }
-/*
+
 #[test]
 fn can_get_maven_job() {
     setup();
@@ -579,17 +586,24 @@ fn can_get_maven_job() {
     println!("{:?}", job);
     assert!(job.is_ok());
 
-    if let Ok(jenkins_api::Job::MavenModuleSet { modules, .. }) = job {
-        let module = modules[0].get_full_job(&jenkins);
-        if let Ok(jenkins_api::Job::MavenModule { last_build, .. }) = module {
-            let build = last_build.unwrap().get_full_build(&jenkins);
+    if let Ok(maven) = job.unwrap()
+        .as_variant::<jenkins_api::job::MavenModuleSet>()
+    {
+        let module = maven.modules[0].get_full_job(&jenkins);
+        if let Ok(maven_module) = module
+            .unwrap()
+            .as_variant::<jenkins_api::job::MavenModule>()
+        {
+            let build = maven_module.last_build.unwrap().get_full_build(&jenkins);
             println!("{:?}", build);
             assert!(build.is_ok());
-            if let Ok(jenkins_api::Build::MavenBuild {
-                maven_artifacts, ..
-            }) = build
+            if let Ok(maven_build) = build
+                .unwrap()
+                .as_variant::<jenkins_api::build::MavenBuild>()
             {
-                let artifacts = maven_artifacts.get_full_artifact_record(&jenkins);
+                let artifacts = maven_build
+                    .maven_artifacts
+                    .get_full_artifact_record(&jenkins);
                 println!("{:?}", artifacts);
                 assert!(artifacts.is_ok());
             } else {
@@ -606,21 +620,12 @@ fn can_get_maven_job() {
     println!("{:?}", build);
     assert!(build.is_ok());
 
-    if let Ok(jenkins_api::Build::MavenModuleSetBuild { .. }) = build {
+    if let Ok(_) = build
+        .unwrap()
+        .as_variant::<jenkins_api::build::MavenModuleSetBuild>()
+    {
         assert!(true);
     } else {
         assert!(false);
     }
-}
-*/
-
-#[test]
-fn can_get_external_job() {
-    setup();
-    let jenkins = JenkinsBuilder::new(JENKINS_URL)
-        .with_user("user", Some("password"))
-        .build()
-        .unwrap();
-    let job = jenkins.get_job("external job");
-    assert!(job.is_ok());
 }
