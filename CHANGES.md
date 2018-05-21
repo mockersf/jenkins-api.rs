@@ -1,6 +1,6 @@
 # Changes
 
-# 0.3.1
+# 0.3.1 (2018/05/21)
 
 * Get artifacts of a build
 * Support external jobs
