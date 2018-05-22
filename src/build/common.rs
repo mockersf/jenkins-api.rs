@@ -64,18 +64,62 @@ pub struct Artifact {
 }
 
 /// Helper type to act on a build
-#[derive(Debug, Copy, Clone)]
-pub struct BuildNumber(pub u32);
+#[derive(Debug, PartialEq)]
+pub enum BuildNumber {
+    /// Alias to last build
+    LastBuild,
+    /// Alias to last successful build
+    LastSuccessfulBuild,
+    /// Alias to last stable build
+    LastStableBuild,
+    /// Alias to last complete build
+    LastCompletedBuild,
+    /// Alias to last failed build
+    LastFailedBuild,
+    /// Alias to last unsuccessful build
+    LastUnsuccessfulBuild,
+    /// Build number
+    Number(u32),
+    /// Unknown alias
+    UnknwonAlias(String),
+}
+impl ToString for BuildNumber {
+    fn to_string(&self) -> String {
+        match self {
+            BuildNumber::LastBuild => "lastBuild".to_string(),
+            BuildNumber::LastSuccessfulBuild => "lastSuccessfulBuild".to_string(),
+            BuildNumber::LastStableBuild => "lastStableBuild".to_string(),
+            BuildNumber::LastCompletedBuild => "lastCompletedBuild".to_string(),
+            BuildNumber::LastFailedBuild => "lastFailedBuild".to_string(),
+            BuildNumber::LastUnsuccessfulBuild => "lastUnsuccessfulBuild".to_string(),
+            BuildNumber::Number(n) => n.to_string(),
+            BuildNumber::UnknwonAlias(s) => s.to_string(),
+        }
+    }
+}
+impl<'a> From<&'a str> for BuildNumber {
+    fn from(v: &'a str) -> BuildNumber {
+        match v {
+            "lastBuild" => BuildNumber::LastBuild,
+            "lastSuccessfulBuild" => BuildNumber::LastSuccessfulBuild,
+            "lastStableBuild" => BuildNumber::LastStableBuild,
+            "lastCompletedBuild" => BuildNumber::LastCompletedBuild,
+            "lastFailedBuild" => BuildNumber::LastFailedBuild,
+            "lastUnsuccessfulBuild" => BuildNumber::LastUnsuccessfulBuild,
+            _ => BuildNumber::UnknwonAlias(v.to_string()),
+        }
+    }
+}
 impl From<u32> for BuildNumber {
     fn from(v: u32) -> BuildNumber {
-        BuildNumber(v)
+        BuildNumber::Number(v)
     }
 }
 macro_rules! safe_into_buildnumber {
     ($type_from:ty) => {
         impl From<$type_from> for BuildNumber {
             fn from(v: $type_from) -> BuildNumber {
-                BuildNumber(u32::from(v))
+                BuildNumber::Number(u32::from(v))
             }
         }
     };
@@ -84,7 +128,7 @@ macro_rules! into_buildnumber {
     ($type_from:ty) => {
         impl From<$type_from> for BuildNumber {
             fn from(v: $type_from) -> BuildNumber {
-                BuildNumber(v as u32)
+                BuildNumber::Number(v as u32)
             }
         }
     };

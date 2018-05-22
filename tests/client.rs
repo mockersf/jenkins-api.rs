@@ -629,3 +629,16 @@ fn can_get_maven_job() {
         assert!(false);
     }
 }
+
+#[test]
+fn can_get_build_with_alias() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+    assert_that!(jenkins.get_build("normal job", "lastBuild")).is_ok();
+    assert_that!(jenkins.get_build("normal job", "lastSuccessfulBuild")).is_ok();
+    assert_that!(jenkins.get_build("normal job", "lastCompletedBuild")).is_ok();
+    assert_that!(jenkins.get_build("normal job", "zut")).is_err();
+}

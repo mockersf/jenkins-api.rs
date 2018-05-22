@@ -1,6 +1,7 @@
 use urlencoding;
 
 use super::Jenkins;
+use build;
 
 #[derive(Debug, PartialEq)]
 pub(crate) enum Name<'a> {
@@ -52,12 +53,12 @@ pub(crate) enum Path<'a> {
     },
     Build {
         job_name: Name<'a>,
-        number: u32,
+        number: build::BuildNumber,
         configuration: Option<Name<'a>>,
     },
     ConsoleText {
         job_name: Name<'a>,
-        number: u32,
+        number: build::BuildNumber,
         configuration: Option<Name<'a>>,
     },
     Queue,
@@ -66,7 +67,7 @@ pub(crate) enum Path<'a> {
     },
     MavenArtifactRecord {
         job_name: Name<'a>,
-        number: u32,
+        number: build::BuildNumber,
         configuration: Option<Name<'a>>,
     },
     Raw {
@@ -115,7 +116,7 @@ impl<'a> ToString for Path<'a> {
                 ref job_name,
                 ref number,
                 configuration: None,
-            } => format!("/job/{}/{}", job_name.to_string(), number),
+            } => format!("/job/{}/{}", job_name.to_string(), number.to_string()),
             Path::Build {
                 ref job_name,
                 ref number,
@@ -124,13 +125,17 @@ impl<'a> ToString for Path<'a> {
                 "/job/{}/{}/{}",
                 job_name.to_string(),
                 configuration.to_string(),
-                number
+                number.to_string()
             ),
             Path::ConsoleText {
                 ref job_name,
                 ref number,
                 configuration: None,
-            } => format!("/job/{}/{}/consoleText", job_name.to_string(), number),
+            } => format!(
+                "/job/{}/{}/consoleText",
+                job_name.to_string(),
+                number.to_string()
+            ),
             Path::ConsoleText {
                 ref job_name,
                 ref number,
@@ -139,7 +144,7 @@ impl<'a> ToString for Path<'a> {
                 "/job/{}/{}/{}/consoleText",
                 job_name.to_string(),
                 configuration.to_string(),
-                number
+                number.to_string()
             ),
             Path::Queue => "/queue".to_string(),
             Path::QueueItem { ref id } => format!("/queue/item/{}", id),
@@ -147,7 +152,11 @@ impl<'a> ToString for Path<'a> {
                 ref job_name,
                 ref number,
                 configuration: None,
-            } => format!("/job/{}/{}/mavenArtifacts", job_name.to_string(), number),
+            } => format!(
+                "/job/{}/{}/mavenArtifacts",
+                job_name.to_string(),
+                number.to_string()
+            ),
             Path::MavenArtifactRecord {
                 ref job_name,
                 ref number,
@@ -156,7 +165,7 @@ impl<'a> ToString for Path<'a> {
                 "/job/{}/{}/{}/mavenArtifacts",
                 job_name.to_string(),
                 configuration.to_string(),
-                number
+                number.to_string()
             ),
             Path::Raw { path } => path.to_string(),
             Path::CrumbIssuer => "/crumbIssuer".to_string(),
@@ -190,7 +199,7 @@ impl Jenkins {
                 if let Ok(number) = number {
                     Path::Build {
                         job_name: Name::UrlEncodedName(&path[5..slashes[2]]),
-                        number,
+                        number: build::BuildNumber::Number(number),
                         configuration: None,
                     }
                 } else {
@@ -204,13 +213,17 @@ impl Jenkins {
                 if &path[slashes[3]..slashes[4]] == "mavenArtifacts" {
                     Path::MavenArtifactRecord {
                         job_name: Name::UrlEncodedName(&path[5..slashes[2]]),
-                        number: path[(slashes[3] + 1)..(path.len() - 1)].parse().unwrap(),
+                        number: build::BuildNumber::Number(
+                            path[(slashes[3] + 1)..(path.len() - 1)].parse().unwrap(),
+                        ),
                         configuration: None,
                     }
                 } else {
                     Path::Build {
                         job_name: Name::UrlEncodedName(&path[5..slashes[2]]),
-                        number: path[(slashes[3] + 1)..(path.len() - 1)].parse().unwrap(),
+                        number: build::BuildNumber::Number(
+                            path[(slashes[3] + 1)..(path.len() - 1)].parse().unwrap(),
+                        ),
                         configuration: Some(Name::UrlEncodedName(
                             &path[(slashes[2] + 1)..slashes[3]],
                         )),
@@ -219,7 +232,9 @@ impl Jenkins {
             }
             ("/job", 6) => Path::MavenArtifactRecord {
                 job_name: Name::UrlEncodedName(&path[5..slashes[2]]),
-                number: path[(slashes[3] + 1)..slashes[4]].parse().unwrap(),
+                number: build::BuildNumber::Number(
+                    path[(slashes[3] + 1)..slashes[4]].parse().unwrap(),
+                ),
                 configuration: Some(Name::UrlEncodedName(&path[(slashes[2] + 1)..slashes[3]])),
             },
             ("/queue", 4) => Path::QueueItem {
@@ -286,7 +301,7 @@ mod tests {
             path,
             Path::Build {
                 job_name: Name::UrlEncodedName("myjob"),
-                number: 1,
+                number: build::BuildNumber::Number(1),
                 configuration: None
             }
         );
@@ -301,7 +316,7 @@ mod tests {
             path,
             Path::Build {
                 job_name: Name::UrlEncodedName("myjob"),
-                number: 1,
+                number: build::BuildNumber::Number(1),
                 configuration: Some(Name::UrlEncodedName("config"))
             }
         );

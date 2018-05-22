@@ -28,7 +28,7 @@ impl Jenkins {
     {
         Ok(self.get(&Path::Build {
             job_name: Name::Name(job_name.into().0),
-            number: build_number.into().0,
+            number: build_number.into(),
             configuration: None,
         })?
             .json()?)
