@@ -3,6 +3,7 @@
 # 0.4.0
 
 * Change all data structures to extendable trait / struct instead of enum
+* Can change depth in requests when building Jenkins client
 
 # 0.3.1 (2018/05/21)
 

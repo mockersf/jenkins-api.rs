@@ -22,6 +22,7 @@ pub struct JenkinsBuilder {
     url: String,
     user: Option<User>,
     csrf_enabled: bool,
+    depth: u8,
 }
 
 impl JenkinsBuilder {
@@ -37,6 +38,7 @@ impl JenkinsBuilder {
             },
             user: None,
             csrf_enabled: true,
+            depth: 1,
         }
     }
 
@@ -56,6 +58,7 @@ impl JenkinsBuilder {
             client: Client::builder().default_headers(headers).build()?,
             user: self.user,
             csrf_enabled: self.csrf_enabled,
+            depth: self.depth,
         })
     }
 
@@ -71,6 +74,13 @@ impl JenkinsBuilder {
     /// Disable CSRF in crumbs used for post queries
     pub fn disable_csrf(mut self) -> Self {
         self.csrf_enabled = false;
+        self
+    }
+
+    /// Change the depth parameters of requests made to Jenkins. It controls
+    /// the amount of data in responses
+    pub fn with_depth(mut self, depth: u8) -> Self {
+        self.depth = depth;
         self
     }
 }

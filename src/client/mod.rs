@@ -31,6 +31,7 @@ pub struct Jenkins {
     client: Client,
     user: Option<User>,
     csrf_enabled: bool,
+    depth: u8,
 }
 
 impl Jenkins {
@@ -57,7 +58,7 @@ impl Jenkins {
     }
 
     pub(crate) fn get(&self, path: &Path) -> Result<Response, failure::Error> {
-        self.get_with_params(path, &[("depth", "1")])
+        self.get_with_params(path, &[("depth", &self.depth.to_string())])
     }
 
     pub(crate) fn get_with_params(
