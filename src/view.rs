@@ -19,6 +19,8 @@ pub struct ShortView {
     pub name: String,
     /// URL for the view
     pub url: String,
+    #[serde(flatten)]
+    other_fields: Option<serde_json::Value>,
 }
 
 impl ShortView {

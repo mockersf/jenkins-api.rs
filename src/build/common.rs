@@ -17,6 +17,8 @@ pub struct ShortBuild {
     pub url: String,
     /// Build number
     pub number: u32,
+    #[serde(flatten)]
+    pub(crate) other_fields: Option<serde_json::Value>,
 }
 impl ShortBuild {
     /// Get the full details of a `Build` matching the `ShortBuild`

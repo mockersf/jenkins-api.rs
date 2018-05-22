@@ -72,6 +72,8 @@ pub struct ShortJob {
     pub url: String,
     /// Ball Color for the status of the job
     pub color: BallColor,
+    #[serde(flatten)]
+    pub(crate) other_fields: Option<serde_json::Value>,
 }
 impl ShortJob {
     /// Get the full details of a `Job` matching the `ShortJob`

@@ -1,6 +1,7 @@
 //! Jenkins build queue
 
 use failure::Error;
+use serde_json;
 
 use Jenkins;
 use action::CommonAction;
@@ -13,6 +14,8 @@ use job::ShortJob;
 pub struct ShortQueueItem {
     /// URL to this queued item
     pub url: String,
+    #[serde(flatten)]
+    pub(crate) other_fields: Option<serde_json::Value>,
 }
 impl ShortQueueItem {
     /// Get the full details of a `QueueItem` matching the `ShortQueueItem`
