@@ -3,7 +3,7 @@
 use serde_json;
 
 /// Short User that is used in list and links from other structs
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ShortUser {
     /// Full name of the user

@@ -12,7 +12,7 @@ use job::{JobName, ShortJob};
 use property::CommonProperty;
 
 /// Short View that is used in lists and links from other structs
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ShortView {
     /// Name of the view

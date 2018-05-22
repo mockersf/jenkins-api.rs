@@ -4,6 +4,7 @@
 
 * Change all data structures to extendable trait / struct instead of enum
 * Can change depth in requests when building Jenkins client
+* All short items derive Serialize
 
 # 0.3.1 (2018/05/21)
 
