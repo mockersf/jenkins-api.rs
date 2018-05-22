@@ -56,7 +56,7 @@ pub enum BuildStatus {
 #[serde(rename_all = "camelCase")]
 pub struct Artifact {
     /// Displayed path
-    pub display_path: String,
+    pub display_path: Option<String>,
     /// File name
     pub file_name: String,
     /// Path to the file
