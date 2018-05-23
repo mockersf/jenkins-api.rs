@@ -33,7 +33,7 @@ impl ShortQueueItem {
 }
 
 /// A queued item in Jenkins, with information about the `Job` and why / since when it's waiting
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct QueueItem {
     /// Is this item blocked
