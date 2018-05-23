@@ -148,7 +148,7 @@ pub trait Build {
     /// Get timestamp of a build
     fn timestamp(&self) -> u64;
     /// Get result of a build
-    fn result(&self) -> BuildStatus;
+    fn result(&self) -> Option<BuildStatus>;
     /// Get number of a build
     fn number(&self) -> u32;
     /// Get duration of a build
@@ -233,7 +233,7 @@ macro_rules! build_with_common_fields_and_impl {
             /// Are the logs kept?
             pub keep_log: bool,
             /// Build result
-            pub result: BuildStatus,
+            pub result: Option<BuildStatus>,
             /// Display name, usually "#" followed by the build number
             pub display_name: String,
             /// Full display name: job name followed by the build display name
@@ -268,7 +268,7 @@ macro_rules! build_with_common_fields_and_impl {
                 self.timestamp
             }
 
-            fn result(&self) -> BuildStatus {
+            fn result(&self) -> Option<BuildStatus> {
                 self.result
             }
 
