@@ -27,7 +27,11 @@ fn main() -> Result<(), failure::Error> {
             "last build for job {} at {} was {:?}",
             job.name, build.timestamp, build.result
         );
-        build.result != BuildStatus::Success
+        if let Some(result) = build.result {
+            result != BuildStatus::Success
+        } else {
+            true
+        }
     } else {
         println!("job {} was never built", job.name);
         true
