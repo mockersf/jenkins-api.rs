@@ -4,13 +4,13 @@ use serde_json;
 
 use helpers::Class;
 
-use Jenkins;
 use action::CommonAction;
 use build::ShortBuild;
 use client::{self, Name, Path};
 use property::CommonProperty;
 use queue::ShortQueueItem;
 use view::ViewName;
+use Jenkins;
 
 /// Ball Color corresponding to a `BuildStatus`
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]

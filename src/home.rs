@@ -2,10 +2,10 @@
 
 use failure::Error;
 
-use Jenkins;
 use client::Path;
 use job::ShortJob;
 use view::ShortView;
+use Jenkins;
 
 /// Describe how Jenkins allocates jobs to agents
 #[derive(Debug, Deserialize, Clone, Copy)]

@@ -3,11 +3,11 @@
 use failure::Error;
 use serde_json;
 
-use Jenkins;
 use action::CommonAction;
 use build::ShortBuild;
 use client::{self, Path};
 use job::ShortJob;
+use Jenkins;
 
 /// Short Queue Item that is returned when building a job
 #[derive(Debug, Serialize, Deserialize, Clone)]

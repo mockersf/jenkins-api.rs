@@ -2,8 +2,8 @@ use failure;
 use hyper;
 use std::fmt;
 
-use reqwest::RequestBuilder;
 use reqwest::header::{Formatter, Header, Raw};
+use reqwest::RequestBuilder;
 
 use super::{errors, Jenkins, Path};
 

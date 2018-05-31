@@ -6,10 +6,10 @@ use serde_json;
 
 use helpers::Class;
 
-use Jenkins;
 use client::{self, Name, Path};
 use job::{JobName, ShortJob};
 use property::CommonProperty;
+use Jenkins;
 
 /// Short View that is used in lists and links from other structs
 #[derive(Deserialize, Serialize, Debug)]

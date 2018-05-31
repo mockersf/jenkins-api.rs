@@ -2,9 +2,9 @@
 
 use failure::Error;
 
-use Jenkins;
 use client::{Name, Path};
 use queue::ShortQueueItem;
+use Jenkins;
 
 pub mod builder;
 use self::builder::JobBuilder;

@@ -2,8 +2,8 @@
 
 use failure::Error;
 
-use Jenkins;
 use client::{self, Path};
+use Jenkins;
 
 /// Artifact produced by a build
 #[derive(Deserialize, Debug)]

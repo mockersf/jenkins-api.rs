@@ -7,10 +7,10 @@ use reqwest::header::Location;
 use serde;
 use serde_urlencoded;
 
-use Jenkins;
 use client::{self, Name, Path};
 use job::{Job, JobName};
 use queue::ShortQueueItem;
+use Jenkins;
 
 /// Helper to build a job
 #[derive(Debug)]
