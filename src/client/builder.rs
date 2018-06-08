@@ -1,5 +1,8 @@
+use std::str::FromStr;
+
+use failure::Error;
 use reqwest::header::{Authorization, Basic, Headers};
-use reqwest::{Client, Error};
+use reqwest::{self, Client, Url};
 
 use super::{Jenkins, User};
 
@@ -44,6 +47,10 @@ impl JenkinsBuilder {
 
     /// Build the Jenkins client
     pub fn build(self) -> Result<Jenkins, Error> {
+        if Url::from_str(&self.url)?.cannot_be_a_base() {
+            Err(reqwest::UrlError::RelativeUrlWithoutBase)?;
+        };
+
         let mut headers = Headers::new();
 
         if let Some(ref user) = self.user {
