@@ -1,20 +1,12 @@
 #[macro_use]
 extern crate proptest;
-#[macro_use]
-extern crate spectral;
 
 extern crate env_logger;
-#[macro_use]
 extern crate serde_derive;
 
 extern crate jenkins_api;
 
-use spectral::prelude::*;
-
-use jenkins_api::build::Build;
-use jenkins_api::job::Job;
 use jenkins_api::JenkinsBuilder;
-use std::{thread, time};
 
 use std::sync::{Once, ONCE_INIT};
 
