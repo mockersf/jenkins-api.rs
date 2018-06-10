@@ -1,5 +1,8 @@
 # Changes
 
+# 0.4.1
+
+
 # 0.4.0 (2018/05/24)
 
 * Change all data structures to extendable trait / struct instead of enum
