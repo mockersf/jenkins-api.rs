@@ -2,6 +2,7 @@
 
 # 0.4.1
 
+* Can get nodes linked to Jenkins
 
 # 0.4.0 (2018/05/24)
 

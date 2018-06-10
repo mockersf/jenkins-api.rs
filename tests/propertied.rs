@@ -2,7 +2,6 @@
 extern crate proptest;
 
 extern crate env_logger;
-extern crate serde_derive;
 
 extern crate jenkins_api;
 

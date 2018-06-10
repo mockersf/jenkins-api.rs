@@ -70,6 +70,10 @@ pub(crate) enum Path<'a> {
         number: build::BuildNumber,
         configuration: Option<Name<'a>>,
     },
+    Computers,
+    Computer {
+        name: Name<'a>,
+    },
     Raw {
         path: &'a str,
     },
@@ -167,6 +171,8 @@ impl<'a> ToString for Path<'a> {
                 configuration.to_string(),
                 number.to_string()
             ),
+            Path::Computers => "/computer/api/json".to_string(),
+            Path::Computer { ref name } => format!("/computer/{}/api/json", name.to_string()),
             Path::Raw { path } => path.to_string(),
             Path::CrumbIssuer => "/crumbIssuer".to_string(),
         }

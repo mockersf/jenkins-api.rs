@@ -62,6 +62,7 @@ pub mod build;
 pub mod changeset;
 pub mod home;
 pub mod job;
+pub mod nodes;
 pub mod property;
 pub mod queue;
 pub mod scm;
