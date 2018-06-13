@@ -3,6 +3,7 @@
 # 0.4.1
 
 * Can get nodes linked to Jenkins
+* Support build flow jobs
 
 # 0.4.0 (2018/05/24)
 
