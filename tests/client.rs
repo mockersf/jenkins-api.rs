@@ -495,7 +495,6 @@ fn can_get_matrix_job() {
             .named("was able to get as a MatrixRun")
             .is_ok();
     }
-    assert!(false);
 }
 
 #[test]
