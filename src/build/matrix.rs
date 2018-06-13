@@ -22,7 +22,7 @@ register_class!("hudson.matrix.MatrixBuild" => MatrixBuild);
 
 impl MatrixBuild {}
 
-build_with_common_fields_and_impl!(/// A `Build` from a MatrixProject
+build_with_common_fields_and_impl!(/// A `Build` from a MatrixConfiguration
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct MatrixRun {
