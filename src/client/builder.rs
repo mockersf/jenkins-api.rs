@@ -47,9 +47,13 @@ impl JenkinsBuilder {
 
     /// Build the Jenkins client
     pub fn build(self) -> Result<Jenkins, Error> {
-        if Url::from_str(&self.url)?.cannot_be_a_base() {
+        let url = Url::from_str(&self.url)?;
+        if url.cannot_be_a_base() {
             Err(reqwest::UrlError::RelativeUrlWithoutBase)?;
         };
+        if !url.has_host() {
+            Err(reqwest::UrlError::EmptyHost)?;
+        }
 
         let mut headers = Headers::new();
 
