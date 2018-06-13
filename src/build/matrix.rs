@@ -13,6 +13,8 @@ pub struct MatrixBuild {
     pub change_set: changeset::CommonChangeSetList,
     /// Runs of each configuration
     pub runs: Vec<ShortBuild>,
+    /// Which slave was it build on
+    pub built_on: String,
     /// List of user ids who made a change since the last non-broken build
     pub culprits: Vec<ShortUser>,
 });
@@ -26,9 +28,11 @@ build_with_common_fields_and_impl!(/// A `Build` from a MatrixProject
 pub struct MatrixRun {
     /// Change set for this build
     pub change_set: changeset::CommonChangeSetList,
+    /// Which slave was it build on
+    pub built_on: String,
     /// List of user ids who made a change since the last non-broken build
     pub culprits: Vec<ShortUser>,
 });
-register_class!("hudson.matrix.MatriRun" => MatrixRun);
+register_class!("hudson.matrix.MatrixRun" => MatrixRun);
 
 impl MatrixRun {}

@@ -15,7 +15,7 @@ pub use self::freestyle::FreeStyleBuild;
 mod pipeline;
 pub use self::pipeline::WorkflowRun;
 mod matrix;
-pub use self::matrix::MatrixBuild;
+pub use self::matrix::{MatrixBuild, MatrixRun};
 mod maven;
 pub use self::maven::{MavenBuild, MavenModuleSetBuild};
 
