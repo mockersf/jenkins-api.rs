@@ -126,7 +126,9 @@ pub enum Executor {
     /// An `Executor` of a `Computer`
     #[serde(rename_all = "camelCase")]
     Executor {
-        /// `Build` that is currently running
+        /// `Build` that is currently running. Will be None if the executor
+        /// is idle, or if it is building a job the current user doesn't have
+        /// permissions to see
         current_executable: Option<::build::ShortBuild>,
         /// Is it likely stuck
         likely_stuck: bool,

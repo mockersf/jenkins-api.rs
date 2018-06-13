@@ -19,7 +19,8 @@ pub struct ComputerSet {
     /// Number of executors
     pub total_executors: u32,
     /// List of computers
-    pub computer: Vec<computer::CommonComputer>,
+    #[serde(rename = "computer")]
+    pub computers: Vec<computer::CommonComputer>,
 }
 
 impl Jenkins {
