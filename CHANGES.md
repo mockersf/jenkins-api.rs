@@ -1,6 +1,6 @@
 # Changes
 
-# 0.4.1
+# 0.4.1 (2018/06/13)
 
 * Can get nodes linked to Jenkins
 * Support build flow jobs
