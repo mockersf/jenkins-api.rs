@@ -460,30 +460,42 @@ fn can_get_matrix_job() {
         .unwrap();
 
     let job = jenkins.get_job("matrix job");
-    assert!(job.is_ok());
+    assert_that!(job).named("getting a job").is_ok();
 
-    println!("{:?}", job);
-    if let Ok(matrix_project) = job.unwrap().as_variant::<jenkins_api::job::MatrixProject>() {
-        println!("{:?}", matrix_project);
+    let matrix_project = job.unwrap().as_variant::<jenkins_api::job::MatrixProject>();
+    assert_that!(matrix_project)
+        .named("was able to get as a MatrixProject")
+        .is_ok();
+    if let Ok(matrix_project) = matrix_project {
         let config = matrix_project.active_configurations[0].get_full_job(&jenkins);
         assert_that!(config)
             .named("getting configuration of a matrix")
             .is_ok();
-    } else {
-        assert!(false);
+        assert_that!(
+            config
+                .unwrap()
+                .as_variant::<jenkins_api::job::MatrixConfiguration>()
+        ).named("was able to get as a MatrixConfiguration")
+            .is_ok();
     }
 
     let build = jenkins.get_build("matrix job", 1);
     assert_that!(build).is_ok();
 
-    if let Ok(matrix_build) = build
+    let matrix_build = build
         .unwrap()
-        .as_variant::<jenkins_api::build::MatrixBuild>()
-    {
-        assert!(matrix_build.runs[0].get_full_build(&jenkins).is_ok());
-    } else {
-        assert!(false);
+        .as_variant::<jenkins_api::build::MatrixBuild>();
+    assert_that!(matrix_build)
+        .named("was abled to get as a MatrixBuild")
+        .is_ok();
+    if let Ok(matrix_build) = matrix_build {
+        let run = matrix_build.runs[0].get_full_build(&jenkins);
+        assert_that!(run).named("getting build of a run").is_ok();
+        assert_that!(run.unwrap().as_variant::<jenkins_api::build::MatrixRun>())
+            .named("was able to get as a MatrixRun")
+            .is_ok();
     }
+    assert!(false);
 }
 
 #[test]
