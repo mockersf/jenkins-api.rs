@@ -3,6 +3,7 @@
 Cargo.lock
 
 tests/jenkins_test
+tests/Dockerfile
 
 .dockerignore
 TODO.md
