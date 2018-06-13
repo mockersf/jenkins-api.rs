@@ -93,7 +93,7 @@ impl Jenkins {
     }
 
     /// Get a queue item from it's ID
-    pub fn get_queue_item(&self, id: u32) -> Result<QueueItem, Error> {
+    pub fn get_queue_item(&self, id: i32) -> Result<QueueItem, Error> {
         Ok(self.get(&Path::QueueItem { id })?.json()?)
     }
 }

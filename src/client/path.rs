@@ -63,7 +63,7 @@ pub(crate) enum Path<'a> {
     },
     Queue,
     QueueItem {
-        id: u32,
+        id: i32,
     },
     MavenArtifactRecord {
         job_name: Name<'a>,
