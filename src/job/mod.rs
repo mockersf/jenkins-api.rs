@@ -12,6 +12,8 @@ use self::builder::JobBuilder;
 #[macro_use]
 mod common;
 pub use self::common::{BallColor, CommonJob, HealthReport, Job, JobName, ShortJob};
+mod flow;
+pub use self::flow::BuildFlowJob;
 mod freestyle;
 pub use self::freestyle::FreeStyleProject;
 mod pipeline;

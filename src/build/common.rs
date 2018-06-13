@@ -151,8 +151,8 @@ pub trait Build {
     fn result(&self) -> Option<BuildStatus>;
     /// Get number of a build
     fn number(&self) -> u32;
-    /// Get duration of a build
-    fn duration(&self) -> u32;
+    /// Get duration of a build. Needs to be `i64` as Jenkins can sometimes return `-1`.
+    fn duration(&self) -> i64;
 
     /// Get the `Job` from a `Build`
     fn get_job(&self, jenkins_client: &Jenkins) -> Result<CommonJob, Error> {
@@ -225,9 +225,9 @@ macro_rules! build_with_common_fields_and_impl {
             /// Build number for this job
             pub number: u32,
             /// Duration
-            pub duration: u32,
+            pub duration: i64,
             /// Estimated duration
-            pub estimated_duration: u32,
+            pub estimated_duration: i64,
             /// Timestamp of the build start
             pub timestamp: u64,
             /// Are the logs kept?
@@ -276,7 +276,7 @@ macro_rules! build_with_common_fields_and_impl {
                 self.number
             }
 
-            fn duration(&self) -> u32 {
+            fn duration(&self) -> i64 {
                 self.duration
             }
         }

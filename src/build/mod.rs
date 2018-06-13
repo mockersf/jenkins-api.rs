@@ -10,12 +10,14 @@ use job::JobName;
 #[macro_use]
 mod common;
 pub use self::common::{Artifact, Build, BuildNumber, BuildStatus, CommonBuild, ShortBuild};
+mod flow;
+pub use self::flow::BuildFlowRun;
 mod freestyle;
 pub use self::freestyle::FreeStyleBuild;
 mod pipeline;
 pub use self::pipeline::WorkflowRun;
 mod matrix;
-pub use self::matrix::MatrixBuild;
+pub use self::matrix::{MatrixBuild, MatrixRun};
 mod maven;
 pub use self::maven::{MavenBuild, MavenModuleSetBuild};
 
