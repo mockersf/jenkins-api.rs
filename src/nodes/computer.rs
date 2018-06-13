@@ -93,7 +93,7 @@ macro_rules! computer_with_common_fields_and_impl {
 }
 
 computer_with_common_fields_and_impl!(/// A Jenkins `Computer`
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonComputer {
     /// _class provided by Jenkins
@@ -119,7 +119,7 @@ pub struct SlaveComputer {});
 register_class!("hudson.slave.SlaveComputer" => SlaveComputer);
 
 /// An `Executor` of a `Computer`
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 #[serde(untagged)]
 pub enum Executor {

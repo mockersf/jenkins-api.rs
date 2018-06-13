@@ -69,7 +69,7 @@ pub trait View {
 }
 
 /// A Jenkins `View` with a list of `ShortJob`
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonView {
     /// _class provided by Jenkins

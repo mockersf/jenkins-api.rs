@@ -26,7 +26,7 @@ pub struct MergeOptions {
 pub trait SCM {}
 
 /// A SCM
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonSCM {
     /// _class provided by Jenkins

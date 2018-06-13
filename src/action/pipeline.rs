@@ -9,7 +9,7 @@ use helpers::Class;
 pub trait PipelineNode {}
 
 /// A node of a pipeline
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonPipelineNode {
     /// _class provided by Jenkins

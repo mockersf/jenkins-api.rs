@@ -285,7 +285,7 @@ macro_rules! build_with_common_fields_and_impl {
 
 build_with_common_fields_and_impl!(
     /// A Jenkins `Build`
-    #[derive(Serialize, Deserialize, Debug)]
+    #[derive(Serialize, Deserialize, Debug, Clone)]
     #[serde(rename_all = "camelCase")]
     pub struct CommonBuild {
         /// _class provided by Jenkins

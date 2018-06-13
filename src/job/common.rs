@@ -319,7 +319,7 @@ macro_rules! job_build_with_common_fields_and_impl {
 
 job_build_with_common_fields_and_impl!(
     /// A Jenkins `Job`
-    #[derive(Serialize, Deserialize, Debug)]
+    #[derive(Serialize, Deserialize, Debug, Clone)]
     #[serde(rename_all = "camelCase")]
     pub struct CommonJob {
         /// _class provided by Jenkins

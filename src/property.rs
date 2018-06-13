@@ -9,7 +9,7 @@ use helpers::Class;
 pub trait Property {}
 
 /// A Jenkins `Property`
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonProperty {
     /// _class provided by Jenkins

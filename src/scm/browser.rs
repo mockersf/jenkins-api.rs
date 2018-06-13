@@ -7,7 +7,7 @@ use helpers::Class;
 pub trait Browser {}
 
 /// A Browser
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonBrowser {
     /// _class provided by Jenkins

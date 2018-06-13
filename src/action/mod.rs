@@ -15,7 +15,7 @@ pub mod pipeline;
 pub trait Action {}
 
 /// A node of a pipeline
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonAction {
     /// _class provided by Jenkins

@@ -6,7 +6,7 @@ use serde_json;
 use helpers::Class;
 
 /// Monitor data provided by Jenkins about a `Computer`
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 #[serde(untagged)]
 pub enum Data {
@@ -22,7 +22,7 @@ pub enum Data {
 pub trait MonitorData {}
 
 /// A `MonitorData` on a `Computer`
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonMonitorData {
     /// _class provided by Jenkins

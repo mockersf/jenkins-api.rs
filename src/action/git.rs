@@ -31,7 +31,7 @@ pub struct Revision {
 pub trait BranchBuild {}
 
 /// Information about a build related to a branch
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonBranchBuild {
     /// _class provided by Jenkins

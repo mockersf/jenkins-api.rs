@@ -46,7 +46,7 @@ macro_rules! changesetlist_with_common_fields_and_impl {
 }
 
 changesetlist_with_common_fields_and_impl!(/// A Jenkins `ChangeSetList`
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonChangeSetList {
     /// _class provided by Jenkins
@@ -87,7 +87,7 @@ register_class!("hudson.maven.FilteredChangeLogSet" => FilteredChangeLogSet);
 pub trait ChangeSet {}
 
 /// A Change Set
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonChangeSet {
     /// _class provided by Jenkins

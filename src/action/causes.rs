@@ -9,7 +9,7 @@ use helpers::Class;
 pub trait Cause {}
 
 /// A `Cause` on a `CauseAction`
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CommonCause {
     /// _class provided by Jenkins
