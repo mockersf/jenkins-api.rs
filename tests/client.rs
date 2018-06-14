@@ -145,7 +145,7 @@ fn can_get_build_from_job_and_back() {
     let job = jenkins.get_job("normal job");
     assert!(job.is_ok());
     let job_ok = job.unwrap();
-    let last_build = job_ok.last_build();
+    let last_build = &job_ok.last_build;
     let build = last_build.as_ref().unwrap().get_full_build(&jenkins);
     assert!(build.is_ok());
     let job_back = build.unwrap().get_job(&jenkins);
@@ -163,21 +163,21 @@ fn can_disable_job_and_reenable() {
     let job = jenkins.get_job("normal job");
     assert!(job.is_ok());
     let job_ok = job.unwrap();
-    assert!(job_ok.buildable());
+    assert!(job_ok.buildable);
 
     let disabling = job_ok.disable(&jenkins);
     assert!(disabling.is_ok());
     let job_disabled = jenkins.get_job("normal job");
     assert!(job_disabled.is_ok());
     let job_disabled_ok = job_disabled.unwrap();
-    assert!(!job_disabled_ok.buildable());
+    assert!(!job_disabled_ok.buildable);
 
     let enabling = job_disabled_ok.enable(&jenkins);
     assert!(enabling.is_ok());
     let job_enabled = jenkins.get_job("normal job");
     assert!(job_enabled.is_ok());
     let job_enabled_ok = job_enabled.unwrap();
-    assert!(job_enabled_ok.buildable());
+    assert!(job_enabled_ok.buildable);
 }
 
 #[test]
@@ -359,7 +359,7 @@ fn can_get_console() {
     assert!(job.is_ok());
 
     let job_ok = job.unwrap();
-    let last_build = job_ok.last_build();
+    let last_build = &job_ok.last_build;
     let build = last_build.as_ref().unwrap().get_full_build(&jenkins);
     println!("{:#?}", build);
     assert!(build.is_ok());

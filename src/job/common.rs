@@ -121,12 +121,16 @@ pub trait Job {
     /// Get the name of the project
     fn name(&self) -> &str;
     /// Is the project buildable
+    #[deprecated(since = "0.4.2", note = "please use the field `buildable` directly instead")]
     fn buildable(&self) -> bool;
     /// Link to the last build
+    #[deprecated(since = "0.4.2", note = "please use the field `last_build` directly instead")]
     fn last_build(&self) -> &Option<ShortBuild>;
     /// List of builds of the job
+    #[deprecated(since = "0.4.2", note = "please use the field `builds` directly instead")]
     fn builds(&self) -> &Vec<ShortBuild>;
     /// Health report of the project
+    #[deprecated(since = "0.4.2", note = "please use the field `health_report` directly instead")]
     fn health_report(&self) -> &Vec<HealthReport>;
 
     /// Enable a `Job`. It may need to be refreshed as it may have been updated

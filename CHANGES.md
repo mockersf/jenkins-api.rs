@@ -3,6 +3,7 @@
 # 0.4.2
 
 * decrease log level
+* deprecated most functions of traits `Job` and `Build`
 
 # 0.4.1 (2018/06/13)
 

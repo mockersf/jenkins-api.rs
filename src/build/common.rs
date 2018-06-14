@@ -146,12 +146,16 @@ pub trait Build {
     /// Get the url of a build
     fn url(&self) -> &str;
     /// Get timestamp of a build
+    #[deprecated(since = "0.4.2", note = "please use the field `timestamp` directly instead")]
     fn timestamp(&self) -> u64;
     /// Get result of a build
+    #[deprecated(since = "0.4.2", note = "please use the field `result` directly instead")]
     fn result(&self) -> Option<BuildStatus>;
     /// Get number of a build
+    #[deprecated(since = "0.4.2", note = "please use the field `number` directly instead")]
     fn number(&self) -> u32;
     /// Get duration of a build. Needs to be `i64` as Jenkins can sometimes return `-1`.
+    #[deprecated(since = "0.4.2", note = "please use the field `duration` directly instead")]
     fn duration(&self) -> i64;
 
     /// Get the `Job` from a `Build`
