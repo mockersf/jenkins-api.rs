@@ -120,18 +120,6 @@ pub trait Job {
     fn url(&self) -> &str;
     /// Get the name of the project
     fn name(&self) -> &str;
-    /// Is the project buildable
-    #[deprecated(since = "0.4.2", note = "please use the field `buildable` directly instead")]
-    fn buildable(&self) -> bool;
-    /// Link to the last build
-    #[deprecated(since = "0.4.2", note = "please use the field `last_build` directly instead")]
-    fn last_build(&self) -> &Option<ShortBuild>;
-    /// List of builds of the job
-    #[deprecated(since = "0.4.2", note = "please use the field `builds` directly instead")]
-    fn builds(&self) -> &Vec<ShortBuild>;
-    /// Health report of the project
-    #[deprecated(since = "0.4.2", note = "please use the field `health_report` directly instead")]
-    fn health_report(&self) -> &Vec<HealthReport>;
 
     /// Enable a `Job`. It may need to be refreshed as it may have been updated
     fn enable(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
@@ -300,22 +288,6 @@ macro_rules! job_build_with_common_fields_and_impl {
 
             fn name(&self) -> &str {
                 &self.name
-            }
-
-            fn buildable(&self) -> bool {
-                self.buildable
-            }
-
-            fn last_build(&self) -> &Option<ShortBuild> {
-                &self.last_build
-            }
-
-            fn builds(&self) -> &Vec<ShortBuild> {
-                &self.builds
-            }
-
-            fn health_report(&self) -> &Vec<HealthReport> {
-                &self.health_report
             }
         }
     };

@@ -207,7 +207,7 @@ fn can_add_and_remove_job_from_view_through_view() {
     let adding = view_ok
         .as_variant::<jenkins_api::view::ListView>()
         .unwrap()
-        .add_job(&jenkins, job_ok.name());
+        .add_job(&jenkins, &job_ok.name);
     assert!(adding.is_ok());
 
     let view_with = jenkins.get_view("test view");
@@ -225,7 +225,7 @@ fn can_add_and_remove_job_from_view_through_view() {
     let removing = view_ok
         .as_variant::<jenkins_api::view::ListView>()
         .unwrap()
-        .remove_job(&jenkins, job_ok.name());
+        .remove_job(&jenkins, &job_ok.name);
     assert!(removing.is_ok());
 
     let view_without = jenkins.get_view("test view");
