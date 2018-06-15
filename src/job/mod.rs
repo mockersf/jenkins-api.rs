@@ -24,6 +24,8 @@ mod matrix;
 pub use self::matrix::{MatrixConfiguration, MatrixProject};
 mod maven;
 pub use self::maven::{MavenModule, MavenModuleSet};
+mod multijob;
+pub use self::multijob::MultiJobProject;
 mod external;
 pub use self::external::ExternalJob;
 
