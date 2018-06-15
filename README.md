@@ -13,6 +13,7 @@ extern crate jenkins_api;
 
 use jenkins_api::JenkinsBuilder;
 use jenkins_api::build::BuildStatus;
+use jenkins_api::job::BuildableJob;
 
 fn main() -> Result<(), failure::Error> {
     let jenkins = JenkinsBuilder::new("http://localhost:8080")
