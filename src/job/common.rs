@@ -1,3 +1,5 @@
+use std::marker::PhantomData;
+
 use failure::Error;
 use serde;
 use serde_json;
@@ -5,7 +7,7 @@ use serde_json;
 use helpers::Class;
 
 use action::CommonAction;
-use build::ShortBuild;
+use build::{CommonBuild, ShortBuild};
 use client::{self, Name, Path};
 use property::CommonProperty;
 use queue::ShortQueueItem;
@@ -65,7 +67,7 @@ pub struct HealthReport {
 /// Short Job that is used in lists and links from other structs
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct ShortJob {
+pub struct ShortJob<T: Job = CommonJob> {
     /// Name of the job
     pub name: String,
     /// URL for the job
@@ -74,10 +76,17 @@ pub struct ShortJob {
     pub color: BallColor,
     #[serde(flatten)]
     pub(crate) other_fields: Option<serde_json::Value>,
+
+    #[serde(skip)]
+    job_type: PhantomData<T>,
 }
-impl ShortJob {
+impl<T> ShortJob<T>
+where
+    T: Job,
+    for<'de> T: serde::Deserialize<'de>,
+{
     /// Get the full details of a `Job` matching the `ShortJob`
-    pub fn get_full_job(&self, jenkins_client: &Jenkins) -> Result<CommonJob, Error> {
+    pub fn get_full_job(&self, jenkins_client: &Jenkins) -> Result<T, Error> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Job { .. } = path {
             Ok(jenkins_client.get(&path)?.json()?)
