@@ -232,6 +232,38 @@ macro_rules! job_build_with_common_fields_and_impl {
             })*
         }
     ) => {
+        job_build_with_common_fields_and_impl! {
+            $(#[$attr])*
+            pub struct $name<BuildType = CommonBuild> {
+                $(
+                    $(#[$field_attr])*
+                    pub $field: $field_type,
+                )*
+                $(private_fields {
+                    $(
+                        $(#[$private_field_attr])*
+                        $private_field: $private_field_type
+                    ),*
+                })*
+            }
+        }
+    };
+
+    (
+        $(#[$attr:meta])*
+        pub struct $name:ident<BuildType = $build_type:ty> {
+            $(
+                $(#[$field_attr:meta])*
+                pub $field:ident: $field_type:ty,
+            )*
+            $(private_fields {
+                $(
+                    $(#[$private_field_attr:meta])*
+                    $private_field:ident: $private_field_type:ty
+                ),* $(,)*
+            })*
+        }
+    ) => {
         $(#[$attr])*
         pub struct $name {
             /// Name of the job
@@ -259,21 +291,21 @@ macro_rules! job_build_with_common_fields_and_impl {
             /// Actions of a job
             pub actions: Vec<Option<CommonAction>>,
             /// Link to the last build
-            pub last_build: Option<ShortBuild>,
+            pub last_build: Option<ShortBuild<$build_type>>,
             /// Link to the first build
-            pub first_build: Option<ShortBuild>,
+            pub first_build: Option<ShortBuild<$build_type>>,
             /// Link to the last stable build
-            pub last_stable_build: Option<ShortBuild>,
+            pub last_stable_build: Option<ShortBuild<$build_type>>,
             /// Link to the last unstable build
-            pub last_unstable_build: Option<ShortBuild>,
+            pub last_unstable_build: Option<ShortBuild<$build_type>>,
             /// Link to the last successful build
-            pub last_successful_build: Option<ShortBuild>,
+            pub last_successful_build: Option<ShortBuild<$build_type>>,
             /// Link to the last unsucressful build
-            pub last_unsuccessful_build: Option<ShortBuild>,
+            pub last_unsuccessful_build: Option<ShortBuild<$build_type>>,
             /// Link to the last complete build
-            pub last_completed_build: Option<ShortBuild>,
+            pub last_completed_build: Option<ShortBuild<$build_type>>,
             /// Link to the last failed build
-            pub last_failed_build: Option<ShortBuild>,
+            pub last_failed_build: Option<ShortBuild<$build_type>>,
             /// List of builds of the job
             pub builds: Vec<ShortBuild>,
             /// HealthReport of the job

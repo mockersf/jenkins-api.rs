@@ -143,14 +143,17 @@ fn can_get_build_from_job_and_back() {
         .build()
         .unwrap();
     let job = jenkins.get_job("normal job");
-    assert!(job.is_ok());
-    let job_ok = job.unwrap();
+    assert_that!(job).is_ok();
+    let job_variant = job.unwrap()
+        .as_variant::<jenkins_api::job::FreeStyleProject>();
+    assert_that!(job_variant).is_ok();
+    let job_ok = job_variant.unwrap();
     let last_build = &job_ok.last_build;
     let build = last_build.as_ref().unwrap().get_full_build(&jenkins);
     assert!(build.is_ok());
     let job_back = build.unwrap().get_job(&jenkins);
-    assert!(job_back.is_ok());
-    assert_eq!(job_back.unwrap().name(), job_ok.name());
+    assert_that!(job_back).is_ok();
+    assert_that!(job_back.unwrap().name).is_equal_to(job_ok.name);
 }
 
 #[test]
@@ -467,15 +470,15 @@ fn can_get_matrix_job() {
         .named("was able to get as a MatrixProject")
         .is_ok();
     if let Ok(matrix_project) = matrix_project {
+        assert_that!(matrix_project.last_build.unwrap().get_full_build(&jenkins))
+            .named("getting last run of a matrix project")
+            .is_ok();
         let config = matrix_project.active_configurations[0].get_full_job(&jenkins);
         assert_that!(config)
-            .named("getting configuration of a matrix")
+            .named("getting configuration of a matrix project")
             .is_ok();
-        assert_that!(
-            config
-                .unwrap()
-                .as_variant::<jenkins_api::job::MatrixConfiguration>()
-        ).named("was able to get as a MatrixConfiguration")
+        assert_that!(config.unwrap().last_build.unwrap().get_full_build(&jenkins))
+            .named("getting last run of a matrix configuration")
             .is_ok();
     }
 
@@ -491,9 +494,6 @@ fn can_get_matrix_job() {
     if let Ok(matrix_build) = matrix_build {
         let run = matrix_build.runs[0].get_full_build(&jenkins);
         assert_that!(run).named("getting build of a run").is_ok();
-        assert_that!(run.unwrap().as_variant::<jenkins_api::build::MatrixRun>())
-            .named("was able to get as a MatrixRun")
-            .is_ok();
     }
 }
 
@@ -594,50 +594,38 @@ fn can_get_maven_job() {
         .unwrap();
 
     let job = jenkins.get_job("maven job");
-    println!("{:?}", job);
-    assert!(job.is_ok());
+    assert_that!(job).named("getting a job").is_ok();
 
-    if let Ok(maven) = job.unwrap()
-        .as_variant::<jenkins_api::job::MavenModuleSet>()
-    {
-        let module = maven.modules[0].get_full_job(&jenkins);
-        if let Ok(maven_module) = module
-            .unwrap()
-            .as_variant::<jenkins_api::job::MavenModule>()
-        {
-            let build = maven_module.last_build.unwrap().get_full_build(&jenkins);
-            println!("{:?}", build);
-            assert!(build.is_ok());
-            if let Ok(maven_build) = build
-                .unwrap()
-                .as_variant::<jenkins_api::build::MavenBuild>()
-            {
-                let artifacts = maven_build
-                    .maven_artifacts
-                    .get_full_artifact_record(&jenkins);
-                println!("{:?}", artifacts);
-                assert!(artifacts.is_ok());
-            } else {
-                assert!(false);
-            }
-        } else {
-            assert!(false);
-        }
-    } else {
-        assert!(false);
+    let maven_project = job.unwrap()
+        .as_variant::<jenkins_api::job::MavenModuleSet>();
+    assert_that!(maven_project)
+        .named("was able to get as a MavenModuleSet")
+        .is_ok();
+    if let Ok(maven_project) = maven_project {
+        assert_that!(maven_project.last_build.unwrap().get_full_build(&jenkins))
+            .named("getting last run of a maven project")
+            .is_ok();
+        let module = maven_project.modules[0].get_full_job(&jenkins);
+        assert_that!(module)
+            .named("getting module of a maven project")
+            .is_ok();
+        assert_that!(module.unwrap().last_build.unwrap().get_full_build(&jenkins))
+            .named("getting last run of a maven module")
+            .is_ok();
     }
 
-    let build = jenkins.get_build("maven job", 1);
-    println!("{:?}", build);
-    assert!(build.is_ok());
+    let build = jenkins.get_build("matrix job", 1);
+    assert_that!(build).is_ok();
 
-    if let Ok(_) = build
+    let matrix_build = build
         .unwrap()
-        .as_variant::<jenkins_api::build::MavenModuleSetBuild>()
-    {
-        assert!(true);
-    } else {
-        assert!(false);
+        .as_variant::<jenkins_api::build::MatrixBuild>();
+    assert_that!(matrix_build)
+        .named("was abled to get as a MatrixBuild")
+        .is_ok();
+    if let Ok(matrix_build) = matrix_build {
+        let run = matrix_build.runs[0].get_full_build(&jenkins);
+        assert_that!(run).named("getting build of a run").is_ok();
     }
 }
 

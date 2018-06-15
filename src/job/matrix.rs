@@ -7,12 +7,14 @@ use property::CommonProperty;
 use queue::ShortQueueItem;
 use scm::CommonSCM;
 
+use build::{MatrixBuild, MatrixRun};
+
 use super::{BallColor, HealthReport};
 
 job_build_with_common_fields_and_impl!(/// A matrix project
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct MatrixProject {
+pub struct MatrixProject<BuildType = MatrixBuild> {
     /// Description of the job
     pub description: String,
     /// Is concurrent build enabled for the job?
@@ -36,7 +38,7 @@ impl SCMPollable for MatrixProject {}
 job_build_with_common_fields_and_impl!(/// A matrix configuration
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct MatrixConfiguration {
+pub struct MatrixConfiguration<BuildType = MatrixRun> {
     /// Description of the job
     pub description: Option<String>,
     /// Is concurrent build enabled for the job?

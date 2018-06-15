@@ -2,7 +2,7 @@ use helpers::Class;
 
 use super::{BuildableJob, Job, SCMPollable, ShortJob};
 use action::CommonAction;
-use build::ShortBuild;
+use build::{MavenBuild, MavenModuleSetBuild, ShortBuild};
 use property::CommonProperty;
 use queue::ShortQueueItem;
 use scm::CommonSCM;
@@ -12,7 +12,7 @@ use super::{BallColor, HealthReport};
 job_build_with_common_fields_and_impl!(/// A maven project
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct MavenModuleSet {
+pub struct MavenModuleSet<BuildType = MavenModuleSetBuild> {
     /// Description of the job
     pub description: String,
     /// Is concurrent build enabled for the job?
@@ -36,7 +36,7 @@ impl SCMPollable for MavenModuleSet {}
 job_build_with_common_fields_and_impl!(/// A maven module
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct MavenModule {
+pub struct MavenModule<BuildType = MavenBuild> {
     /// Description of the job
     pub description: Option<String>,
     /// Is concurrent build enabled for the job?

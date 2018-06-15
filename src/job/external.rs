@@ -2,7 +2,7 @@ use helpers::Class;
 
 use super::Job;
 use action::CommonAction;
-use build::ShortBuild;
+use build::{CommonBuild, ShortBuild};
 use property::CommonProperty;
 use queue::ShortQueueItem;
 

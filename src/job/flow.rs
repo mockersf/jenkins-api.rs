@@ -2,7 +2,7 @@ use helpers::Class;
 
 use super::{BuildableJob, Job, SCMPollable, ShortJob};
 use action::CommonAction;
-use build::ShortBuild;
+use build::{BuildFlowRun, ShortBuild};
 use property::CommonProperty;
 use queue::ShortQueueItem;
 use scm::CommonSCM;
@@ -12,7 +12,7 @@ use super::{BallColor, HealthReport};
 job_build_with_common_fields_and_impl!(/// A build flow job
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct BuildFlowJob {
+pub struct BuildFlowJob<BuildType = BuildFlowRun> {
     /// Description of the job
     pub description: String,
     /// Is concurrent build enabled for the job?

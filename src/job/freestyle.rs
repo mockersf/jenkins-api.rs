@@ -2,7 +2,7 @@ use helpers::Class;
 
 use super::{BuildableJob, Job, SCMPollable, ShortJob};
 use action::CommonAction;
-use build::ShortBuild;
+use build::{FreeStyleBuild, ShortBuild};
 use property::CommonProperty;
 use queue::ShortQueueItem;
 use scm::CommonSCM;
@@ -12,7 +12,7 @@ use super::{BallColor, HealthReport};
 job_build_with_common_fields_and_impl!(/// A free style project
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct FreeStyleProject {
+pub struct FreeStyleProject<BuildType = FreeStyleBuild> {
     /// Description of the job
     pub description: String,
     /// Is concurrent build enabled for the job?
