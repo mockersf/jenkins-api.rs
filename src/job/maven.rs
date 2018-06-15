@@ -7,7 +7,7 @@ use property::CommonProperty;
 use queue::ShortQueueItem;
 use scm::CommonSCM;
 
-use super::{BallColor, HealthReport, JobBuilder};
+use super::{BallColor, HealthReport};
 
 job_build_with_common_fields_and_impl!(/// A maven project
 #[derive(Deserialize, Debug)]

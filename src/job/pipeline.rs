@@ -6,7 +6,7 @@ use build::ShortBuild;
 use property::CommonProperty;
 use queue::ShortQueueItem;
 
-use super::{BallColor, HealthReport, JobBuilder};
+use super::{BallColor, HealthReport};
 
 job_build_with_common_fields_and_impl!(/// A pipeline project
 #[derive(Deserialize, Debug)]

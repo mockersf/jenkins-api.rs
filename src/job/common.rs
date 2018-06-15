@@ -6,6 +6,7 @@ use serde_json;
 
 use helpers::Class;
 
+use super::JobBuilder;
 use action::CommonAction;
 use build::{CommonBuild, ShortBuild};
 use client::{self, Name, Path};
