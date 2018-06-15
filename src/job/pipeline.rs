@@ -1,9 +1,6 @@
-use failure::Error;
-
-use client::Jenkins;
 use helpers::Class;
 
-use super::Job;
+use super::{BuildableJob, Job};
 use action::CommonAction;
 use build::ShortBuild;
 use property::CommonProperty;
@@ -22,17 +19,4 @@ pub struct WorkflowJob {
 });
 register_class!("org.jenkinsci.plugins.workflow.job.WorkflowJob" => WorkflowJob);
 
-impl WorkflowJob {
-    /// Build this job
-    pub fn build(&self, jenkins_client: &Jenkins) -> Result<ShortQueueItem, Error> {
-        self.builder(jenkins_client)?.send()
-    }
-
-    /// Create a `JobBuilder` to setup a build of a `Job`
-    pub fn builder<'a, 'b, 'c, 'd>(
-        &'a self,
-        jenkins_client: &'b Jenkins,
-    ) -> Result<JobBuilder<'a, 'b, 'c, 'd>, Error> {
-        JobBuilder::new(self, jenkins_client)
-    }
-}
+impl BuildableJob for WorkflowJob {}

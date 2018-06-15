@@ -320,3 +320,40 @@ job_build_with_common_fields_and_impl!(
 specialize!(CommonJob => Job);
 
 impl CommonJob {}
+
+/// Common trait for jobs that can be build
+pub trait BuildableJob: Job + Sized {
+    /// Build this job
+    fn build(&self, jenkins_client: &Jenkins) -> Result<ShortQueueItem, Error> {
+        self.builder(jenkins_client)?.send()
+    }
+
+    /// Create a `JobBuilder` to setup a build of a `Job`
+    fn builder<'a, 'b, 'c, 'd>(
+        &'a self,
+        jenkins_client: &'b Jenkins,
+    ) -> Result<JobBuilder<'a, 'b, 'c, 'd>, Error> {
+        JobBuilder::new(self, jenkins_client)
+    }
+}
+
+/// Common trait for jobs that can poll a SCM
+pub trait SCMPollable: Job + Sized {
+    /// Poll configured SCM for changes
+    fn poll_scm(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
+        let path = jenkins_client.url_to_path(&self.url());
+        if let Path::Job {
+            name,
+            configuration: None,
+        } = path
+        {
+            jenkins_client.post(&Path::PollSCMJob { name })?;
+            Ok(())
+        } else {
+            Err(client::Error::InvalidUrl {
+                url: self.url().to_string(),
+                expected: client::error::ExpectedType::Job,
+            }.into())
+        }
+    }
+}

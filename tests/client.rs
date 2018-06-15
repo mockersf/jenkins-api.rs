@@ -10,7 +10,7 @@ extern crate jenkins_api;
 use spectral::prelude::*;
 
 use jenkins_api::build::Build;
-use jenkins_api::job::Job;
+use jenkins_api::job::{BuildableJob, Job, SCMPollable};
 use jenkins_api::JenkinsBuilder;
 use std::{thread, time};
 
