@@ -20,7 +20,7 @@ pub struct MavenModuleSet<BuildType = MavenModuleSetBuild> {
     /// SCM configured for the job
     pub scm: CommonSCM,
     /// List of modules
-    pub modules: Vec<ShortJob>,
+    pub modules: Vec<ShortJob<MavenModule>>,
     /// List of the upstream projects
     pub upstream_projects: Vec<ShortJob>,
     /// List of the downstream projects

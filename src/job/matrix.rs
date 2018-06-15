@@ -22,7 +22,7 @@ pub struct MatrixProject<BuildType = MatrixBuild> {
     /// SCM configured for the job
     pub scm: CommonSCM,
     /// Configurations for the job
-    pub active_configurations: Vec<ShortJob>,
+    pub active_configurations: Vec<ShortJob<MatrixConfiguration>>,
     /// List of the upstream projects
     pub upstream_projects: Vec<ShortJob>,
     /// List of the downstream projects
