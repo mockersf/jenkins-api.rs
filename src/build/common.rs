@@ -1,3 +1,5 @@
+use std::marker::PhantomData;
+
 use failure::Error;
 use serde;
 use serde_json;
@@ -6,23 +8,30 @@ use helpers::Class;
 
 use action::CommonAction;
 use client::{self, Path};
-use job::CommonJob;
+use job::{CommonJob, Job};
 use Jenkins;
 
 /// Short Build that is used in lists and links from other structs
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct ShortBuild {
+pub struct ShortBuild<T: Build = CommonBuild> {
     /// URL for the build
     pub url: String,
     /// Build number
     pub number: u32,
     #[serde(flatten)]
     pub(crate) other_fields: Option<serde_json::Value>,
+
+    #[serde(skip)]
+    build_type: PhantomData<T>,
 }
-impl ShortBuild {
+impl<T> ShortBuild<T>
+where
+    T: Build,
+    for<'de> T: serde::Deserialize<'de>,
+{
     /// Get the full details of a `Build` matching the `ShortBuild`
-    pub fn get_full_build(&self, jenkins_client: &Jenkins) -> Result<CommonBuild, Error> {
+    pub fn get_full_build(&self, jenkins_client: &Jenkins) -> Result<T, Error> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Build { .. } = path {
             Ok(jenkins_client.get(&path)?.json()?)
