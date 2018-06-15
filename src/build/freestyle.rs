@@ -3,12 +3,13 @@ use helpers::Class;
 use super::{Artifact, Build, BuildStatus};
 use action::CommonAction;
 use changeset;
+use job::FreeStyleProject;
 use user::ShortUser;
 
 build_with_common_fields_and_impl!(/// A `Build` from a FreeStyleProject
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct FreeStyleBuild {
+pub struct FreeStyleBuild<ParentJob = FreeStyleProject> {
     /// Which slave was it build on
     pub built_on: String,
     /// Change set for this build

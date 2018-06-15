@@ -152,11 +152,17 @@ into_buildnumber!(i64);
 
 /// Trait implemented by specializations of `Build` and providing common methods
 pub trait Build {
+    /// Type of the job that triggered this build
+    type ParentJob: Job;
+
     /// Get the url of a build
     fn url(&self) -> &str;
 
     /// Get the `Job` from a `Build`
-    fn get_job(&self, jenkins_client: &Jenkins) -> Result<CommonJob, Error> {
+    fn get_job(&self, jenkins_client: &Jenkins) -> Result<Self::ParentJob, Error>
+    where
+        for<'de> Self::ParentJob: serde::Deserialize<'de>,
+    {
         let path = jenkins_client.url_to_path(&self.url());
         if let Path::Build {
             job_name,
@@ -219,6 +225,39 @@ macro_rules! build_with_common_fields_and_impl {
             })*
         }
     ) => {
+        build_with_common_fields_and_impl!{
+            $(#[$attr])*
+            pub struct $name<ParentJob = CommonJob> {
+                $(
+                    $(#[$field_attr])*
+                    pub $field: $field_type,
+                )*
+                $(private_fields {
+                    $(
+                        $(#[$private_field_attr])*
+                        $private_field: $private_field_type
+                    ),*
+                })*
+            }
+        }
+
+    };
+
+    (
+        $(#[$attr:meta])*
+        pub struct $name:ident<ParentJob = $parent_job:ty> {
+            $(
+                $(#[$field_attr:meta])*
+                pub $field:ident: $field_type:ty,
+            )*
+            $(private_fields {
+                $(
+                    $(#[$private_field_attr:meta])*
+                    $private_field:ident: $private_field_type:ty
+                ),* $(,)*
+            })*
+        }
+    ) => {
         $(#[$attr])*
         pub struct $name {
             /// URL for the build
@@ -261,6 +300,7 @@ macro_rules! build_with_common_fields_and_impl {
             )*)*
         }
         impl Build for $name {
+            type ParentJob = $parent_job;
             fn url(&self) -> &str {
                 &self.url
             }
@@ -272,7 +312,7 @@ build_with_common_fields_and_impl!(
     /// A Jenkins `Build`
     #[derive(Serialize, Deserialize, Debug, Clone)]
     #[serde(rename_all = "camelCase")]
-    pub struct CommonBuild {
+    pub struct CommonBuild<ParentJob = CommonJob> {
         /// _class provided by Jenkins
         #[serde(rename = "_class")]
         pub class: Option<String>,

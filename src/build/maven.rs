@@ -5,12 +5,13 @@ use helpers::Class;
 use super::{Artifact, Build, BuildStatus};
 use action::CommonAction;
 use changeset;
+use job::{MavenModule, MavenModuleSet};
 use user::ShortUser;
 
 build_with_common_fields_and_impl!(/// A `Build` of a MavenModuleSet
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct MavenModuleSetBuild {
+pub struct MavenModuleSetBuild<ParentJob = MavenModuleSet> {
     /// Change set for this build
     pub change_set: changeset::CommonChangeSetList,
     /// Version of maven
@@ -29,7 +30,7 @@ impl MavenModuleSetBuild {}
 build_with_common_fields_and_impl!(/// A `Build` of a MavenModule
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct MavenBuild {
+pub struct MavenBuild<ParentJob = MavenModule> {
     /// Change set for this build
     pub change_set: changeset::CommonChangeSetList,
     /// Which slave was it build on
