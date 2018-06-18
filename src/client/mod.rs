@@ -1,8 +1,12 @@
+//! Jenkins Client
+
 use failure;
 use regex::Regex;
 use reqwest::header::ContentType;
 use reqwest::{Body, Client, RequestBuilder, Response, StatusCode};
+use serde::{Serialize, Serializer};
 use std::fmt::Debug;
+use std::string::ToString;
 
 mod errors;
 pub use self::errors::Error;
@@ -31,7 +35,82 @@ pub struct Jenkins {
     client: Client,
     user: Option<User>,
     csrf_enabled: bool,
-    depth: u8,
+    pub(crate) depth: u8,
+}
+
+/// Advanced query parameters supported by Jenkins
+/// See https://www.cloudbees.com/blog/taming-jenkins-json-api-depth-and-tree
+#[derive(Debug)]
+pub enum AdvancedQuery {
+    /// depth query parameter
+    Depth(u8),
+    /// tree query parameter
+    Tree(TreeQueryParam),
+}
+
+#[derive(Debug, Serialize)]
+pub(crate) struct InternalAdvancedQueryParams {
+    depth: Option<u8>,
+    tree: Option<TreeQueryParam>,
+}
+impl From<AdvancedQuery> for InternalAdvancedQueryParams {
+    fn from(query: AdvancedQuery) -> Self {
+        match query {
+            AdvancedQuery::Depth(depth) => InternalAdvancedQueryParams {
+                depth: Some(depth),
+                tree: None,
+            },
+            AdvancedQuery::Tree(tree) => InternalAdvancedQueryParams {
+                depth: None,
+                tree: Some(tree),
+            },
+        }
+    }
+}
+/// Jenkins tree query parameter
+#[derive(Debug)]
+pub struct TreeQueryParam {
+    /// Name of the key at the root of this tree
+    pub keyname: String,
+    /// fields of this object
+    pub fields: Vec<String>,
+    /// keys leading to child objects
+    pub subkeys: Vec<TreeQueryParam>,
+}
+impl Serialize for TreeQueryParam {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&self.to_string())
+    }
+}
+impl ToString for TreeQueryParam {
+    fn to_string(&self) -> String {
+        match (self.fields.len(), self.subkeys.len()) {
+            (0, 0) => format!("{}", self.keyname),
+            (_, 0) => format!("{}[{}]", self.keyname, self.fields.join(",")),
+            (0, _) => format!(
+                "{}[{}]",
+                self.keyname,
+                self.subkeys
+                    .iter()
+                    .map(|t| t.to_string())
+                    .collect::<Vec<_>>()
+                    .join(",")
+            ),
+            (_, _) => format!(
+                "{}[{},{}]",
+                self.keyname,
+                self.fields.join(","),
+                self.subkeys
+                    .iter()
+                    .map(|t| t.to_string())
+                    .collect::<Vec<_>>()
+                    .join(",")
+            ),
+        }
+    }
 }
 
 impl Jenkins {
@@ -61,13 +140,13 @@ impl Jenkins {
         self.get_with_params(path, &[("depth", &self.depth.to_string())])
     }
 
-    pub(crate) fn get_with_params(
+    pub(crate) fn get_with_params<T: Serialize>(
         &self,
         path: &Path,
-        qps: &[(&str, &str)],
+        qps: T,
     ) -> Result<Response, failure::Error> {
         let mut query = self.client.get(&self.url_api_json(&path.to_string()));
-        query.query(qps);
+        query.query(&qps);
         Ok(Self::error_for_status(self.send(query)?)?)
     }
 

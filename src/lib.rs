@@ -51,8 +51,8 @@ extern crate regex;
 #[macro_use]
 extern crate log;
 
-mod client;
-pub use client::{error, Error, Jenkins, JenkinsBuilder};
+pub mod client;
+pub use client::{Error, Jenkins, JenkinsBuilder};
 
 #[macro_use]
 pub mod helpers;

@@ -1,8 +1,9 @@
 //! Jenkins Jobs
 
 use failure::Error;
+use serde;
 
-use client::{Name, Path};
+use client::{AdvancedQuery, InternalAdvancedQueryParams, Name, Path};
 use queue::ShortQueueItem;
 use Jenkins;
 
@@ -36,6 +37,27 @@ impl Jenkins {
             name: Name::Name(job_name.into().0),
             configuration: None,
         })?
+            .json()?)
+    }
+
+    /// Get a `Job` from it's `job_name`, specifying the depth or tree parameters
+    /// see https://www.cloudbees.com/blog/taming-jenkins-json-api-depth-and-tree
+    pub fn get_job_as<'a, J, T>(
+        &self,
+        job_name: J,
+        parameters: Option<AdvancedQuery>,
+    ) -> Result<T, Error>
+    where
+        J: Into<JobName<'a>>,
+        for<'de> T: serde::Deserialize<'de>,
+    {
+        Ok(self.get_with_params(
+            &Path::Job {
+                name: Name::Name(job_name.into().0),
+                configuration: None,
+            },
+            parameters.map(InternalAdvancedQueryParams::from),
+        )?
             .json()?)
     }
 
