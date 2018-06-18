@@ -1,9 +1,11 @@
 # Changes
 
-# 0.4.2
+# 0.4.2 (2018/06/19)
 
-* decrease log level
-* deprecated most functions of traits `Job` and `Build`
+* Decrease log level
+* Deprecated most functions of traits `Job` and `Build`
+* Add fields on TimeInQueueAction
+* Support MultiJobProject and MultiJobBuild
 
 # 0.4.1 (2018/06/13)
 
