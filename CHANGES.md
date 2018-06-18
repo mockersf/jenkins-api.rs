@@ -1,5 +1,8 @@
 # Changes
 
+# 0.5.0
+
+
 # 0.4.2 (2018/06/19)
 
 * Decrease log level
