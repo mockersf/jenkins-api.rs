@@ -4,12 +4,13 @@ use super::{Artifact, Build, BuildStatus};
 use action::CommonAction;
 /* use build::ShortBuild; */
 use changeset;
+use job::MultiJobProject;
 use user::ShortUser;
 
 build_with_common_fields_and_impl!(/// A `Build` from a MultiJobProject
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct MultiJobBuild {
+pub struct MultiJobBuild<ParentJob = MultiJobProject> {
     /// Change set for this build
     pub change_set: changeset::CommonChangeSetList,
     /// Which slave was it build on
