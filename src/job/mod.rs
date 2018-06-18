@@ -33,11 +33,7 @@ impl Jenkins {
     where
         J: Into<JobName<'a>>,
     {
-        Ok(self.get(&Path::Job {
-            name: Name::Name(job_name.into().0),
-            configuration: None,
-        })?
-            .json()?)
+        Ok(self.get_job_as(job_name, None)?)
     }
 
     /// Get a `Job` from it's `job_name`, specifying the depth or tree parameters
