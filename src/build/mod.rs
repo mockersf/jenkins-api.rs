@@ -20,6 +20,8 @@ mod matrix;
 pub use self::matrix::{MatrixBuild, MatrixRun};
 mod maven;
 pub use self::maven::{MavenBuild, MavenModuleSetBuild};
+mod multijob;
+pub use self::multijob::MultiJobBuild;
 
 impl Jenkins {
     /// Get a build from a `job_name` and `build_number`
