@@ -81,7 +81,12 @@ impl Action for RepoTagAction {}
 /// An action on time in queue
 #[derive(Deserialize, Debug, Copy, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct TimeInQueueAction {}
+pub struct TimeInQueueAction {
+    /// Time spent in queue (milliseconds)
+    pub queuing_duration_millis: u64,
+    /// Total time spent in queue and building (milliseconds)
+    pub total_duration_millis: u64,
+}
 register_class!("jenkins.metrics.impl.TimeInQueueAction" => TimeInQueueAction);
 impl Action for TimeInQueueAction {}
 
