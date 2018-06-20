@@ -4,9 +4,9 @@ use serde::{Serialize, Serializer};
 #[derive(Debug)]
 pub struct TreeQueryParam {
     /// Name of the key at the root of this tree
-    pub keyname: String,
+    keyname: Option<String>,
     /// Children keys
-    pub subkeys: Vec<TreeQueryParam>,
+    subkeys: Vec<TreeQueryParam>,
 }
 impl Serialize for TreeQueryParam {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -18,11 +18,19 @@ impl Serialize for TreeQueryParam {
 }
 impl ToString for TreeQueryParam {
     fn to_string(&self) -> String {
-        match self.subkeys.len() {
-            0 => self.keyname.clone(),
-            _ => format!(
+        match (self.keyname.as_ref(), self.subkeys.len()) {
+            (Some(keyname), 0) => keyname.clone(),
+            (Some(keyname), _) => format!(
                 "{}[{}]",
-                self.keyname,
+                keyname,
+                self.subkeys
+                    .iter()
+                    .map(TreeQueryParam::to_string)
+                    .collect::<Vec<_>>()
+                    .join(",")
+            ),
+            (None, _) => format!(
+                "{}",
                 self.subkeys
                     .iter()
                     .map(TreeQueryParam::to_string)
@@ -42,26 +50,39 @@ impl ToString for TreeQueryParam {
 ///     .with_subfield(
 ///         jenkins_api::client::TreeBuilder::object("actions").with_subfield("causes"),
 ///     )
-///     .build()
+///     .build();
 /// ```
 #[derive(Debug)]
 pub struct TreeBuilder {
     tree: TreeQueryParam,
 }
 impl TreeBuilder {
-    /// Create a parent `TreeQueryParam`
-    pub fn object(name: &str) -> Self {
+    /// Build a new empty `TreeBuilder`
+    pub fn new() -> Self {
         TreeBuilder {
             tree: TreeQueryParam {
-                keyname: name.to_string(),
+                keyname: None,
                 subkeys: vec![],
             },
         }
     }
     /// Add a field to the `TreeQueryParam`
-    pub fn with_subfield<T: Into<TreeQueryParam>>(mut self, subfield: T) -> Self {
+    pub fn with_field<T: Into<TreeQueryParam>>(mut self, subfield: T) -> Self {
         self.tree.subkeys.push(subfield.into());
         self
+    }
+    /// Create a parent `TreeQueryParam`
+    pub fn object(name: &str) -> Self {
+        TreeBuilder {
+            tree: TreeQueryParam {
+                keyname: Some(name.to_string()),
+                subkeys: vec![],
+            },
+        }
+    }
+    /// Add a subfield to the `TreeQueryParam`
+    pub fn with_subfield<T: Into<TreeQueryParam>>(self, subfield: T) -> Self {
+        self.with_field(subfield)
     }
     /// Build the `TreeQueryParam`
     pub fn build(self) -> TreeQueryParam {
@@ -76,7 +97,7 @@ impl Into<TreeQueryParam> for TreeBuilder {
 impl<'a> Into<TreeQueryParam> for &'a str {
     fn into(self) -> TreeQueryParam {
         TreeQueryParam {
-            keyname: self.to_string(),
+            keyname: Some(self.to_string()),
             subkeys: vec![],
         }
     }
