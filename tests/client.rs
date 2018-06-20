@@ -665,6 +665,24 @@ fn can_get_master() {
 }
 
 #[test]
+fn can_get_master_while_building() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+
+    let job: Result<jenkins_api::job::FreeStyleProject, _> = jenkins.get_job_as("long job", None);
+    assert!(job.is_ok());
+    job.unwrap().build(&jenkins);
+
+    assert_that!(jenkins.get_master_node()).is_ok();
+
+    println!("{:#?}", jenkins.get_master_node());
+    assert!(false);
+}
+
+#[test]
 fn can_get_with_tree() {
     #[derive(Deserialize, Debug)]
     #[serde(rename_all = "camelCase")]
