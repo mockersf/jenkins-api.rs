@@ -478,9 +478,11 @@ fn can_get_matrix_job() {
         assert_that!(config)
             .named("getting configuration of a matrix project")
             .is_ok();
-        assert_that!(config.unwrap().last_build.unwrap().get_full_build(&jenkins))
+        let full_build = config.unwrap().last_build.unwrap().get_full_build(&jenkins);
+        assert_that!(full_build)
             .named("getting last run of a matrix configuration")
             .is_ok();
+        assert_that!(full_build.unwrap().get_console(&jenkins)).is_ok();
     }
 
     let build = jenkins.get_build("matrix job", 1);
@@ -674,12 +676,10 @@ fn can_get_master_while_building() {
 
     let job: Result<jenkins_api::job::FreeStyleProject, _> = jenkins.get_job_as("long job", None);
     assert!(job.is_ok());
-    job.unwrap().build(&jenkins);
-
-    assert_that!(jenkins.get_master_node()).is_ok();
+    job.unwrap().build(&jenkins).ok();
 
     println!("{:#?}", jenkins.get_master_node());
-    assert!(false);
+    assert_that!(jenkins.get_master_node()).is_ok();
 }
 
 #[test]
