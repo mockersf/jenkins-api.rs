@@ -4,7 +4,7 @@ use failure;
 use regex::Regex;
 use reqwest::header::ContentType;
 use reqwest::{Body, Client, RequestBuilder, Response, StatusCode};
-use serde::{Serialize, Serializer};
+use serde::Serialize;
 use std::fmt::Debug;
 use std::string::ToString;
 
@@ -15,6 +15,8 @@ pub(crate) use self::path::{Name, Path};
 mod builder;
 pub use self::builder::JenkinsBuilder;
 mod csrf;
+mod tree;
+pub use self::tree::{TreeBuilder, TreeQueryParam};
 
 /// Helper type for error management
 pub mod error {
@@ -38,8 +40,9 @@ pub struct Jenkins {
     pub(crate) depth: u8,
 }
 
-/// Advanced query parameters supported by Jenkins
-/// See https://www.cloudbees.com/blog/taming-jenkins-json-api-depth-and-tree
+/// Advanced query parameters supported by Jenkins to control the amount of data retrieved
+///
+/// see [taming-jenkins-json-api-depth-and-tree](https://www.cloudbees.com/blog/taming-jenkins-json-api-depth-and-tree)
 #[derive(Debug)]
 pub enum AdvancedQuery {
     /// depth query parameter
@@ -48,6 +51,7 @@ pub enum AdvancedQuery {
     Tree(TreeQueryParam),
 }
 
+/// Hidden type used to represent the AdvancedQueryParams as serializer doesn't support enums
 #[derive(Debug, Serialize)]
 pub(crate) struct InternalAdvancedQueryParams {
     depth: Option<u8>,
@@ -64,51 +68,6 @@ impl From<AdvancedQuery> for InternalAdvancedQueryParams {
                 depth: None,
                 tree: Some(tree),
             },
-        }
-    }
-}
-/// Jenkins tree query parameter
-#[derive(Debug)]
-pub struct TreeQueryParam {
-    /// Name of the key at the root of this tree
-    pub keyname: String,
-    /// fields of this object
-    pub fields: Vec<String>,
-    /// keys leading to child objects
-    pub subkeys: Vec<TreeQueryParam>,
-}
-impl Serialize for TreeQueryParam {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_str(&self.to_string())
-    }
-}
-impl ToString for TreeQueryParam {
-    fn to_string(&self) -> String {
-        match (self.fields.len(), self.subkeys.len()) {
-            (0, 0) => format!("{}", self.keyname),
-            (_, 0) => format!("{}[{}]", self.keyname, self.fields.join(",")),
-            (0, _) => format!(
-                "{}[{}]",
-                self.keyname,
-                self.subkeys
-                    .iter()
-                    .map(|t| t.to_string())
-                    .collect::<Vec<_>>()
-                    .join(",")
-            ),
-            (_, _) => format!(
-                "{}[{},{}]",
-                self.keyname,
-                self.fields.join(","),
-                self.subkeys
-                    .iter()
-                    .map(|t| t.to_string())
-                    .collect::<Vec<_>>()
-                    .join(",")
-            ),
         }
     }
 }
