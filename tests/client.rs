@@ -666,12 +666,26 @@ fn can_get_master() {
 
 #[test]
 fn can_get_with_tree() {
+    #[derive(Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    struct LastBuild {
+        number: u8,
+        duration: u8,
+        result: String,
+    }
+    #[derive(Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    struct LasBuildOfJob {
+        display_name: String,
+        last_build: LastBuild,
+    }
+
     setup();
     let jenkins = JenkinsBuilder::new(JENKINS_URL)
         .with_user("user", Some("password"))
         .build()
         .unwrap();
-    let r: Result<serde_json::Value, _> = jenkins.get_job_as(
+    let r: Result<LasBuildOfJob, _> = jenkins.get_job_as(
         "normal job",
         jenkins_api::client::TreeBuilder::new()
             .with_field("displayName")
