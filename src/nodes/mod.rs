@@ -41,7 +41,7 @@ impl Jenkins {
     }
 
     /// Get the master `Computer`
-    pub fn get_master_node(&self) -> Result<computer::CommonComputer, Error> {
+    pub fn get_master_node(&self) -> Result<computer::MasterComputer, Error> {
         Ok(self.get(&Path::Computer {
             name: Name::Name("(master)"),
         })?
