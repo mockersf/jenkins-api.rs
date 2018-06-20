@@ -27,7 +27,7 @@ proptest! {
             .with_user(&s, Some("password"))
             .build()
             .unwrap();
-        jenkins.get_home();
+        jenkins.get_home().ok();
     }
 }
 
@@ -52,6 +52,6 @@ proptest! {
             .with_user("user", Some("password"))
             .build()
             .unwrap();
-        jenkins.get_job(s);
+        jenkins.get_job(s).ok();
     }
 }
