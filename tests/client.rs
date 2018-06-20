@@ -4,6 +4,7 @@ extern crate spectral;
 extern crate env_logger;
 #[macro_use]
 extern crate serde_derive;
+extern crate serde_json;
 
 extern crate jenkins_api;
 
@@ -661,4 +662,40 @@ fn can_get_master() {
         .unwrap();
     assert_that!(jenkins.get_node("(master)")).is_ok();
     assert_that!(jenkins.get_master_node()).is_ok();
+}
+
+#[test]
+fn can_get_with_tree() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+    let r: Result<serde_json::Value, _> = jenkins.get_job_as(
+        "normal job",
+        jenkins_api::client::TreeBuilder::new()
+            .with_field("displayName")
+            .with_field(
+                jenkins_api::client::TreeBuilder::object("lastBuild")
+                    .with_subfield("number")
+                    .with_subfield("duration")
+                    .with_subfield("result"),
+            )
+            .build(),
+    );
+
+    assert!(r.is_ok());
+}
+
+#[test]
+fn can_get_with_depth() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+    let r: Result<serde_json::Value, _> =
+        jenkins.get_job_as("normal job", jenkins_api::client::AdvancedQuery::Depth(2));
+
+    assert!(r.is_ok());
 }
