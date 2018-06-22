@@ -12,8 +12,9 @@ use self::builder::JobBuilder;
 
 #[macro_use]
 mod common;
-pub use self::common::{BallColor, BuildableJob, CommonJob, HealthReport, Job, JobName,
-                       SCMPollable, ShortJob};
+pub use self::common::{
+    BallColor, BuildableJob, CommonJob, HealthReport, Job, JobName, SCMPollable, ShortJob,
+};
 mod flow;
 pub use self::flow::BuildFlowJob;
 mod freestyle;
