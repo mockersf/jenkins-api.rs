@@ -105,7 +105,7 @@ impl Jenkins {
         qps: T,
     ) -> Result<Response, failure::Error> {
         let mut query = self.client.get(&self.url_api_json(&path.to_string()));
-        query.query(&qps);
+        let _ = query.query(&qps);
         Ok(Self::error_for_status(self.send(query)?)?)
     }
 
@@ -127,8 +127,8 @@ impl Jenkins {
 
         self.add_csrf_to_request(&mut request_builder)?;
 
-        request_builder.header(ContentType::form_url_encoded());
-        request_builder.query(qps).body(body);
+        let _ = request_builder.header(ContentType::form_url_encoded());
+        let _ = request_builder.query(qps).body(body);
         let mut response = self.send(request_builder)?;
 
         if response.status() == StatusCode::InternalServerError {

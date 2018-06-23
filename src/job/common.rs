@@ -139,7 +139,7 @@ pub trait Job {
             configuration: None,
         } = path
         {
-            jenkins_client.post(&Path::JobEnable { name })?;
+            let _ = jenkins_client.post(&Path::JobEnable { name })?;
             Ok(())
         } else {
             Err(client::Error::InvalidUrl {
@@ -157,7 +157,7 @@ pub trait Job {
             configuration: None,
         } = path
         {
-            jenkins_client.post(&Path::JobDisable { name })?;
+            let _ = jenkins_client.post(&Path::JobDisable { name })?;
             Ok(())
         } else {
             Err(client::Error::InvalidUrl {
@@ -178,7 +178,7 @@ pub trait Job {
             configuration: None,
         } = path
         {
-            jenkins_client.post(&Path::AddJobToView {
+            let _ = jenkins_client.post(&Path::AddJobToView {
                 job_name: name,
                 view_name: Name::Name(view_name.into().0),
             })?;
@@ -202,7 +202,7 @@ pub trait Job {
             configuration: None,
         } = path
         {
-            jenkins_client.post(&Path::RemoveJobFromView {
+            let _ = jenkins_client.post(&Path::RemoveJobFromView {
                 job_name: name,
                 view_name: Name::Name(view_name.into().0),
             })?;
@@ -380,7 +380,7 @@ pub trait SCMPollable: Job + Sized {
             configuration: None,
         } = path
         {
-            jenkins_client.post(&Path::PollSCMJob { name })?;
+            let _ = jenkins_client.post(&Path::PollSCMJob { name })?;
             Ok(())
         } else {
             Err(client::Error::InvalidUrl {

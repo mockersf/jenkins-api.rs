@@ -1,7 +1,8 @@
 #![deny(
     warnings, missing_debug_implementations, missing_copy_implementations, trivial_casts,
     trivial_numeric_casts, unsafe_code, unstable_features, unused_import_braces,
-    unused_qualifications, missing_docs
+    unused_qualifications, missing_docs, unreachable_pub, unused_extern_crates,
+    unused_qualifications, unused_results
 )]
 
 //! Bindings to [Jenkins JSON API](https://wiki.jenkins.io/display/JENKINS/Remote+access+API)

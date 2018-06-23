@@ -34,7 +34,7 @@ impl Jenkins {
         request_builder: &mut RequestBuilder,
     ) -> Result<(), failure::Error> {
         if self.csrf_enabled {
-            request_builder.header(self.get_csrf()?);
+            let _ = request_builder.header(self.get_csrf()?);
         }
         Ok(())
     }

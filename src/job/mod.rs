@@ -77,7 +77,7 @@ impl Jenkins {
     where
         J: Into<JobName<'a>>,
     {
-        self.post(&Path::PollSCMJob {
+        let _ = self.post(&Path::PollSCMJob {
             name: Name::Name(job_name.into().0),
         })?;
         Ok(())
