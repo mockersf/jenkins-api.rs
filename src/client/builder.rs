@@ -88,8 +88,8 @@ impl JenkinsBuilder {
         self
     }
 
-    /// Change the depth parameters of requests made to Jenkins. It controls
-    /// the amount of data in responses
+    /// Change the default depth parameters of requests made to Jenkins. It
+    /// controls the amount of data in responses
     pub fn with_depth(mut self, depth: u8) -> Self {
         self.depth = depth;
         self
