@@ -114,7 +114,7 @@ impl<'a> Into<PrivatePath<'a>> for Path<'a> {
 
 impl super::Jenkins {
     /// Get a `Path` from Jenkins, specifying the depth or tree parameters
-    pub fn get_object_as<'a, Q, T>(&self, object: Path, parameters: Q) -> Result<T, FailureError>
+    pub fn get_object_as<Q, T>(&self, object: Path, parameters: Q) -> Result<T, FailureError>
     where
         Q: Into<Option<AdvancedQuery>>,
         for<'de> T: serde::Deserialize<'de>,
