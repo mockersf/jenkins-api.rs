@@ -3,9 +3,12 @@ use urlencoding;
 use super::Jenkins;
 use build;
 
+/// Name of an object
 #[derive(Debug, PartialEq)]
-pub(crate) enum Name<'a> {
+pub enum Name<'a> {
+    /// Name of an object
     Name(&'a str),
+    /// URL Encoded name of an object
     UrlEncodedName(&'a str),
 }
 
@@ -19,7 +22,7 @@ impl<'a> ToString for Name<'a> {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) enum Path<'a> {
+pub enum Path<'a> {
     Home,
     View {
         name: Name<'a>,

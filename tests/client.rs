@@ -731,3 +731,61 @@ fn can_get_with_depth() {
 
     assert!(r.is_ok());
 }
+
+#[test]
+fn can_get_by_path_with_tree() {
+    #[derive(Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    struct LastBuild {
+        number: u8,
+        duration: u8,
+        result: String,
+    }
+    #[derive(Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    struct LasBuildOfJob {
+        display_name: String,
+        last_build: LastBuild,
+    }
+
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+    let r: Result<LasBuildOfJob, _> = jenkins.get_object_as(
+        jenkins_api::client::Path::Job {
+            name: "normal job",
+            configuration: None,
+        },
+        jenkins_api::client::TreeBuilder::new()
+            .with_field("displayName")
+            .with_field(
+                jenkins_api::client::TreeBuilder::object("lastBuild")
+                    .with_subfield("number")
+                    .with_subfield("duration")
+                    .with_subfield("result"),
+            )
+            .build(),
+    );
+
+    assert!(r.is_ok());
+}
+
+#[test]
+fn can_get_by_path_with_depth() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+    let r: Result<serde_json::Value, _> = jenkins.get_object_as(
+        jenkins_api::client::Path::Job {
+            name: "normal job",
+            configuration: None,
+        },
+        jenkins_api::client::AdvancedQuery::Depth(2),
+    );
+
+    assert!(r.is_ok());
+}

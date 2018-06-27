@@ -2,7 +2,8 @@
 
 use failure::Error;
 
-use client::{self, Path};
+use client;
+use client_internals::path::Path;
 use Jenkins;
 
 /// Artifact produced by a build

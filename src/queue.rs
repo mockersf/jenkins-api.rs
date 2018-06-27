@@ -5,7 +5,8 @@ use serde_json;
 
 use action::CommonAction;
 use build::ShortBuild;
-use client::{self, Path};
+use client;
+use client_internals::Path;
 use job::ShortJob;
 use Jenkins;
 

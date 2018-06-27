@@ -6,7 +6,8 @@ use serde_json;
 
 use helpers::Class;
 
-use client::{self, Name, Path};
+use client;
+use client_internals::{Name, Path};
 use job::{JobName, ShortJob};
 use property::CommonProperty;
 use Jenkins;

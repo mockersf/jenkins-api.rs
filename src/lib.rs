@@ -1,8 +1,7 @@
 #![deny(
     warnings, missing_debug_implementations, missing_copy_implementations, trivial_casts,
     trivial_numeric_casts, unsafe_code, unstable_features, unused_import_braces,
-    unused_qualifications, missing_docs, unreachable_pub, unused_extern_crates,
-    unused_qualifications, unused_results
+    unused_qualifications, missing_docs, unused_extern_crates, unused_qualifications, unused_results
 )]
 
 //! Bindings to [Jenkins JSON API](https://wiki.jenkins.io/display/JENKINS/Remote+access+API)
@@ -52,8 +51,9 @@ extern crate regex;
 #[macro_use]
 extern crate log;
 
+mod client_internals;
+pub use client_internals::{Jenkins, JenkinsBuilder};
 pub mod client;
-pub use client::{Error, Jenkins, JenkinsBuilder};
 
 #[macro_use]
 pub mod helpers;

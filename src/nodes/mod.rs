@@ -2,7 +2,7 @@
 
 use failure::Error;
 
-use client::{Name, Path};
+use client_internals::{Name, Path};
 use Jenkins;
 
 pub mod computer;

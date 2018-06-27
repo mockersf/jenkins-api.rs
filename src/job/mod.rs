@@ -3,7 +3,7 @@
 use failure::Error;
 use serde;
 
-use client::{AdvancedQuery, InternalAdvancedQueryParams, Name, Path};
+use client_internals::{AdvancedQuery, InternalAdvancedQueryParams, Name, Path};
 use queue::ShortQueueItem;
 use Jenkins;
 

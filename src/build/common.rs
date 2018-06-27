@@ -7,7 +7,8 @@ use serde_json;
 use helpers::Class;
 
 use action::CommonAction;
-use client::{self, Path};
+use client;
+use client_internals::path::Path;
 use job::{CommonJob, Job};
 use Jenkins;
 

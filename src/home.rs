@@ -2,7 +2,7 @@
 
 use failure::Error;
 
-use client::Path;
+use client_internals::Path;
 use job::ShortJob;
 use view::ShortView;
 use Jenkins;

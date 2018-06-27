@@ -5,7 +5,7 @@ use std::fmt;
 use reqwest::header::{Formatter, Header, Raw};
 use reqwest::RequestBuilder;
 
-use super::{errors, Jenkins, Path};
+use super::{errors, path::Path, Jenkins};
 
 #[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]

@@ -2,10 +2,9 @@
 
 use failure::Error;
 
-use Jenkins;
-// use action::Action;
-use client::{Name, Path};
+use client_internals::path::{Name, Path};
 use job::JobName;
+use Jenkins;
 
 #[macro_use]
 mod common;

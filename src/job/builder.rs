@@ -7,7 +7,8 @@ use reqwest::header::Location;
 use serde;
 use serde_urlencoded;
 
-use client::{self, Name, Path};
+use client;
+use client_internals::{Name, Path};
 use job::{Job, JobName};
 use queue::ShortQueueItem;
 use Jenkins;
@@ -55,7 +56,7 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
         J: Into<JobName<'a>>,
     {
         Ok(JobBuilder {
-            job_name: client::Name::Name(name.into().0),
+            job_name: Name::Name(name.into().0),
             jenkins_client,
             delay: None,
             cause: None,

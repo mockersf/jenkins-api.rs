@@ -10,10 +10,10 @@ use std::string::ToString;
 
 mod errors;
 pub use self::errors::Error;
-mod path;
-pub(crate) use self::path::{Name, Path};
 mod builder;
+pub mod path;
 pub use self::builder::JenkinsBuilder;
+pub use self::path::{Name, Path};
 mod csrf;
 mod tree;
 pub use self::tree::{TreeBuilder, TreeQueryParam};
