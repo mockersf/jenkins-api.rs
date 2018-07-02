@@ -43,23 +43,6 @@ impl Jenkins {
         // self.get_job_as(job_name, None)
     }
 
-    // /// Get a `Job` from it's `job_name`, specifying the depth or tree parameters
-    // pub fn get_job_as<'a, J, Q, T>(&self, job_name: J, parameters: Q) -> Result<T, Error>
-    // where
-    //     J: Into<JobName<'a>>,
-    //     Q: Into<Option<AdvancedQuery>>,
-    //     for<'de> T: serde::Deserialize<'de>,
-    // {
-    //     Ok(self.get_with_params(
-    //         &Path::Job {
-    //             name: Name::Name(job_name.into().0),
-    //             configuration: None,
-    //         },
-    //         parameters.into().map(InternalAdvancedQueryParams::from),
-    //     )?
-    //         .json()?)
-    // }
-
     /// Build a `Job` from it's `job_name`
     pub fn build_job<'a, J>(&self, job_name: J) -> Result<ShortQueueItem, Error>
     where
