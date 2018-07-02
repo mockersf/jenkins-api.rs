@@ -674,62 +674,13 @@ fn can_get_master_while_building() {
         .build()
         .unwrap();
 
-    let job: Result<jenkins_api::job::FreeStyleProject, _> = jenkins.get_job_as("long job", None);
+    let job: Result<jenkins_api::job::FreeStyleProject, _> =
+        jenkins.get_job("long job").unwrap().as_variant();
     assert!(job.is_ok());
     job.unwrap().build(&jenkins).ok();
 
     println!("{:#?}", jenkins.get_master_node());
     assert_that!(jenkins.get_master_node()).is_ok();
-}
-
-#[test]
-fn can_get_with_tree() {
-    #[derive(Deserialize, Debug)]
-    #[serde(rename_all = "camelCase")]
-    struct LastBuild {
-        number: u8,
-        duration: u8,
-        result: String,
-    }
-    #[derive(Deserialize, Debug)]
-    #[serde(rename_all = "camelCase")]
-    struct LasBuildOfJob {
-        display_name: String,
-        last_build: LastBuild,
-    }
-
-    setup();
-    let jenkins = JenkinsBuilder::new(JENKINS_URL)
-        .with_user("user", Some("password"))
-        .build()
-        .unwrap();
-    let r: Result<LasBuildOfJob, _> = jenkins.get_job_as(
-        "normal job",
-        jenkins_api::client::TreeBuilder::new()
-            .with_field("displayName")
-            .with_field(
-                jenkins_api::client::TreeBuilder::object("lastBuild")
-                    .with_subfield("number")
-                    .with_subfield("duration")
-                    .with_subfield("result"),
-            )
-            .build(),
-    );
-
-    assert!(r.is_ok());
-}
-
-#[test]
-fn can_get_with_depth() {
-    setup();
-    let jenkins = JenkinsBuilder::new(JENKINS_URL)
-        .with_user("user", Some("password"))
-        .build()
-        .unwrap();
-    let r: Result<serde_json::Value, _> =
-        jenkins.get_job_as("normal job", jenkins_api::client::AdvancedQuery::Depth(2));
-
-    assert!(r.is_ok());
 }
 
 #[test]
