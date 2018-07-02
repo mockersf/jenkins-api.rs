@@ -5,6 +5,7 @@
 * Updated variants types to be able to keep variant information when navigating between objects (ie `CommonJob` -> `FreeStyleProject` -> `ShortBuild` -> `FreeStyleBuild` without going through `CommonBuild`)
 * Updated visibility of some of the structs in `client`
 * Added a new method `get_object_as` that let the user decide the amount of data returned. See [taming-jenkins-json-api-depth-and-tree](https://www.cloudbees.com/blog/taming-jenkins-json-api-depth-and-tree)
+* Removed deprecated methods
 
 # 0.4.2 (2018/06/19)
 
