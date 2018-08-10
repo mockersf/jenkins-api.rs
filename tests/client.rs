@@ -145,7 +145,8 @@ fn can_get_build_from_job_and_back() {
         .unwrap();
     let job = jenkins.get_job("normal job");
     assert_that!(job).is_ok();
-    let job_variant = job.unwrap()
+    let job_variant = job
+        .unwrap()
         .as_variant::<jenkins_api::job::FreeStyleProject>();
     assert_that!(job_variant).is_ok();
     let job_ok = job_variant.unwrap();
@@ -335,7 +336,8 @@ fn can_get_queue_item() {
 
     let job = jenkins.get_job("job name");
     assert!(job.is_ok());
-    let triggered = job.unwrap()
+    let triggered = job
+        .unwrap()
         .as_variant::<jenkins_api::job::FreeStyleProject>()
         .unwrap()
         .build(&jenkins);
@@ -579,7 +581,8 @@ fn can_poll_scm() {
     let job = jenkins.get_job("git triggered");
     assert!(job.is_ok());
 
-    let poll = job.unwrap()
+    let poll = job
+        .unwrap()
         .as_variant::<jenkins_api::job::FreeStyleProject>()
         .unwrap()
         .poll_scm(&jenkins);
@@ -599,7 +602,8 @@ fn can_get_maven_job() {
     let job = jenkins.get_job("maven job");
     assert_that!(job).named("getting a job").is_ok();
 
-    let maven_project = job.unwrap()
+    let maven_project = job
+        .unwrap()
         .as_variant::<jenkins_api::job::MavenModuleSet>();
     assert_that!(maven_project)
         .named("was able to get as a MavenModuleSet")

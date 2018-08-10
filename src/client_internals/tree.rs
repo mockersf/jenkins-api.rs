@@ -29,7 +29,8 @@ impl ToString for TreeQueryParam {
                     .collect::<Vec<_>>()
                     .join(",")
             ),
-            (None, _) => self.subkeys
+            (None, _) => self
+                .subkeys
                 .iter()
                 .map(TreeQueryParam::to_string)
                 .collect::<Vec<_>>()

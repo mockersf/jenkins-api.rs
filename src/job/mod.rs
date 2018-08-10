@@ -35,10 +35,11 @@ impl Jenkins {
     where
         J: Into<JobName<'a>>,
     {
-        Ok(self.get(&Path::Job {
-            name: Name::Name(job_name.into().0),
-            configuration: None,
-        })?
+        Ok(self
+            .get(&Path::Job {
+                name: Name::Name(job_name.into().0),
+                configuration: None,
+            })?
             .json()?)
         // self.get_job_as(job_name, None)
     }

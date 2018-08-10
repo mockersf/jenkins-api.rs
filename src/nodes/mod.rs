@@ -34,17 +34,19 @@ impl Jenkins {
     where
         C: Into<computer::ComputerName<'a>>,
     {
-        Ok(self.get(&Path::Computer {
-            name: Name::Name(&computer_name.into().0),
-        })?
+        Ok(self
+            .get(&Path::Computer {
+                name: Name::Name(&computer_name.into().0),
+            })?
             .json()?)
     }
 
     /// Get the master `Computer`
     pub fn get_master_node(&self) -> Result<computer::MasterComputer, Error> {
-        Ok(self.get(&Path::Computer {
-            name: Name::Name("(master)"),
-        })?
+        Ok(self
+            .get(&Path::Computer {
+                name: Name::Name("(master)"),
+            })?
             .json()?)
     }
 }

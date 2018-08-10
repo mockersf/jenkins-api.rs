@@ -189,7 +189,8 @@ impl Jenkins {
         } else {
             url
         };
-        let slashes: Vec<usize> = path.char_indices()
+        let slashes: Vec<usize> = path
+            .char_indices()
             .filter(|c| c.1 == '/')
             .map(|c| c.0)
             .collect();

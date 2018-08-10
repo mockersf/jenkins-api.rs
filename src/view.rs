@@ -166,9 +166,10 @@ impl Jenkins {
     where
         V: Into<ViewName<'a>>,
     {
-        Ok(self.get(&Path::View {
-            name: Name::Name(&view_name.into().0),
-        })?
+        Ok(self
+            .get(&Path::View {
+                name: Name::Name(&view_name.into().0),
+            })?
             .json()?)
     }
 

@@ -169,10 +169,11 @@ impl super::Jenkins {
         Q: Into<Option<AdvancedQuery>>,
         for<'de> T: serde::Deserialize<'de>,
     {
-        Ok(self.get_with_params(
-            &object.into(),
-            parameters.into().map(InternalAdvancedQueryParams::from),
-        )?
+        Ok(self
+            .get_with_params(
+                &object.into(),
+                parameters.into().map(InternalAdvancedQueryParams::from),
+            )?
             .json()?)
     }
 }
