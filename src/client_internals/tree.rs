@@ -106,3 +106,8 @@ impl Into<Option<super::AdvancedQuery>> for TreeQueryParam {
         Some(super::AdvancedQuery::Tree(self))
     }
 }
+impl Default for TreeBuilder {
+    fn default() -> Self {
+        Self::new()
+    }
+}
