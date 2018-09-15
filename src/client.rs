@@ -173,7 +173,6 @@ impl super::Jenkins {
             .get_with_params(
                 &object.into(),
                 parameters.into().map(InternalAdvancedQueryParams::from),
-            )?
-            .json()?)
+            )?.json()?)
     }
 }

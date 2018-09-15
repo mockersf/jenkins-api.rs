@@ -169,8 +169,7 @@ impl Jenkins {
         Ok(self
             .get(&Path::View {
                 name: Name::Name(&view_name.into().0),
-            })?
-            .json()?)
+            })?.json()?)
     }
 
     /// Add the job `job_name` to the view `view_name`

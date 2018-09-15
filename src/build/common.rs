@@ -175,8 +175,7 @@ pub trait Build {
                 .get(&Path::Job {
                     name: job_name,
                     configuration,
-                })?
-                .json()?)
+                })?.json()?)
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url().to_string(),
@@ -199,8 +198,7 @@ pub trait Build {
                     job_name,
                     number,
                     configuration,
-                })?
-                .text()?)
+                })?.text()?)
         } else {
             Err(client::Error::InvalidUrl {
                 url: self.url().to_string(),

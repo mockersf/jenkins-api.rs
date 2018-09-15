@@ -720,8 +720,7 @@ fn can_get_by_path_with_tree() {
                     .with_subfield("number")
                     .with_subfield("duration")
                     .with_subfield("result"),
-            )
-            .build(),
+            ).build(),
     );
 
     assert!(r.is_ok());

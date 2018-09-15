@@ -77,7 +77,7 @@ macro_rules! computer_with_common_fields_and_impl {
             /// One off executors of the computer
             pub one_off_executors: Vec<Executor>,
 
-            // TODO: actions, assignedLabels, loadStatistics 
+            // TODO: actions, assignedLabels, loadStatistics
 
             $(
                 $(#[$field_attr])*

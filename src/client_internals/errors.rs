@@ -13,7 +13,10 @@ pub enum Error {
     },
 
     /// Error thrown when CSRF protection use an unexpected field name
-    #[fail(display = "invalid crumbfield '{}', expected 'Jenkins-Crumb'", field_name)]
+    #[fail(
+        display = "invalid crumbfield '{}', expected 'Jenkins-Crumb'",
+        field_name
+    )]
     InvalidCrumbFieldName {
         /// Field name provided by Jenkins api for crumb
         field_name: String,
@@ -37,7 +40,12 @@ pub enum Error {
     UnsupportedBuildConfiguration,
 
     /// Error when trying to do an action on an object not supporting it
-    #[fail(display = "can't do '{}' on a {} of type {}", action, object_type, variant_name)]
+    #[fail(
+        display = "can't do '{}' on a {} of type {}",
+        action,
+        object_type,
+        variant_name
+    )]
     InvalidObjectType {
         /// Object type
         object_type: ExpectedType,

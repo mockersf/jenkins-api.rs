@@ -69,8 +69,7 @@ mod tests {
         "crumbRequestField":"Invalid-Crumb"
 }
 "#,
-            )
-            .create();
+            ).create();
 
         let crumb = jenkins_client.get_csrf();
 
