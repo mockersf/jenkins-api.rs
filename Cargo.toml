@@ -15,7 +15,7 @@ build = "build.rs"
 travis-ci = { repository = "mockersf/jenkins-api.rs" }
 
 [dependencies]
-reqwest = "0.8"
+reqwest = "0.9"
 hyper = "0.11"
 
 serde = "1.0"
