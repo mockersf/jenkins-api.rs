@@ -49,7 +49,7 @@ fn should_be_forbidden() {
     assert_eq!(
         format!("{:?}", response),
         format!(
-            "Err(Error {{ kind: ClientError(Unauthorized), url: Some(\"{}/api/json?depth=1\") }})",
+            "Err(Inner {{ kind: ClientError(401), url: Some(\"{}/api/json?depth=1\") }})",
             JENKINS_URL
         )
     );
@@ -87,7 +87,7 @@ fn should_get_view_not_found() {
     assert_eq!(
         format!("{:?}", response),
         format!(
-            "Err(Error {{ kind: ClientError(NotFound), url: Some(\"{}/view/zut/api/json?depth=1\") }})",
+            "Err(Inner {{ kind: ClientError(404), url: Some(\"{}/view/zut/api/json?depth=1\") }})",
             JENKINS_URL
         )
     );
@@ -341,7 +341,7 @@ fn can_get_queue_item() {
         .as_variant::<jenkins_api::job::FreeStyleProject>()
         .unwrap()
         .build(&jenkins);
-    assert!(triggered.is_ok());
+    assert_that!(triggered).named("job triggered").is_ok();
 
     let triggered_ok = triggered.unwrap();
 
@@ -532,7 +532,7 @@ fn can_build_job_with_parameters() {
         .with_parameters(&params)
         .unwrap()
         .send();
-    assert!(triggered.is_ok());
+    assert_that!(triggered).named("triggered job").is_ok();
 
     let queue_item = triggered.unwrap().get_full_queue_item(&jenkins);
     assert!(queue_item.is_ok());
@@ -543,13 +543,15 @@ fn can_build_job_with_parameters() {
     let mut found_param2 = false;
     let mut found_param3 = false;
 
+    // print!("{:?}", queue_item_ok);
     for action in queue_item_ok.actions {
         if let Ok(parameters) = action.as_variant::<jenkins_api::action::ParametersAction>() {
             for param in parameters.parameters {
+                print!("{:#?}", param);
                 if let Ok(bool_param) =
                     param.as_variant::<jenkins_api::action::parameters::BooleanParameterValue>()
                 {
-                    found_param1 = bool_param.value;
+                    found_param1 = bool_param.value == params.bool_param;
                 }
                 if let Ok(string_param) =
                     param.as_variant::<jenkins_api::action::parameters::StringParameterValue>()
@@ -564,7 +566,6 @@ fn can_build_job_with_parameters() {
             }
         }
     }
-
     assert!(found_param1);
     assert!(found_param2);
     assert!(found_param3);

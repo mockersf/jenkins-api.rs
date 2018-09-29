@@ -2,8 +2,9 @@
 
 use failure;
 use regex::Regex;
-use reqwest::header::ContentType;
-use reqwest::{Body, Client, RequestBuilder, Response, StatusCode};
+use reqwest::{
+    header::HeaderValue, header::CONTENT_TYPE, Body, Client, RequestBuilder, Response, StatusCode,
+};
 use serde::Serialize;
 use std::fmt::Debug;
 use std::string::ToString;
@@ -82,6 +83,10 @@ impl Jenkins {
     }
 
     fn send(&self, mut request_builder: RequestBuilder) -> Result<Response, failure::Error> {
+        if let Some(ref user) = self.user {
+            request_builder =
+                request_builder.basic_auth(user.username.clone(), user.password.clone());
+        }
         let query = request_builder.build()?;
         debug!("sending {} {}", query.method(), query.url());
         Ok(self.client.execute(query)?)
@@ -104,17 +109,19 @@ impl Jenkins {
         path: &Path,
         qps: T,
     ) -> Result<Response, failure::Error> {
-        let mut query = self.client.get(&self.url_api_json(&path.to_string()));
-        let _ = query.query(&qps);
+        let query = self
+            .client
+            .get(&self.url_api_json(&path.to_string()))
+            .query(&qps);
         Ok(Self::error_for_status(self.send(query)?)?)
     }
 
     pub(crate) fn post(&self, path: &Path) -> Result<Response, failure::Error> {
         let mut request_builder = self.client.post(&self.url(&path.to_string()));
 
-        self.add_csrf_to_request(&mut request_builder)?;
+        request_builder = self.add_csrf_to_request(request_builder)?;
 
-        Ok(request_builder.send()?.error_for_status()?)
+        Ok(Self::error_for_status(self.send(request_builder)?)?)
     }
 
     pub(crate) fn post_with_body<T: Into<Body> + Debug>(
@@ -125,13 +132,17 @@ impl Jenkins {
     ) -> Result<Response, failure::Error> {
         let mut request_builder = self.client.post(&self.url(&path.to_string()));
 
-        self.add_csrf_to_request(&mut request_builder)?;
+        request_builder = self.add_csrf_to_request(request_builder)?;
 
-        let _ = request_builder.header(ContentType::form_url_encoded());
-        let _ = request_builder.query(qps).body(body);
+        request_builder = request_builder.header(
+            CONTENT_TYPE,
+            HeaderValue::from_static("application/x-www-form-urlencoded"),
+        );
+        debug!("{:?}", body);
+        request_builder = request_builder.query(qps).body(body);
         let mut response = self.send(request_builder)?;
 
-        if response.status() == StatusCode::InternalServerError {
+        if response.status() == StatusCode::INTERNAL_SERVER_ERROR {
             let body = response.text()?;
 
             let re = Regex::new(r"java.lang.([a-zA-Z]+): (.*)").unwrap();
@@ -279,7 +290,7 @@ mod tests {
         assert_eq!(
             format!("{:?}", response),
             concat!(
-                r#"Err(Error { kind: ServerError(InternalServerError), "#,
+                r#"Err(Inner { kind: ServerError(500), "#,
                 r#"url: Some("http://127.0.0.1:1234/error-NewException?") })"#
             )
         );

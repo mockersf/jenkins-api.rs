@@ -1,7 +1,6 @@
 use std::str::FromStr;
 
 use failure::Error;
-use reqwest::header::{Authorization, Basic, Headers};
 use reqwest::{self, Client, Url};
 
 use super::{Jenkins, User};
@@ -55,18 +54,9 @@ impl JenkinsBuilder {
             Err(reqwest::UrlError::EmptyHost)?;
         }
 
-        let mut headers = Headers::new();
-
-        if let Some(ref user) = self.user {
-            headers.set(Authorization(Basic {
-                username: user.username.clone(),
-                password: user.password.clone(),
-            }));
-        }
-
         Ok(Jenkins {
             url: self.url,
-            client: Client::builder().default_headers(headers).build()?,
+            client: Client::builder().build()?,
             user: self.user,
             csrf_enabled: self.csrf_enabled,
             depth: self.depth,

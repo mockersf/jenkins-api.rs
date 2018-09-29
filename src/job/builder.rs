@@ -1,8 +1,7 @@
 //! Helper to build a job
-
 use failure::Error;
 
-use reqwest::header::Location;
+use reqwest::header::LOCATION;
 
 use serde;
 use serde_urlencoded;
@@ -117,9 +116,9 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
                 )?
             }
         };
-        if let Some(location) = response.headers().get::<Location>() {
+        if let Some(location) = response.headers().get(LOCATION) {
             Ok(ShortQueueItem {
-                url: location.lines().next().unwrap().to_string(),
+                url: location.to_str().unwrap().to_string(),
                 other_fields: None,
             })
         } else {
