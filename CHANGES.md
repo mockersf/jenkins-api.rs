@@ -1,5 +1,10 @@
 # Changes
 
+# 0.5.1 (2018/10/10)
+
+* Updated dependencies
+* Should now work with all configurations for crumb header in Jenkins
+
 # 0.5.0 (2018/07/02)
 
 * Updated variants types to be able to keep variant information when navigating between objects (ie `CommonJob` -> `FreeStyleProject` -> `ShortBuild` -> `FreeStyleBuild` without going through `CommonBuild`)
