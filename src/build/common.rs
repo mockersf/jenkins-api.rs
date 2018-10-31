@@ -281,7 +281,7 @@ macro_rules! build_with_common_fields_and_impl {
             /// Display name, usually "#" followed by the build number
             pub display_name: String,
             /// Full display name: job name followed by the build display name
-            pub full_display_name: String,
+            pub full_display_name: Option<String>,
             /// Build description
             pub description: Option<String>,
             /// Is this build currently running

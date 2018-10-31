@@ -277,7 +277,7 @@ macro_rules! job_build_with_common_fields_and_impl {
             /// Display Name of the job
             pub display_name: String,
             /// Full Display Name of the job
-            pub full_display_name: String,
+            pub full_display_name: Option<String>,
             /// Full Name of the job
             pub full_name: String,
             /// Display Name of the job
