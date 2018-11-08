@@ -76,6 +76,8 @@ macro_rules! computer_with_common_fields_and_impl {
             pub executors: Vec<Executor>,
             /// One off executors of the computer
             pub one_off_executors: Vec<Executor>,
+            /// Labels assigned to the computer
+            pub assigned_labels: Vec<AssignedLabel>,
 
             // TODO: actions, assignedLabels, loadStatistics
 
@@ -151,4 +153,11 @@ pub enum ExecutorProgress {
     Percent(u32),
     /// Nothing
     None(i32),
+}
+
+/// A label assigned to a computer.
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct AssignedLabel {
+    /// Name of the label.
+    pub name: String,
 }
