@@ -1,5 +1,9 @@
 # Changes
 
+# 0.5.2 (2018/11/10)
+
+* Support assigned labels field on computers
+
 # 0.5.1 (2018/10/10)
 
 * Updated dependencies
