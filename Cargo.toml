@@ -34,7 +34,7 @@ skeptic = "0.13"
 
 [dev-dependencies]
 skeptic = "0.13"
-env_logger = "0.5"
+env_logger = "0.6"
 mockito = "0.14.0"
 spectral = "0.6.0"
 proptest = "0.8.1"
