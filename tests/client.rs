@@ -1,4 +1,3 @@
-#[macro_use]
 extern crate spectral;
 
 extern crate env_logger;
