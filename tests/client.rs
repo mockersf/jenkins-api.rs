@@ -1,4 +1,3 @@
-#[macro_use]
 extern crate spectral;
 
 extern crate env_logger;
@@ -196,14 +195,12 @@ fn can_add_and_remove_job_from_view_through_view() {
     let view = jenkins.get_view("test view");
     assert!(view.is_ok());
     let view_ok = view.unwrap();
-    assert!(
-        view_ok
-            .jobs
-            .iter()
-            .map(|job| &job.name)
-            .find(|job_name| *job_name == "normal job")
-            .is_none()
-    );
+    assert!(view_ok
+        .jobs
+        .iter()
+        .map(|job| &job.name)
+        .find(|job_name| *job_name == "normal job")
+        .is_none());
 
     let job = jenkins.get_job("normal job");
     assert!(job.is_ok());
@@ -217,15 +214,13 @@ fn can_add_and_remove_job_from_view_through_view() {
 
     let view_with = jenkins.get_view("test view");
     assert!(view_with.is_ok());
-    assert!(
-        view_with
-            .unwrap()
-            .jobs
-            .iter()
-            .map(|job| &job.name)
-            .find(|job_name| *job_name == "normal job")
-            .is_some()
-    );
+    assert!(view_with
+        .unwrap()
+        .jobs
+        .iter()
+        .map(|job| &job.name)
+        .find(|job_name| *job_name == "normal job")
+        .is_some());
 
     let removing = view_ok
         .as_variant::<jenkins_api::view::ListView>()
@@ -235,15 +230,13 @@ fn can_add_and_remove_job_from_view_through_view() {
 
     let view_without = jenkins.get_view("test view");
     assert!(view_without.is_ok());
-    assert!(
-        view_without
-            .unwrap()
-            .jobs
-            .iter()
-            .map(|job| &job.name)
-            .find(|job_name| *job_name == "normal job")
-            .is_none()
-    );
+    assert!(view_without
+        .unwrap()
+        .jobs
+        .iter()
+        .map(|job| &job.name)
+        .find(|job_name| *job_name == "normal job")
+        .is_none());
 }
 
 #[test]
@@ -258,14 +251,12 @@ fn can_add_and_remove_job_from_view_through_job() {
     println!("{:#?}", view);
     assert!(view.is_ok());
     let view_ok = view.unwrap();
-    assert!(
-        view_ok
-            .jobs
-            .iter()
-            .map(|job| &job.name)
-            .find(|job_name| *job_name == "pipeline job")
-            .is_none()
-    );
+    assert!(view_ok
+        .jobs
+        .iter()
+        .map(|job| &job.name)
+        .find(|job_name| *job_name == "pipeline job")
+        .is_none());
 
     let job = jenkins.get_job("pipeline job");
     println!("{:#?}", job);
@@ -279,15 +270,13 @@ fn can_add_and_remove_job_from_view_through_job() {
     let view_with = jenkins.get_view("test view");
     println!("{:#?}", view_with);
     assert!(view_with.is_ok());
-    assert!(
-        view_with
-            .unwrap()
-            .jobs
-            .iter()
-            .map(|job| &job.name)
-            .find(|job_name| *job_name == "pipeline job")
-            .is_some()
-    );
+    assert!(view_with
+        .unwrap()
+        .jobs
+        .iter()
+        .map(|job| &job.name)
+        .find(|job_name| *job_name == "pipeline job")
+        .is_some());
 
     let removing = job_ok.remove_from_view(&jenkins, &view_ok.name);
     println!("{:#?}", removing);
@@ -296,15 +285,13 @@ fn can_add_and_remove_job_from_view_through_job() {
     let view_without = jenkins.get_view("test view");
     println!("{:#?}", view_without);
     assert!(view_without.is_ok());
-    assert!(
-        view_without
-            .unwrap()
-            .jobs
-            .iter()
-            .map(|job| &job.name)
-            .find(|job_name| *job_name == "pipeline job")
-            .is_none()
-    );
+    assert!(view_without
+        .unwrap()
+        .jobs
+        .iter()
+        .map(|job| &job.name)
+        .find(|job_name| *job_name == "pipeline job")
+        .is_none());
 }
 
 #[test]
@@ -721,7 +708,8 @@ fn can_get_by_path_with_tree() {
                     .with_subfield("number")
                     .with_subfield("duration")
                     .with_subfield("result"),
-            ).build(),
+            )
+            .build(),
     );
 
     assert!(r.is_ok());

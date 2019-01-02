@@ -194,11 +194,9 @@ impl Jenkins {
 mod tests {
     extern crate mockito;
 
-    static JENKINS_URL: &'static str = mockito::SERVER_URL;
-
     #[test]
     fn can_post_with_body() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL)
+        let jenkins_client = ::JenkinsBuilder::new(&mockito::server_url())
             .disable_csrf()
             .build()
             .unwrap();
@@ -214,7 +212,7 @@ mod tests {
 
     #[test]
     fn can_post_with_body_and_get_error_state() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL)
+        let jenkins_client = ::JenkinsBuilder::new(&mockito::server_url())
             .disable_csrf()
             .build()
             .unwrap();
@@ -241,7 +239,7 @@ mod tests {
 
     #[test]
     fn can_post_with_body_and_get_error_argument() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL)
+        let jenkins_client = ::JenkinsBuilder::new(&mockito::server_url())
             .disable_csrf()
             .build()
             .unwrap();
@@ -268,7 +266,7 @@ mod tests {
 
     #[test]
     fn can_post_with_body_and_get_error_new() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL)
+        let jenkins_client = ::JenkinsBuilder::new(&mockito::server_url())
             .disable_csrf()
             .build()
             .unwrap();
@@ -298,7 +296,7 @@ mod tests {
 
     #[test]
     fn can_post_with_query_params() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL)
+        let jenkins_client = ::JenkinsBuilder::new(&mockito::server_url())
             .disable_csrf()
             .build()
             .unwrap();
