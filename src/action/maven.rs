@@ -49,7 +49,8 @@ impl ShortMavenArtifactRecord {
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
                 expected: client::error::ExpectedType::MavenArtifactRecord,
-            }.into())
+            }
+            .into())
         }
     }
 }

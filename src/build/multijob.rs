@@ -7,19 +7,21 @@ use changeset;
 use job::MultiJobProject;
 use user::ShortUser;
 
-build_with_common_fields_and_impl!(/// A `Build` from a MultiJobProject
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct MultiJobBuild<ParentJob = MultiJobProject> {
-    /// Change set for this build
-    pub change_set: changeset::CommonChangeSetList,
-    /// Which slave was it build on
-    pub built_on: String,
-    /// List of user ids who made a change since the last non-broken build
-    pub culprits: Vec<ShortUser>,
-    /// Sub-builds of multi job
-    pub sub_builds: Vec<MultiJobSubBuild>,
-});
+build_with_common_fields_and_impl!(
+    /// A `Build` from a MultiJobProject
+    #[derive(Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    pub struct MultiJobBuild<ParentJob = MultiJobProject> {
+        /// Change set for this build
+        pub change_set: changeset::CommonChangeSetList,
+        /// Which slave was it build on
+        pub built_on: String,
+        /// List of user ids who made a change since the last non-broken build
+        pub culprits: Vec<ShortUser>,
+        /// Sub-builds of multi job
+        pub sub_builds: Vec<MultiJobSubBuild>,
+    }
+);
 register_class!("com.tikal.jenkins.plugins.multijob.MultiJobBuild" => MultiJobBuild);
 
 impl MultiJobBuild {}

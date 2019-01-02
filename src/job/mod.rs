@@ -39,7 +39,8 @@ impl Jenkins {
             .get(&Path::Job {
                 name: Name::Name(job_name.into().0),
                 configuration: None,
-            })?.json()?)
+            })?
+            .json()?)
         // self.get_job_as(job_name, None)
     }
 

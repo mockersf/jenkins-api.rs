@@ -59,28 +59,36 @@ pub struct CommonChangeSetList {
 });
 specialize!(CommonChangeSetList => ChangeSetList);
 
-changesetlist_with_common_fields_and_impl!(/// No changes recorded
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct EmptyChangeSet {});
+changesetlist_with_common_fields_and_impl!(
+    /// No changes recorded
+    #[derive(Serialize, Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    pub struct EmptyChangeSet {}
+);
 register_class!("hudson.scm.EmptyChangeLogSet" => EmptyChangeSet);
 
-changesetlist_with_common_fields_and_impl!(/// Changes found from git
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct GitChangeSetList {});
+changesetlist_with_common_fields_and_impl!(
+    /// Changes found from git
+    #[derive(Serialize, Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    pub struct GitChangeSetList {}
+);
 register_class!("hudson.plugins.git.GitChangeSetList" => GitChangeSetList);
 
-changesetlist_with_common_fields_and_impl!(/// Changes found from a repo
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct RepoChangeLogSet {});
+changesetlist_with_common_fields_and_impl!(
+    /// Changes found from a repo
+    #[derive(Serialize, Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    pub struct RepoChangeLogSet {}
+);
 register_class!("hudson.plugins.repo.RepoChangeLogSet" => RepoChangeLogSet);
 
-changesetlist_with_common_fields_and_impl!(/// Changes filtered by maven module
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct FilteredChangeLogSet {});
+changesetlist_with_common_fields_and_impl!(
+    /// Changes filtered by maven module
+    #[derive(Serialize, Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    pub struct FilteredChangeLogSet {}
+);
 register_class!("hudson.maven.FilteredChangeLogSet" => FilteredChangeLogSet);
 
 /// Trait implemented by specialization of changeset

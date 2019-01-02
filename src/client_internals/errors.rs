@@ -42,9 +42,7 @@ pub enum Error {
     /// Error when trying to do an action on an object not supporting it
     #[fail(
         display = "can't do '{}' on a {} of type {}",
-        action,
-        object_type,
-        variant_name
+        action, object_type, variant_name
     )]
     InvalidObjectType {
         /// Object type

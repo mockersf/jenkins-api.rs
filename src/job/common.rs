@@ -96,7 +96,8 @@ where
             Err(client::Error::InvalidUrl {
                 url: self.url.clone(),
                 expected: client::error::ExpectedType::Job,
-            }.into())
+            }
+            .into())
         }
     }
 }
@@ -146,7 +147,8 @@ pub trait Job {
             Err(client::Error::InvalidUrl {
                 url: self.url().to_string(),
                 expected: client::error::ExpectedType::Job,
-            }.into())
+            }
+            .into())
         }
     }
 
@@ -164,7 +166,8 @@ pub trait Job {
             Err(client::Error::InvalidUrl {
                 url: self.url().to_string(),
                 expected: client::error::ExpectedType::Job,
-            }.into())
+            }
+            .into())
         }
     }
 
@@ -188,7 +191,8 @@ pub trait Job {
             Err(client::Error::InvalidUrl {
                 url: self.url().to_string(),
                 expected: client::error::ExpectedType::Job,
-            }.into())
+            }
+            .into())
         }
     }
 
@@ -212,7 +216,8 @@ pub trait Job {
             Err(client::Error::InvalidUrl {
                 url: self.url().to_string(),
                 expected: client::error::ExpectedType::Job,
-            }.into())
+            }
+            .into())
         }
     }
 }
@@ -387,7 +392,8 @@ pub trait SCMPollable: Job + Sized {
             Err(client::Error::InvalidUrl {
                 url: self.url().to_string(),
                 expected: client::error::ExpectedType::Job,
-            }.into())
+            }
+            .into())
         }
     }
 }

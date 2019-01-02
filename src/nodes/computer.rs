@@ -108,16 +108,20 @@ pub struct CommonComputer {
 });
 specialize!(CommonComputer => Computer);
 
-computer_with_common_fields_and_impl!(/// The master computer
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct MasterComputer {});
+computer_with_common_fields_and_impl!(
+    /// The master computer
+    #[derive(Serialize, Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    pub struct MasterComputer {}
+);
 register_class!("hudson.model.Hudson$MasterComputer" => MasterComputer);
 
-computer_with_common_fields_and_impl!(/// A slave computer
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct SlaveComputer {});
+computer_with_common_fields_and_impl!(
+    /// A slave computer
+    #[derive(Serialize, Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    pub struct SlaveComputer {}
+);
 register_class!("hudson.slave.SlaveComputer" => SlaveComputer);
 
 /// An `Executor` of a `Computer`
