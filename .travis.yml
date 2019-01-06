@@ -18,13 +18,13 @@ matrix:
   - rust: stable
     env: RUSTFMT
     install:
-      - rustup component add rustfmt-preview
+      - rustup component add rustfmt
     script:
       - cargo fmt -- --check
-  - rust: nightly
+  - rust: stable
     env: CLIPPY
     install:
-      - rustup component add clippy-preview
+      - rustup component add clippy
     script:
       - cargo clippy -- -D clippy
   - rust: stable
