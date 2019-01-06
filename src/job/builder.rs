@@ -24,6 +24,7 @@ pub struct JobBuilder<'a, 'b, 'c, 'd> {
 }
 
 impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
+    #[allow(clippy::new_ret_no_self)]
     pub(crate) fn new<T>(job: &'a T, jenkins_client: &'b Jenkins) -> Result<Self, Error>
     where
         T: Job,
