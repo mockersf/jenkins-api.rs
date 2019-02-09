@@ -1,10 +1,12 @@
-use helpers::Class;
+use serde::Deserialize;
+
+use crate::helpers::Class;
 
 use super::{Artifact, Build, BuildStatus};
-use action::CommonAction;
-use changeset;
-use job::FreeStyleProject;
-use user::ShortUser;
+use crate::action::CommonAction;
+use crate::changeset;
+use crate::job::FreeStyleProject;
+use crate::user::ShortUser;
 
 build_with_common_fields_and_impl!(
     /// A `Build` from a FreeStyleProject

@@ -1,9 +1,9 @@
 //! Types to parse the monitor data of a `Computer`
 
-use serde;
+use serde::{self, Deserialize, Serialize};
 use serde_json;
 
-use helpers::Class;
+use crate::helpers::Class;
 
 /// Monitor data provided by Jenkins about a `Computer`
 #[derive(Serialize, Deserialize, Debug, Clone)]

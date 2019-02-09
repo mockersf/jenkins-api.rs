@@ -3,14 +3,14 @@ use failure::Error;
 
 use reqwest::header::LOCATION;
 
-use serde;
+use serde::{self, Serialize};
 use serde_urlencoded;
 
-use client;
-use client_internals::{Name, Path};
-use job::{Job, JobName};
-use queue::ShortQueueItem;
-use Jenkins;
+use crate::client;
+use crate::client_internals::{Name, Path};
+use crate::job::{Job, JobName};
+use crate::queue::ShortQueueItem;
+use crate::Jenkins;
 
 /// Helper to build a job
 #[derive(Debug)]
@@ -168,7 +168,7 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
     ///
     /// This methods will return an error if serializing `parameters` fails, or if passing
     /// parameters to a remote build.
-    pub fn with_parameters<T: serde::Serialize>(mut self, parameters: &T) -> Result<Self, Error> {
+    pub fn with_parameters<T: Serialize>(mut self, parameters: &T) -> Result<Self, Error> {
         if self.token.is_some() {
             return Err(client::Error::UnsupportedBuildConfiguration.into());
         }

@@ -1,17 +1,17 @@
 //! Helpers to build advanced queries
 
 use failure::Error as FailureError;
-use serde;
+use serde::{self, Deserialize};
 
-use client_internals::path::{Name, Path as PrivatePath};
-use client_internals::InternalAdvancedQueryParams;
+use crate::client_internals::path::{Name, Path as PrivatePath};
+use crate::client_internals::InternalAdvancedQueryParams;
 
 // pub use client_internals::path::Name;
-pub use client_internals::AdvancedQuery;
-pub use client_internals::{error, Error};
-pub use client_internals::{TreeBuilder, TreeQueryParam};
+pub use crate::client_internals::AdvancedQuery;
+pub use crate::client_internals::{error, Error};
+pub use crate::client_internals::{TreeBuilder, TreeQueryParam};
 
-use build;
+use crate::build;
 
 /// Path to an object in Jenkins
 #[derive(Debug, PartialEq)]
@@ -119,9 +119,8 @@ impl super::Jenkins {
     ///
     /// ```rust
     /// # extern crate failure;
-    /// # extern crate serde;
     /// # #[macro_use]
-    /// # extern crate serde_derive;
+    /// # extern crate serde;
     /// #
     /// # extern crate jenkins_api;
     /// #
@@ -167,7 +166,7 @@ impl super::Jenkins {
     pub fn get_object_as<Q, T>(&self, object: Path, parameters: Q) -> Result<T, FailureError>
     where
         Q: Into<Option<AdvancedQuery>>,
-        for<'de> T: serde::Deserialize<'de>,
+        for<'de> T: Deserialize<'de>,
     {
         Ok(self
             .get_with_params(

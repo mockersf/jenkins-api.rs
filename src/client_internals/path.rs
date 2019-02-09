@@ -1,7 +1,7 @@
 use urlencoding;
 
 use super::Jenkins;
-use build;
+use crate::build;
 
 /// Name of an object
 #[derive(Debug, PartialEq)]
@@ -263,7 +263,7 @@ mod tests {
 
     #[test]
     fn can_parse_view_path() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+        let jenkins_client = crate::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
 
         let path = jenkins_client.url_to_path("/view/myview/");
         assert_eq!(
@@ -276,7 +276,7 @@ mod tests {
 
     #[test]
     fn can_parse_job_path() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+        let jenkins_client = crate::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
 
         let path = jenkins_client.url_to_path("/job/myjob/");
         assert_eq!(
@@ -290,7 +290,7 @@ mod tests {
 
     #[test]
     fn can_parse_job_with_config_path() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+        let jenkins_client = crate::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
 
         let path = jenkins_client.url_to_path("/job/myjob/config/");
         assert_eq!(
@@ -304,7 +304,7 @@ mod tests {
 
     #[test]
     fn can_parse_build_path() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+        let jenkins_client = crate::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
 
         let path = jenkins_client.url_to_path("/job/myjob/1/");
         assert_eq!(
@@ -319,7 +319,7 @@ mod tests {
 
     #[test]
     fn can_parse_build_with_config_path() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+        let jenkins_client = crate::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
 
         let path = jenkins_client.url_to_path("/job/myjob/config/1/");
         assert_eq!(
@@ -334,7 +334,7 @@ mod tests {
 
     #[test]
     fn can_parse_unknown_path() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+        let jenkins_client = crate::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
 
         let path = jenkins_client.url_to_path("/unknown/path/");
         assert_eq!(
@@ -347,7 +347,7 @@ mod tests {
 
     #[test]
     fn can_parse_job_path_with_jenkins_url() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
+        let jenkins_client = crate::JenkinsBuilder::new(JENKINS_URL).build().unwrap();
 
         let path_url = format!("{}/job/myjob/", JENKINS_URL);
         let path = jenkins_client.url_to_path(&path_url);

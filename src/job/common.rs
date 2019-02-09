@@ -1,20 +1,20 @@
 use std::marker::PhantomData;
 
 use failure::Error;
-use serde;
+use serde::{self, Deserialize, Serialize};
 use serde_json;
 
-use helpers::Class;
+use crate::helpers::Class;
 
 use super::JobBuilder;
-use action::CommonAction;
-use build::{CommonBuild, ShortBuild};
-use client;
-use client_internals::{Name, Path};
-use property::CommonProperty;
-use queue::ShortQueueItem;
-use view::ViewName;
-use Jenkins;
+use crate::action::CommonAction;
+use crate::build::{CommonBuild, ShortBuild};
+use crate::client;
+use crate::client_internals::{Name, Path};
+use crate::property::CommonProperty;
+use crate::queue::ShortQueueItem;
+use crate::view::ViewName;
+use crate::Jenkins;
 
 /// Ball Color corresponding to a `BuildStatus`
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
@@ -85,7 +85,7 @@ pub struct ShortJob<T: Job = CommonJob> {
 impl<T> ShortJob<T>
 where
     T: Job,
-    for<'de> T: serde::Deserialize<'de>,
+    for<'de> T: Deserialize<'de>,
 {
     /// Get the full details of a `Job` matching the `ShortJob`
     pub fn get_full_job(&self, jenkins_client: &Jenkins) -> Result<T, Error> {

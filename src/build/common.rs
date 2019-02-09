@@ -1,16 +1,16 @@
 use std::marker::PhantomData;
 
 use failure::Error;
-use serde;
+use serde::{self, Deserialize, Serialize};
 use serde_json;
 
-use helpers::Class;
+use crate::helpers::Class;
 
-use action::CommonAction;
-use client;
-use client_internals::path::Path;
-use job::{CommonJob, Job};
-use Jenkins;
+use crate::action::CommonAction;
+use crate::client;
+use crate::client_internals::path::Path;
+use crate::job::{CommonJob, Job};
+use crate::Jenkins;
 
 /// Short Build that is used in lists and links from other structs
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -29,7 +29,7 @@ pub struct ShortBuild<T: Build = CommonBuild> {
 impl<T> ShortBuild<T>
 where
     T: Build,
-    for<'de> T: serde::Deserialize<'de>,
+    for<'de> T: Deserialize<'de>,
 {
     /// Get the full details of a `Build` matching the `ShortBuild`
     pub fn get_full_build(&self, jenkins_client: &Jenkins) -> Result<T, Error> {
@@ -163,7 +163,7 @@ pub trait Build {
     /// Get the `Job` from a `Build`
     fn get_job(&self, jenkins_client: &Jenkins) -> Result<Self::ParentJob, Error>
     where
-        for<'de> Self::ParentJob: serde::Deserialize<'de>,
+        for<'de> Self::ParentJob: Deserialize<'de>,
     {
         let path = jenkins_client.url_to_path(&self.url());
         if let Path::Build {

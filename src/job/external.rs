@@ -1,10 +1,12 @@
-use helpers::Class;
+use serde::Deserialize;
+
+use crate::helpers::Class;
 
 use super::Job;
-use action::CommonAction;
-use build::{CommonBuild, ShortBuild};
-use property::CommonProperty;
-use queue::ShortQueueItem;
+use crate::action::CommonAction;
+use crate::build::{CommonBuild, ShortBuild};
+use crate::property::CommonProperty;
+use crate::queue::ShortQueueItem;
 
 use super::{BallColor, HealthReport};
 

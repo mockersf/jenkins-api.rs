@@ -1,16 +1,16 @@
 //! Jenkins Views, use to group Jobs
 
 use failure::Error;
-use serde;
+use serde::{self, Deserialize, Serialize};
 use serde_json;
 
-use helpers::Class;
+use crate::helpers::Class;
 
-use client;
-use client_internals::{Name, Path};
-use job::{JobName, ShortJob};
-use property::CommonProperty;
-use Jenkins;
+use crate::client;
+use crate::client_internals::{Name, Path};
+use crate::job::{JobName, ShortJob};
+use crate::property::CommonProperty;
+use crate::Jenkins;
 
 /// Short View that is used in lists and links from other structs
 #[derive(Deserialize, Serialize, Debug)]

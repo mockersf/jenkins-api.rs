@@ -22,7 +22,7 @@ macro_rules! specialize {
             #[doc = "Read the object as one of it's specialization implementing $trait"]
             pub fn as_variant<T: Class + $trait>(&self) -> Result<T, serde_json::Error>
             where
-                for<'de> T: serde::Deserialize<'de>,
+                for<'de> T: Deserialize<'de>,
             {
                 let value = serde_json::to_value(self)?;
                 match self.class {

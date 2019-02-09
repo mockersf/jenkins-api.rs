@@ -42,24 +42,24 @@
 //! ```
 //!
 
-extern crate reqwest;
+// extern crate reqwest;
 
-#[macro_use]
-extern crate serde;
-extern crate serde_json;
-extern crate serde_urlencoded;
+// #[macro_use]
+// use serde::{Serialize, Deserialize, self};
+// extern crate serde_json;
+// extern crate serde_urlencoded;
 
-extern crate urlencoding;
+// extern crate urlencoding;
 
-#[macro_use]
-extern crate failure;
-extern crate regex;
+// #[macro_use]
+// extern crate failure;
+// extern crate regex;
 
-#[macro_use]
-extern crate log;
+// #[macro_use]
+// extern crate log;
 
 mod client_internals;
-pub use client_internals::{Jenkins, JenkinsBuilder};
+pub use crate::client_internals::{Jenkins, JenkinsBuilder};
 pub mod client;
 
 #[macro_use]

@@ -1,11 +1,11 @@
 //! Types describing changes between two builds
 
-use user::ShortUser;
+use crate::user::ShortUser;
 
-use serde;
+use serde::{self, Deserialize, Serialize};
 use serde_json;
 
-use helpers::Class;
+use crate::helpers::Class;
 
 /// Trait implemented by specialization of changesetlist
 pub trait ChangeSetList {}

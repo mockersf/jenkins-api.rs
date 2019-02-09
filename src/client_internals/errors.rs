@@ -1,5 +1,7 @@
 use std::fmt;
 
+use failure::Fail;
+
 /// Errors that can be thrown
 #[derive(Debug, Fail)]
 pub enum Error {

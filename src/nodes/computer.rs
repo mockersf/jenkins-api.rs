@@ -2,10 +2,10 @@
 
 use std::collections::HashMap;
 
-use serde;
+use serde::{self, Deserialize, Serialize};
 use serde_json;
 
-use helpers::Class;
+use crate::helpers::Class;
 
 use super::monitor;
 
@@ -135,7 +135,7 @@ pub enum Executor {
         /// `Build` that is currently running. Will be None if the executor
         /// is idle, or if it is building a job the current user doesn't have
         /// permissions to see
-        current_executable: Option<::build::ShortBuild>,
+        current_executable: Option<crate::build::ShortBuild>,
         /// Is it likely stuck
         likely_stuck: bool,
         /// Executor number

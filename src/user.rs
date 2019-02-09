@@ -1,5 +1,6 @@
 //! A user, not always a Jenkins user
 
+use serde::{Deserialize, Serialize};
 use serde_json;
 
 /// Short User that is used in list and links from other structs

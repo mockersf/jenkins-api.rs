@@ -1,13 +1,15 @@
 //! Jenkins Client
 
+use std::fmt::Debug;
+use std::string::ToString;
+
 use failure;
+use log::{debug, warn};
 use regex::Regex;
 use reqwest::{
     header::HeaderValue, header::CONTENT_TYPE, Body, Client, RequestBuilder, Response, StatusCode,
 };
 use serde::Serialize;
-use std::fmt::Debug;
-use std::string::ToString;
 
 mod errors;
 pub use self::errors::Error;
@@ -192,11 +194,11 @@ impl Jenkins {
 
 #[cfg(test)]
 mod tests {
-    extern crate mockito;
+    use mockito;
 
     #[test]
     fn can_post_with_body() {
-        let jenkins_client = ::JenkinsBuilder::new(&mockito::server_url())
+        let jenkins_client = crate::JenkinsBuilder::new(&mockito::server_url())
             .disable_csrf()
             .build()
             .unwrap();
@@ -212,7 +214,7 @@ mod tests {
 
     #[test]
     fn can_post_with_body_and_get_error_state() {
-        let jenkins_client = ::JenkinsBuilder::new(&mockito::server_url())
+        let jenkins_client = crate::JenkinsBuilder::new(&mockito::server_url())
             .disable_csrf()
             .build()
             .unwrap();
@@ -239,7 +241,7 @@ mod tests {
 
     #[test]
     fn can_post_with_body_and_get_error_argument() {
-        let jenkins_client = ::JenkinsBuilder::new(&mockito::server_url())
+        let jenkins_client = crate::JenkinsBuilder::new(&mockito::server_url())
             .disable_csrf()
             .build()
             .unwrap();
@@ -266,7 +268,7 @@ mod tests {
 
     #[test]
     fn can_post_with_body_and_get_error_new() {
-        let jenkins_client = ::JenkinsBuilder::new(&mockito::server_url())
+        let jenkins_client = crate::JenkinsBuilder::new(&mockito::server_url())
             .disable_csrf()
             .build()
             .unwrap();
@@ -296,7 +298,7 @@ mod tests {
 
     #[test]
     fn can_post_with_query_params() {
-        let jenkins_client = ::JenkinsBuilder::new(&mockito::server_url())
+        let jenkins_client = crate::JenkinsBuilder::new(&mockito::server_url())
             .disable_csrf()
             .build()
             .unwrap();

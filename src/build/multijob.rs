@@ -1,11 +1,13 @@
-use helpers::Class;
+use serde::Deserialize;
+
+use crate::helpers::Class;
 
 use super::{Artifact, Build, BuildStatus};
-use action::CommonAction;
+use crate::action::CommonAction;
 /* use build::ShortBuild; */
-use changeset;
-use job::MultiJobProject;
-use user::ShortUser;
+use crate::changeset;
+use crate::job::MultiJobProject;
+use crate::user::ShortUser;
 
 build_with_common_fields_and_impl!(
     /// A `Build` from a MultiJobProject

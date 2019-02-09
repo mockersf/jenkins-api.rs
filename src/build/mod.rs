@@ -2,9 +2,9 @@
 
 use failure::Error;
 
-use client_internals::path::{Name, Path};
-use job::JobName;
-use Jenkins;
+use crate::client_internals::path::{Name, Path};
+use crate::job::JobName;
+use crate::Jenkins;
 
 #[macro_use]
 mod common;

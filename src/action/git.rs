@@ -2,10 +2,10 @@
 
 use std::collections::HashMap;
 
-use serde;
+use serde::{self, Deserialize, Serialize};
 use serde_json;
 
-use helpers::Class;
+use crate::helpers::Class;
 
 /// Describe a git branch
 #[derive(Deserialize, Debug)]
@@ -52,7 +52,7 @@ pub struct GitBranchBuild {
     /// Build number
     pub build_number: u32,
     /// Build result
-    pub build_result: Option<::build::BuildStatus>,
+    pub build_result: Option<crate::build::BuildStatus>,
     /// Marked revision
     pub marked: Revision,
 }

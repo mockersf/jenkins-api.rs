@@ -1,6 +1,7 @@
 use failure;
 
 use reqwest::{header::HeaderName, header::HeaderValue, RequestBuilder};
+use serde::Deserialize;
 
 use super::{path::Path, Jenkins};
 
@@ -18,7 +19,6 @@ impl Jenkins {
     ) -> Result<RequestBuilder, failure::Error> {
         if self.csrf_enabled {
             let crumb = self.get_csrf()?;
-            debug!("{:?}", crumb);
             Ok(request_builder.header(
                 HeaderName::from_lowercase(crumb.crumb_request_field.to_lowercase().as_bytes())?,
                 HeaderValue::from_str(&crumb.crumb)?,

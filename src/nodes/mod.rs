@@ -1,9 +1,10 @@
 //! Jenkins Slaves Informations
 
 use failure::Error;
+use serde::{Deserialize, Serialize};
 
-use client_internals::{Name, Path};
-use Jenkins;
+use crate::client_internals::{Name, Path};
+use crate::Jenkins;
 
 pub mod computer;
 pub mod monitor;

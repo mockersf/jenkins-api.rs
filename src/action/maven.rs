@@ -1,10 +1,11 @@
 //! Types related to maven
 
 use failure::Error;
+use serde::Deserialize;
 
-use client;
-use client_internals::path::Path;
-use Jenkins;
+use crate::client;
+use crate::client_internals::path::Path;
+use crate::Jenkins;
 
 /// Artifact produced by a build
 #[derive(Deserialize, Debug)]
@@ -66,7 +67,7 @@ pub struct MavenArtifactRecord {
     /// Main artifact
     pub main_artifact: Artifact,
     /// Parent build
-    pub parent: ::build::ShortBuild,
+    pub parent: crate::build::ShortBuild,
     /// POM artifact
     pub pom_artifact: Artifact,
 }

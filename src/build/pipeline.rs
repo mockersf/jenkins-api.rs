@@ -1,9 +1,11 @@
-use helpers::Class;
+use serde::Deserialize;
+
+use crate::helpers::Class;
 
 use super::{Artifact, Build, BuildStatus, ShortBuild};
-use action::CommonAction;
-use changeset;
-use job::WorkflowJob;
+use crate::action::CommonAction;
+use crate::changeset;
+use crate::job::WorkflowJob;
 
 build_with_common_fields_and_impl!(
     /// A `Build` from a WorkflowJob

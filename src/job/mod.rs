@@ -2,9 +2,9 @@
 
 use failure::Error;
 
-use client_internals::{Name, Path};
-use queue::ShortQueueItem;
-use Jenkins;
+use crate::client_internals::{Name, Path};
+use crate::queue::ShortQueueItem;
+use crate::Jenkins;
 
 pub mod builder;
 use self::builder::JobBuilder;

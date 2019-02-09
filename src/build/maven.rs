@@ -1,12 +1,14 @@
 use std::collections::HashMap;
 
-use helpers::Class;
+use serde::Deserialize;
+
+use crate::helpers::Class;
 
 use super::{Artifact, Build, BuildStatus};
-use action::CommonAction;
-use changeset;
-use job::{MavenModule, MavenModuleSet};
-use user::ShortUser;
+use crate::action::CommonAction;
+use crate::changeset;
+use crate::job::{MavenModule, MavenModuleSet};
+use crate::user::ShortUser;
 
 build_with_common_fields_and_impl!(
     /// A `Build` of a MavenModuleSet
@@ -20,7 +22,7 @@ build_with_common_fields_and_impl!(
         /// Which slave was it build on
         pub built_on: String,
         /// Artifacts from maven
-        pub maven_artifacts: HashMap<String, Vec<::action::maven::ShortMavenArtifactRecord>>,
+        pub maven_artifacts: HashMap<String, Vec<crate::action::maven::ShortMavenArtifactRecord>>,
         /// List of user ids who made a change since the last non-broken build
         pub culprits: Vec<ShortUser>,
     }
@@ -39,7 +41,7 @@ build_with_common_fields_and_impl!(
         /// Which slave was it build on
         pub built_on: String,
         /// Artifacts from maven
-        pub maven_artifacts: ::action::maven::ShortMavenArtifactRecord,
+        pub maven_artifacts: crate::action::maven::ShortMavenArtifactRecord,
         /// List of user ids who made a change since the last non-broken build
         pub culprits: Vec<ShortUser>,
     }

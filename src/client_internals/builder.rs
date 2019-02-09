@@ -92,7 +92,7 @@ mod tests {
 
     #[test]
     fn create_builder() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL);
+        let jenkins_client = crate::JenkinsBuilder::new(JENKINS_URL);
 
         assert_eq!(jenkins_client.url, JENKINS_URL);
         assert_eq!(jenkins_client.user, None);
@@ -101,7 +101,7 @@ mod tests {
 
     #[test]
     fn create_builder_with_trailing_slash() {
-        let jenkins_client = ::JenkinsBuilder::new(&format!("{}/", JENKINS_URL));
+        let jenkins_client = crate::JenkinsBuilder::new(&format!("{}/", JENKINS_URL));
 
         assert_eq!(jenkins_client.url, JENKINS_URL);
         assert_eq!(jenkins_client.user, None);
@@ -110,7 +110,7 @@ mod tests {
 
     #[test]
     fn disable_csrf() {
-        let jenkins_client = ::JenkinsBuilder::new(JENKINS_URL).disable_csrf();
+        let jenkins_client = crate::JenkinsBuilder::new(JENKINS_URL).disable_csrf();
 
         assert_eq!(jenkins_client.url, JENKINS_URL);
         assert_eq!(jenkins_client.user, None);

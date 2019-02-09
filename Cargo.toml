@@ -10,6 +10,7 @@ keywords = ["jenkins"]
 license = "MIT"
 readme = "README.md"
 build = "build.rs"
+edition = "2018"
 
 [badges]
 travis-ci = { repository = "mockersf/jenkins-api.rs" }

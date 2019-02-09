@@ -1,11 +1,12 @@
 //! Jenkins Home, describing state of the master
 
 use failure::Error;
+use serde::Deserialize;
 
-use client_internals::Path;
-use job::ShortJob;
-use view::ShortView;
-use Jenkins;
+use crate::client_internals::Path;
+use crate::job::ShortJob;
+use crate::view::ShortView;
+use crate::Jenkins;
 
 /// Describe how Jenkins allocates jobs to agents
 #[derive(Debug, Deserialize, Clone, Copy)]

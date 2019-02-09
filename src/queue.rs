@@ -1,14 +1,15 @@
 //! Jenkins build queue
 
 use failure::Error;
+use serde::{Deserialize, Serialize};
 use serde_json;
 
-use action::CommonAction;
-use build::ShortBuild;
-use client;
-use client_internals::Path;
-use job::ShortJob;
-use Jenkins;
+use crate::action::CommonAction;
+use crate::build::ShortBuild;
+use crate::client;
+use crate::client_internals::Path;
+use crate::job::ShortJob;
+use crate::Jenkins;
 
 /// Short Queue Item that is returned when building a job
 #[derive(Debug, Serialize, Deserialize, Clone)]

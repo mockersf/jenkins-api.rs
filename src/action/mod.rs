@@ -1,9 +1,9 @@
 //! Types to parse the actions that triggered a `Build`
 
-use serde;
+use serde::{self, Deserialize, Serialize};
 use serde_json;
 
-use helpers::Class;
+use crate::helpers::Class;
 
 pub mod causes;
 pub mod git;
@@ -118,7 +118,7 @@ pub struct MavenArtifactRecord {
     /// Main artifact
     pub main_artifact: maven::Artifact,
     /// Parent build
-    pub parent: ::build::ShortBuild,
+    pub parent: crate::build::ShortBuild,
     /// POM artifact
     pub pom_artifact: maven::Artifact,
 }

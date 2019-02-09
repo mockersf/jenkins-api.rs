@@ -1,9 +1,9 @@
 //! Source Control Management configuration
 
-use serde;
+use serde::{self, Deserialize, Serialize};
 use serde_json;
 
-use helpers::Class;
+use crate::helpers::Class;
 
 mod browser;
 pub use self::browser::*;
