@@ -7,23 +7,19 @@ The API docs for the master branch are published [here](https://mockersf.github.
 ## Example
 
 ```rust
-extern crate failure;
-
-extern crate jenkins_api;
-
 use jenkins_api::JenkinsBuilder;
 use jenkins_api::build::BuildStatus;
 use jenkins_api::job::BuildableJob;
 
-fn main() -> Result<(), failure::Error> {
+fn main() {
     let jenkins = JenkinsBuilder::new("http://localhost:8080")
         .with_user("user", Some("password"))
-        .build()?;
+        .build().unwrap();
 
-    let job = jenkins.get_job("job name")?;
+    let job = jenkins.get_job("job name").unwrap();
 
     let to_build = if let Some(short_build) = job.last_build.clone() {
-        let build = short_build.get_full_build(&jenkins)?;
+        let build = short_build.get_full_build(&jenkins).unwrap();
         println!(
             "last build for job {} at {} was {:?}",
             job.name, build.timestamp, build.result
@@ -40,8 +36,8 @@ fn main() -> Result<(), failure::Error> {
 
     if to_build {
         println!("triggering a new build");
-        job.as_variant::<jenkins_api::job::FreeStyleProject>()?.build(&jenkins)?;
+        job.as_variant::<jenkins_api::job::FreeStyleProject>().unwrap()
+            .build(&jenkins).unwrap();
     }
-    Ok(())
 }
 ```
