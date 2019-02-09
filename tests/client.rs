@@ -48,7 +48,7 @@ fn should_be_forbidden() {
     assert_eq!(
         format!("{:?}", response),
         format!(
-            "Err(Inner {{ kind: ClientError(401), url: Some(\"{}/api/json?depth=1\") }})",
+            "Err(Error {{ kind: ClientError(401), url: Some(\"{}/api/json?depth=1\") }})",
             JENKINS_URL
         )
     );
@@ -86,7 +86,7 @@ fn should_get_view_not_found() {
     assert_eq!(
         format!("{:?}", response),
         format!(
-            "Err(Inner {{ kind: ClientError(404), url: Some(\"{}/view/zut/api/json?depth=1\") }})",
+            "Err(Error {{ kind: ClientError(404), url: Some(\"{}/view/zut/api/json?depth=1\") }})",
             JENKINS_URL
         )
     );

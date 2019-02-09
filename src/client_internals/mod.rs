@@ -287,13 +287,13 @@ mod tests {
         );
 
         assert!(response.is_err());
-        // assert_eq!(
-        //     format!("{:?}", response),
-        //     concat!(
-        //         r#"Err(Inner { kind: ServerError(500), "#,
-        //         r#"url: Some("http://127.0.0.1:1234/error-NewException?") })"#
-        //     )
-        // );
+        assert_eq!(
+            format!("{:?}", response),
+            concat!(
+                r#"Err(Error { kind: ServerError(500), "#,
+                r#"url: Some("http://127.0.0.1:1234/error-NewException?") })"#
+            )
+        );
     }
 
     #[test]
