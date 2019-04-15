@@ -67,7 +67,7 @@ impl JenkinsBuilder {
     pub fn with_user(mut self, login: &str, password: Option<&str>) -> Self {
         self.user = Some(User {
             username: login.to_string(),
-            password: password.map(|s| s.to_string()),
+            password: password.map(std::string::ToString::to_string),
         });
         self
     }
