@@ -203,7 +203,7 @@ mod tests {
             .build()
             .unwrap();
 
-        let _mock = mockito::mock("POST", "/mypath?").with_body("ok").create();
+        let _mock = mockito::mock("POST", "/mypath").with_body("ok").create();
 
         let response =
             jenkins_client.post_with_body(&super::Path::Raw { path: "/mypath" }, "body", &[]);
@@ -219,7 +219,7 @@ mod tests {
             .build()
             .unwrap();
 
-        let _mock = mockito::mock("POST", "/error-IllegalStateException?")
+        let _mock = mockito::mock("POST", "/error-IllegalStateException")
             .with_status(500)
             .with_body("hviqsuvnqsodjfsqjdgo java.lang.IllegalStateException: my error\nvzfjsd")
             .create();
@@ -246,7 +246,7 @@ mod tests {
             .build()
             .unwrap();
 
-        let _mock = mockito::mock("POST", "/error-IllegalArgumentException?")
+        let _mock = mockito::mock("POST", "/error-IllegalArgumentException")
             .with_status(500)
             .with_body("hviqsuvnqsodjfsqjdgo java.lang.IllegalArgumentException: my error\nvzfjsd")
             .create();
@@ -273,7 +273,7 @@ mod tests {
             .build()
             .unwrap();
 
-        let _mock = mockito::mock("POST", "/error-NewException?")
+        let _mock = mockito::mock("POST", "/error-NewException")
             .with_status(500)
             .with_body("hviqsuvnqsodjfsqjdgo java.lang.NewException: my error\nvzfjsd")
             .create();
@@ -290,8 +290,8 @@ mod tests {
         assert_eq!(
             format!("{:?}", response),
             concat!(
-                r#"Err(Error { kind: ServerError(500), "#,
-                r#"url: Some("http://127.0.0.1:1234/error-NewException?") })"#
+                r#"Err(Error(Status(500), "#,
+                r#""http://127.0.0.1:1234/error-NewException"))"#
             )
         );
     }
