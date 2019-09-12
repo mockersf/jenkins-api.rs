@@ -20,6 +20,10 @@ pub struct ShortBuild<T: Build = CommonBuild> {
     pub url: String,
     /// Build number
     pub number: u32,
+    /// Display name for the build
+    pub display_name: Option<String>,
+    /// Timestamp for the build
+    pub timestamp: Option<u64>,
     #[serde(flatten)]
     pub(crate) other_fields: Option<serde_json::Value>,
 
