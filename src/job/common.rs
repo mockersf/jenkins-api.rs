@@ -75,7 +75,7 @@ pub struct ShortJob<T: Job = CommonJob> {
     /// URL for the job
     pub url: String,
     /// Ball Color for the status of the job
-    pub color: BallColor,
+    pub color: Option<BallColor>,
     #[serde(flatten)]
     pub(crate) other_fields: Option<serde_json::Value>,
 
@@ -285,7 +285,7 @@ macro_rules! job_build_with_common_fields_and_impl {
             /// URL for the job
             pub url: String,
             /// Ball Color for the status of the job
-            pub color: BallColor,
+            pub color: Option<BallColor>,
             /// Is the job buildable?
             pub buildable: bool,
             /// Are dependencies kept for this job?
