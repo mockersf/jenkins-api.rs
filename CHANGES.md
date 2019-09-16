@@ -1,5 +1,11 @@
 # Changes
 
+# 0.6.0 (2019/09/17)
+
+* Update dependencies
+* Changed some fields of jobs to be optional (`full_name`, `full_display_name`, `color`)
+* Changed some fields of builds to be optional (`full_display_name`) and added some fields (`display_name`, `timestamp`)
+
 # 0.5.2 (2018/11/10)
 
 * Support assigned labels field on computers
