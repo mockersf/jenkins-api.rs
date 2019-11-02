@@ -13,6 +13,7 @@
     unused_qualifications,
     unused_results
 )]
+#![allow(clippy::type_repetition_in_bounds)]
 
 //! Bindings to [Jenkins JSON API](https://wiki.jenkins.io/display/JENKINS/Remote+access+API)
 //!

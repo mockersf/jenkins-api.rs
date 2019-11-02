@@ -48,10 +48,10 @@ impl JenkinsBuilder {
     pub fn build(self) -> Result<Jenkins, Error> {
         let url = Url::from_str(&self.url)?;
         if url.cannot_be_a_base() {
-            Err(reqwest::UrlError::RelativeUrlWithoutBase)?;
+            return Err(reqwest::UrlError::RelativeUrlWithoutBase.into());
         };
         if !url.has_host() {
-            Err(reqwest::UrlError::EmptyHost)?;
+            return Err(reqwest::UrlError::EmptyHost.into());
         }
 
         Ok(Jenkins {
@@ -116,5 +116,4 @@ mod tests {
         assert_eq!(jenkins_client.user, None);
         assert_eq!(jenkins_client.csrf_enabled, false);
     }
-
 }

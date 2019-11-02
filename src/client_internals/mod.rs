@@ -317,5 +317,4 @@ mod tests {
         assert_eq!(response.unwrap().text().unwrap(), "ok");
         mock.assert()
     }
-
 }

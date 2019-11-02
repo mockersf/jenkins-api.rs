@@ -29,13 +29,15 @@ macro_rules! specialize {
                     Some(ref class) if class == T::with_class() => {
                         serde_json::from_value::<T>(value)
                     }
-                    _ => Err(serde::de::Error::custom(&format!(
-                        r"invalid _class '{}', expected '{}'",
-                        self.class
-                            .clone()
-                            .ok_or(serde::de::Error::custom("missing _class"))?,
-                        T::with_class()
-                    )))?,
+                    _ => {
+                        return Err(serde::de::Error::custom(&format!(
+                            r"invalid _class '{}', expected '{}'",
+                            self.class
+                                .clone()
+                                .ok_or(serde::de::Error::custom("missing _class"))?,
+                            T::with_class()
+                        )))
+                    }
                 }
             }
         }
