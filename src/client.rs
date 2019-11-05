@@ -1,6 +1,5 @@
 //! Helpers to build advanced queries
 
-use failure::Error as FailureError;
 use serde::{self, Deserialize};
 
 use crate::client_internals::path::{Name, Path as PrivatePath};
@@ -163,7 +162,11 @@ impl super::Jenkins {
     /// # }
     /// ```
     ///
-    pub fn get_object_as<Q, T>(&self, object: Path, parameters: Q) -> Result<T, FailureError>
+    pub fn get_object_as<Q, T>(
+        &self,
+        object: Path,
+        parameters: Q,
+    ) -> Result<T, Box<dyn std::error::Error>>
     where
         Q: Into<Option<AdvancedQuery>>,
         for<'de> T: Deserialize<'de>,

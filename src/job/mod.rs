@@ -1,7 +1,5 @@
 //! Jenkins Jobs
 
-use failure::Error;
-
 use crate::client_internals::{Name, Path};
 use crate::queue::ShortQueueItem;
 use crate::Jenkins;
@@ -31,7 +29,7 @@ pub use self::external::ExternalJob;
 
 impl Jenkins {
     /// Get a `Job` from it's `job_name`
-    pub fn get_job<'a, J>(&self, job_name: J) -> Result<CommonJob, Error>
+    pub fn get_job<'a, J>(&self, job_name: J) -> Result<CommonJob, Box<dyn std::error::Error>>
     where
         J: Into<JobName<'a>>,
     {
@@ -45,7 +43,7 @@ impl Jenkins {
     }
 
     /// Build a `Job` from it's `job_name`
-    pub fn build_job<'a, J>(&self, job_name: J) -> Result<ShortQueueItem, Error>
+    pub fn build_job<'a, J>(&self, job_name: J) -> Result<ShortQueueItem, Box<dyn std::error::Error>>
     where
         J: Into<JobName<'a>>,
     {
@@ -56,12 +54,12 @@ impl Jenkins {
     pub fn job_builder<'a, 'b, 'c, 'd>(
         &'b self,
         job_name: &'a str,
-    ) -> Result<JobBuilder<'a, 'b, 'c, 'd>, Error> {
+    ) -> Result<JobBuilder<'a, 'b, 'c, 'd>, Box<dyn std::error::Error>> {
         JobBuilder::new_from_job_name(job_name, self)
     }
 
     /// Poll SCM of a `Job` from it's `job_name`
-    pub fn poll_scm_job<'a, J>(&self, job_name: J) -> Result<(), Error>
+    pub fn poll_scm_job<'a, J>(&self, job_name: J) -> Result<(), Box<dyn std::error::Error>>
     where
         J: Into<JobName<'a>>,
     {

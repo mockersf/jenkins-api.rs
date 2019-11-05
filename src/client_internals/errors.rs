@@ -1,12 +1,9 @@
 use std::fmt;
 
-use failure::Fail;
-
 /// Errors that can be thrown
-#[derive(Debug, Fail)]
+#[derive(Debug)]
 pub enum Error {
-    /// Error thrown when a link between objects has an unexpected format
-    #[fail(display = "invalid url for {}: {}", expected, url)]
+    ///  Error thrown when a link between objects has an unexpected format
     InvalidUrl {
         /// URL found
         url: String,
@@ -14,38 +11,27 @@ pub enum Error {
         expected: ExpectedType,
     },
 
-    /// Error thrown when CSRF protection use an unexpected field name
-    #[fail(
-        display = "invalid crumbfield '{}', expected 'Jenkins-Crumb'",
-        field_name
-    )]
+    ///  Error thrown when CSRF protection use an unexpected field name
     InvalidCrumbFieldName {
         /// Field name provided by Jenkins api for crumb
         field_name: String,
     },
 
-    /// Error thrown when building a parameterized job with an invalid parameter
-    #[fail(display = "illegal argument: '{}'", message)]
+    ///  Error thrown when building a parameterized job with an invalid parameter
     IllegalArgument {
         /// Exception message provided by Jenkins
         message: String,
     },
-    /// Error thrown when building a job with invalid parameters
-    #[fail(display = "illegal state: '{}'", message)]
+    ///  Error thrown when building a job with invalid parameters
     IllegalState {
         /// Exception message provided by Jenkins
         message: String,
     },
 
-    /// Error when trying to remotely build a job with parameters
-    #[fail(display = "can't build a job remotely with parameters")]
+    ///  Error when trying to remotely build a job with parameters
     UnsupportedBuildConfiguration,
 
-    /// Error when trying to do an action on an object not supporting it
-    #[fail(
-        display = "can't do '{}' on a {} of type {}",
-        action, object_type, variant_name
-    )]
+    ///  Error when trying to do an action on an object not supporting it
     InvalidObjectType {
         /// Object type
         object_type: ExpectedType,
@@ -54,6 +40,35 @@ pub enum Error {
         /// Action
         action: Action,
     },
+}
+impl std::error::Error for Error {}
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Error::InvalidUrl { url, expected } => {
+                write!(f, "invalid url for {}: {}", expected, url)
+            }
+            Error::InvalidCrumbFieldName { field_name } => write!(
+                f,
+                "invalid crumbfield '{}', expected 'Jenkins-Crumb'",
+                field_name
+            ),
+            Error::IllegalArgument { message } => write!(f, "illegal argument: '{}'", message),
+            Error::IllegalState { message } => write!(f, "illegal state: '{}'", message),
+            Error::UnsupportedBuildConfiguration => {
+                write!(f, "can't build a job remotely with parameters")
+            }
+            Error::InvalidObjectType {
+                object_type,
+                variant_name,
+                action,
+            } => write!(
+                f,
+                "can't do '{}' on a {} of type {}",
+                action, object_type, variant_name
+            ),
+        }
+    }
 }
 
 /// Possible type of URL expected in links between items

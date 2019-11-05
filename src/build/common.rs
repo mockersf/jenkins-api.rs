@@ -1,6 +1,5 @@
 use std::marker::PhantomData;
 
-use failure::Error;
 use serde::{self, Deserialize, Serialize};
 use serde_json;
 
@@ -36,7 +35,10 @@ where
     for<'de> T: Deserialize<'de>,
 {
     /// Get the full details of a `Build` matching the `ShortBuild`
-    pub fn get_full_build(&self, jenkins_client: &Jenkins) -> Result<T, Error> {
+    pub fn get_full_build(
+        &self,
+        jenkins_client: &Jenkins,
+    ) -> Result<T, Box<dyn std::error::Error>> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Build { .. } = path {
             Ok(jenkins_client.get(&path)?.json()?)
@@ -165,7 +167,10 @@ pub trait Build {
     fn url(&self) -> &str;
 
     /// Get the `Job` from a `Build`
-    fn get_job(&self, jenkins_client: &Jenkins) -> Result<Self::ParentJob, Error>
+    fn get_job(
+        &self,
+        jenkins_client: &Jenkins,
+    ) -> Result<Self::ParentJob, Box<dyn std::error::Error>>
     where
         for<'de> Self::ParentJob: Deserialize<'de>,
     {
@@ -192,7 +197,7 @@ pub trait Build {
     }
 
     /// Get the console output from a `Build`
-    fn get_console(&self, jenkins_client: &Jenkins) -> Result<String, Error> {
+    fn get_console(&self, jenkins_client: &Jenkins) -> Result<String, Box<dyn std::error::Error>> {
         let path = jenkins_client.url_to_path(&self.url());
         if let Path::Build {
             job_name,

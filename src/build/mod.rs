@@ -1,7 +1,5 @@
 //! Jenkins Builds
 
-use failure::Error;
-
 use crate::client_internals::path::{Name, Path};
 use crate::job::JobName;
 use crate::Jenkins;
@@ -24,7 +22,11 @@ pub use self::multijob::MultiJobBuild;
 
 impl Jenkins {
     /// Get a build from a `job_name` and `build_number`
-    pub fn get_build<'a, J, B>(&self, job_name: J, build_number: B) -> Result<CommonBuild, Error>
+    pub fn get_build<'a, J, B>(
+        &self,
+        job_name: J,
+        build_number: B,
+    ) -> Result<CommonBuild, Box<dyn std::error::Error>>
     where
         J: Into<JobName<'a>>,
         B: Into<BuildNumber>,

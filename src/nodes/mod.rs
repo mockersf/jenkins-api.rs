@@ -1,6 +1,5 @@
 //! Jenkins Slaves Informations
 
-use failure::Error;
 use serde::{Deserialize, Serialize};
 
 use crate::client_internals::{Name, Path};
@@ -26,12 +25,15 @@ pub struct ComputerSet {
 
 impl Jenkins {
     /// Get a `ComputerSet`
-    pub fn get_nodes(&self) -> Result<ComputerSet, Error> {
+    pub fn get_nodes(&self) -> Result<ComputerSet, Box<dyn std::error::Error>> {
         Ok(self.get(&Path::Computers)?.json()?)
     }
 
     /// Get a `Computer`
-    pub fn get_node<'a, C>(&self, computer_name: C) -> Result<computer::CommonComputer, Error>
+    pub fn get_node<'a, C>(
+        &self,
+        computer_name: C,
+    ) -> Result<computer::CommonComputer, Box<dyn std::error::Error>>
     where
         C: Into<computer::ComputerName<'a>>,
     {
@@ -43,7 +45,7 @@ impl Jenkins {
     }
 
     /// Get the master `Computer`
-    pub fn get_master_node(&self) -> Result<computer::MasterComputer, Error> {
+    pub fn get_master_node(&self) -> Result<computer::MasterComputer, Box<dyn std::error::Error>> {
         Ok(self
             .get(&Path::Computer {
                 name: Name::Name("(master)"),

@@ -1,6 +1,5 @@
 use std::str::FromStr;
 
-use failure::Error;
 use reqwest::{self, Client, Url};
 
 use super::{Jenkins, User};
@@ -45,7 +44,7 @@ impl JenkinsBuilder {
     }
 
     /// Build the Jenkins client
-    pub fn build(self) -> Result<Jenkins, Error> {
+    pub fn build(self) -> Result<Jenkins, Box<dyn std::error::Error>> {
         let url = Url::from_str(&self.url)?;
         if url.cannot_be_a_base() {
             return Err(reqwest::UrlError::RelativeUrlWithoutBase.into());
