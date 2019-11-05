@@ -43,7 +43,10 @@ impl Jenkins {
     }
 
     /// Build a `Job` from it's `job_name`
-    pub fn build_job<'a, J>(&self, job_name: J) -> Result<ShortQueueItem, Box<dyn std::error::Error>>
+    pub fn build_job<'a, J>(
+        &self,
+        job_name: J,
+    ) -> Result<ShortQueueItem, Box<dyn std::error::Error>>
     where
         J: Into<JobName<'a>>,
     {
