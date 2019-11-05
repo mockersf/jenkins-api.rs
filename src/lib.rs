@@ -20,7 +20,6 @@
 //! # Example
 //!
 //! ```rust
-//! extern crate failure;
 //!
 //! extern crate jenkins_api;
 //!
@@ -42,22 +41,6 @@
 //! }
 //! ```
 //!
-
-// extern crate reqwest;
-
-// #[macro_use]
-// use serde::{Serialize, Deserialize, self};
-// extern crate serde_json;
-// extern crate serde_urlencoded;
-
-// extern crate urlencoding;
-
-// #[macro_use]
-// extern crate failure;
-// extern crate regex;
-
-// #[macro_use]
-// extern crate log;
 
 mod client_internals;
 pub use crate::client_internals::{Jenkins, JenkinsBuilder};

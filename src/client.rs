@@ -117,7 +117,6 @@ impl super::Jenkins {
     /// # Example
     ///
     /// ```rust
-    /// # extern crate failure;
     /// # #[macro_use]
     /// # extern crate serde;
     /// #
