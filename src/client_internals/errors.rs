@@ -1,5 +1,8 @@
 use std::fmt;
 
+/// Wrapper `Result` type
+pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+
 /// Errors that can be thrown
 #[derive(Debug)]
 pub enum Error {

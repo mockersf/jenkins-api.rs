@@ -11,7 +11,7 @@ use reqwest::{
 use serde::Serialize;
 
 mod errors;
-pub use self::errors::Error;
+pub use self::errors::{Error, Result};
 mod builder;
 pub mod path;
 pub use self::builder::JenkinsBuilder;
@@ -83,10 +83,7 @@ impl Jenkins {
         format!("{}{}", self.url, endpoint)
     }
 
-    fn send(
-        &self,
-        mut request_builder: RequestBuilder,
-    ) -> Result<Response, Box<dyn std::error::Error>> {
+    fn send(&self, mut request_builder: RequestBuilder) -> Result<Response> {
         if let Some(ref user) = self.user {
             request_builder =
                 request_builder.basic_auth(user.username.clone(), user.password.clone());
@@ -96,7 +93,7 @@ impl Jenkins {
         Ok(self.client.execute(query)?)
     }
 
-    fn error_for_status(response: Response) -> Result<Response, Box<dyn std::error::Error>> {
+    fn error_for_status(response: Response) -> Result<Response> {
         let status = response.status();
         if status.is_client_error() || status.is_server_error() {
             warn!("got an error: {}", status);
@@ -104,15 +101,11 @@ impl Jenkins {
         Ok(response.error_for_status()?)
     }
 
-    pub(crate) fn get(&self, path: &Path) -> Result<Response, Box<dyn std::error::Error>> {
+    pub(crate) fn get(&self, path: &Path) -> Result<Response> {
         self.get_with_params(path, &[("depth", &self.depth.to_string())])
     }
 
-    pub(crate) fn get_with_params<T: Serialize>(
-        &self,
-        path: &Path,
-        qps: T,
-    ) -> Result<Response, Box<dyn std::error::Error>> {
+    pub(crate) fn get_with_params<T: Serialize>(&self, path: &Path, qps: T) -> Result<Response> {
         let query = self
             .client
             .get(&self.url_api_json(&path.to_string()))
@@ -120,7 +113,7 @@ impl Jenkins {
         Ok(Self::error_for_status(self.send(query)?)?)
     }
 
-    pub(crate) fn post(&self, path: &Path) -> Result<Response, Box<dyn std::error::Error>> {
+    pub(crate) fn post(&self, path: &Path) -> Result<Response> {
         let mut request_builder = self.client.post(&self.url(&path.to_string()));
 
         request_builder = self.add_csrf_to_request(request_builder)?;
@@ -133,7 +126,7 @@ impl Jenkins {
         path: &Path,
         body: T,
         qps: &[(&str, &str)],
-    ) -> Result<Response, Box<dyn std::error::Error>> {
+    ) -> Result<Response> {
         let mut request_builder = self.client.post(&self.url(&path.to_string()));
 
         request_builder = self.add_csrf_to_request(request_builder)?;

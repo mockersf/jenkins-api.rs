@@ -7,7 +7,7 @@ use crate::client_internals::InternalAdvancedQueryParams;
 
 // pub use client_internals::path::Name;
 pub use crate::client_internals::AdvancedQuery;
-pub use crate::client_internals::{error, Error};
+pub use crate::client_internals::{error, Error, Result};
 pub use crate::client_internals::{TreeBuilder, TreeQueryParam};
 
 use crate::build;
@@ -161,11 +161,7 @@ impl super::Jenkins {
     /// # }
     /// ```
     ///
-    pub fn get_object_as<Q, T>(
-        &self,
-        object: Path,
-        parameters: Q,
-    ) -> Result<T, Box<dyn std::error::Error>>
+    pub fn get_object_as<Q, T>(&self, object: Path, parameters: Q) -> Result<T>
     where
         Q: Into<Option<AdvancedQuery>>,
         for<'de> T: Deserialize<'de>,

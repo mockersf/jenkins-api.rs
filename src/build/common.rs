@@ -6,7 +6,7 @@ use serde_json;
 use crate::helpers::Class;
 
 use crate::action::CommonAction;
-use crate::client;
+use crate::client::{self, Result};
 use crate::client_internals::path::Path;
 use crate::job::{CommonJob, Job};
 use crate::Jenkins;
@@ -35,10 +35,7 @@ where
     for<'de> T: Deserialize<'de>,
 {
     /// Get the full details of a `Build` matching the `ShortBuild`
-    pub fn get_full_build(
-        &self,
-        jenkins_client: &Jenkins,
-    ) -> Result<T, Box<dyn std::error::Error>> {
+    pub fn get_full_build(&self, jenkins_client: &Jenkins) -> Result<T> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Build { .. } = path {
             Ok(jenkins_client.get(&path)?.json()?)
@@ -167,10 +164,7 @@ pub trait Build {
     fn url(&self) -> &str;
 
     /// Get the `Job` from a `Build`
-    fn get_job(
-        &self,
-        jenkins_client: &Jenkins,
-    ) -> Result<Self::ParentJob, Box<dyn std::error::Error>>
+    fn get_job(&self, jenkins_client: &Jenkins) -> Result<Self::ParentJob>
     where
         for<'de> Self::ParentJob: Deserialize<'de>,
     {
@@ -197,7 +191,7 @@ pub trait Build {
     }
 
     /// Get the console output from a `Build`
-    fn get_console(&self, jenkins_client: &Jenkins) -> Result<String, Box<dyn std::error::Error>> {
+    fn get_console(&self, jenkins_client: &Jenkins) -> Result<String> {
         let path = jenkins_client.url_to_path(&self.url());
         if let Path::Build {
             job_name,

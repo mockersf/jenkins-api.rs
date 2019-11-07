@@ -2,7 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::client_internals::{Name, Path};
+use crate::client_internals::{Name, Path, Result};
 use crate::Jenkins;
 
 pub mod computer;
@@ -25,15 +25,12 @@ pub struct ComputerSet {
 
 impl Jenkins {
     /// Get a `ComputerSet`
-    pub fn get_nodes(&self) -> Result<ComputerSet, Box<dyn std::error::Error>> {
+    pub fn get_nodes(&self) -> Result<ComputerSet> {
         Ok(self.get(&Path::Computers)?.json()?)
     }
 
     /// Get a `Computer`
-    pub fn get_node<'a, C>(
-        &self,
-        computer_name: C,
-    ) -> Result<computer::CommonComputer, Box<dyn std::error::Error>>
+    pub fn get_node<'a, C>(&self, computer_name: C) -> Result<computer::CommonComputer>
     where
         C: Into<computer::ComputerName<'a>>,
     {
@@ -45,7 +42,7 @@ impl Jenkins {
     }
 
     /// Get the master `Computer`
-    pub fn get_master_node(&self) -> Result<computer::MasterComputer, Box<dyn std::error::Error>> {
+    pub fn get_master_node(&self) -> Result<computer::MasterComputer> {
         Ok(self
             .get(&Path::Computer {
                 name: Name::Name("(master)"),

@@ -2,7 +2,7 @@
 
 use serde::Deserialize;
 
-use crate::client;
+use crate::client::{self, Result};
 use crate::client_internals::path::Path;
 use crate::Jenkins;
 
@@ -41,7 +41,7 @@ impl ShortMavenArtifactRecord {
     pub fn get_full_artifact_record(
         &self,
         jenkins_client: &Jenkins,
-    ) -> Result<MavenArtifactRecord, Box<dyn std::error::Error>> {
+    ) -> Result<MavenArtifactRecord> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::MavenArtifactRecord { .. } = path {
             Ok(jenkins_client.get(&path)?.json()?)

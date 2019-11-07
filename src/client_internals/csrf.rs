@@ -2,6 +2,7 @@ use reqwest::{header::HeaderName, header::HeaderValue, RequestBuilder};
 use serde::Deserialize;
 
 use super::{path::Path, Jenkins};
+use crate::client::Result;
 
 #[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -14,7 +15,7 @@ impl Jenkins {
     pub(crate) fn add_csrf_to_request(
         &self,
         request_builder: RequestBuilder,
-    ) -> Result<RequestBuilder, Box<dyn std::error::Error>> {
+    ) -> Result<RequestBuilder> {
         if self.csrf_enabled {
             let crumb = self.get_csrf()?;
             Ok(request_builder.header(
@@ -26,7 +27,7 @@ impl Jenkins {
         }
     }
 
-    pub(crate) fn get_csrf(&self) -> Result<Crumb, Box<dyn std::error::Error>> {
+    pub(crate) fn get_csrf(&self) -> Result<Crumb> {
         let crumb: Crumb = self.get(&Path::CrumbIssuer)?.json()?;
         Ok(crumb)
     }

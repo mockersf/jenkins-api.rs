@@ -20,7 +20,8 @@ macro_rules! specialize {
     ($common:ty => $trait:path) => {
         impl $common {
             #[doc = "Read the object as one of it's specialization implementing $trait"]
-            pub fn as_variant<T: Class + $trait>(&self) -> Result<T, serde_json::Error>
+            #[allow(unused_qualifications)]
+            pub fn as_variant<T: Class + $trait>(&self) -> std::result::Result<T, serde_json::Error>
             where
                 for<'de> T: Deserialize<'de>,
             {
