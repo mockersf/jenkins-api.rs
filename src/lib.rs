@@ -25,7 +25,7 @@
 //!
 //! use jenkins_api::JenkinsBuilder;
 //!
-//! fn main() -> Result<(), failure::Error> {
+//! fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!     let jenkins = JenkinsBuilder::new("http://localhost:8080")
 //!         .with_user("user", Some("password"))
 //!         .build()?;
