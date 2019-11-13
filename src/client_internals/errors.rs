@@ -1,11 +1,14 @@
 use std::fmt;
 
+use thiserror::Error;
+
 /// Wrapper `Result` type
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 /// Errors that can be thrown
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum Error {
+    #[error("invalid url for {expected}: {url}")]
     ///  Error thrown when a link between objects has an unexpected format
     InvalidUrl {
         /// URL found
@@ -14,26 +17,32 @@ pub enum Error {
         expected: ExpectedType,
     },
 
+    #[error("invalid crumbfield '{field_name}', expected 'Jenkins-Crumb'")]
     ///  Error thrown when CSRF protection use an unexpected field name
     InvalidCrumbFieldName {
         /// Field name provided by Jenkins api for crumb
         field_name: String,
     },
 
+    #[error("illegal argument: '{message}'")]
     ///  Error thrown when building a parameterized job with an invalid parameter
     IllegalArgument {
         /// Exception message provided by Jenkins
         message: String,
     },
+
+    #[error("illegal state: '{message}'")]
     ///  Error thrown when building a job with invalid parameters
     IllegalState {
         /// Exception message provided by Jenkins
         message: String,
     },
 
+    #[error("can't build a job remotely with parameters")]
     ///  Error when trying to remotely build a job with parameters
     UnsupportedBuildConfiguration,
 
+    #[error("can't do '{action}' on a {object_type} of type {variant_name}")]
     ///  Error when trying to do an action on an object not supporting it
     InvalidObjectType {
         /// Object type
@@ -43,35 +52,6 @@ pub enum Error {
         /// Action
         action: Action,
     },
-}
-impl std::error::Error for Error {}
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Error::InvalidUrl { url, expected } => {
-                write!(f, "invalid url for {}: {}", expected, url)
-            }
-            Error::InvalidCrumbFieldName { field_name } => write!(
-                f,
-                "invalid crumbfield '{}', expected 'Jenkins-Crumb'",
-                field_name
-            ),
-            Error::IllegalArgument { message } => write!(f, "illegal argument: '{}'", message),
-            Error::IllegalState { message } => write!(f, "illegal state: '{}'", message),
-            Error::UnsupportedBuildConfiguration => {
-                write!(f, "can't build a job remotely with parameters")
-            }
-            Error::InvalidObjectType {
-                object_type,
-                variant_name,
-                action,
-            } => write!(
-                f,
-                "can't do '{}' on a {} of type {}",
-                action, object_type, variant_name
-            ),
-        }
-    }
 }
 
 /// Possible type of URL expected in links between items
