@@ -1,12 +1,11 @@
 //! Helper to build a job
-use failure::Error;
 
 use reqwest::header::LOCATION;
 
 use serde::{self, Serialize};
 use serde_urlencoded;
 
-use crate::client;
+use crate::client::{self, Result};
 use crate::client_internals::{Name, Path};
 use crate::job::{Job, JobName};
 use crate::queue::ShortQueueItem;
@@ -25,7 +24,7 @@ pub struct JobBuilder<'a, 'b, 'c, 'd> {
 
 impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
     #[allow(clippy::new_ret_no_self)]
-    pub(crate) fn new<T>(job: &'a T, jenkins_client: &'b Jenkins) -> Result<Self, Error>
+    pub(crate) fn new<T>(job: &'a T, jenkins_client: &'b Jenkins) -> Result<Self>
     where
         T: Job,
     {
@@ -52,7 +51,7 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
         }
     }
 
-    pub(crate) fn new_from_job_name<J>(name: J, jenkins_client: &'b Jenkins) -> Result<Self, Error>
+    pub(crate) fn new_from_job_name<J>(name: J, jenkins_client: &'b Jenkins) -> Result<Self>
     where
         J: Into<JobName<'a>>,
     {
@@ -67,7 +66,7 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
     }
 
     /// Trigger the build
-    pub fn send(self) -> Result<ShortQueueItem, Error> {
+    pub fn send(self) -> Result<ShortQueueItem> {
         let response = match (self.token, self.parameters) {
             (Some(token), None) => {
                 let bound_cause = self.cause.unwrap_or("");
@@ -145,7 +144,7 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
         mut self,
         token: &'d str,
         cause: Option<&'c str>,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self> {
         if self.parameters.is_some() {
             return Err(client::Error::UnsupportedBuildConfiguration.into());
         }
@@ -168,7 +167,7 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
     ///
     /// This methods will return an error if serializing `parameters` fails, or if passing
     /// parameters to a remote build.
-    pub fn with_parameters<T: Serialize>(mut self, parameters: &T) -> Result<Self, Error> {
+    pub fn with_parameters<T: Serialize>(mut self, parameters: &T) -> Result<Self> {
         if self.token.is_some() {
             return Err(client::Error::UnsupportedBuildConfiguration.into());
         }

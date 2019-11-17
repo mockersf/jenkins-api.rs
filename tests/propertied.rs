@@ -7,9 +7,9 @@ extern crate jenkins_api;
 
 use jenkins_api::JenkinsBuilder;
 
-use std::sync::{Once, ONCE_INIT};
+use std::sync::Once;
 
-static INIT: Once = ONCE_INIT;
+static INIT: Once = Once::new();
 
 fn setup() {
     INIT.call_once(|| {

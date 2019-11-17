@@ -1,9 +1,8 @@
 //! Jenkins Home, describing state of the master
 
-use failure::Error;
 use serde::Deserialize;
 
-use crate::client_internals::Path;
+use crate::client_internals::{Path, Result};
 use crate::job::ShortJob;
 use crate::view::ShortView;
 use crate::Jenkins;
@@ -48,7 +47,7 @@ pub struct Home {
 
 impl Jenkins {
     /// Get Jenkins `Home`
-    pub fn get_home(&self) -> Result<Home, Error> {
+    pub fn get_home(&self) -> Result<Home> {
         Ok(self.get(&Path::Home)?.json()?)
     }
 }

@@ -20,13 +20,12 @@
 //! # Example
 //!
 //! ```rust
-//! extern crate failure;
 //!
 //! extern crate jenkins_api;
 //!
 //! use jenkins_api::JenkinsBuilder;
 //!
-//! fn main() -> Result<(), failure::Error> {
+//! fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!     let jenkins = JenkinsBuilder::new("http://localhost:8080")
 //!         .with_user("user", Some("password"))
 //!         .build()?;
@@ -42,22 +41,6 @@
 //! }
 //! ```
 //!
-
-// extern crate reqwest;
-
-// #[macro_use]
-// use serde::{Serialize, Deserialize, self};
-// extern crate serde_json;
-// extern crate serde_urlencoded;
-
-// extern crate urlencoding;
-
-// #[macro_use]
-// extern crate failure;
-// extern crate regex;
-
-// #[macro_use]
-// extern crate log;
 
 mod client_internals;
 pub use crate::client_internals::{Jenkins, JenkinsBuilder};

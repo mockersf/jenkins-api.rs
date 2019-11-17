@@ -1,12 +1,11 @@
 //! Jenkins Views, use to group Jobs
 
-use failure::Error;
 use serde::{self, Deserialize, Serialize};
 use serde_json;
 
 use crate::helpers::Class;
 
-use crate::client;
+use crate::client::{self, Result};
 use crate::client_internals::{Name, Path};
 use crate::job::{JobName, ShortJob};
 use crate::property::CommonProperty;
@@ -26,7 +25,7 @@ pub struct ShortView {
 
 impl ShortView {
     /// Get the full details of a `View` matching the `ShortView`
-    pub fn get_full_view(&self, jenkins_client: &Jenkins) -> Result<CommonView, Error> {
+    pub fn get_full_view(&self, jenkins_client: &Jenkins) -> Result<CommonView> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::View { .. } = path {
             Ok(jenkins_client.get(&path)?.json()?)
@@ -121,7 +120,7 @@ impl View for ListView {
 
 impl ListView {
     /// Add the job `job_name` to this view
-    pub fn add_job<'a, J>(&self, jenkins_client: &Jenkins, job_name: J) -> Result<(), Error>
+    pub fn add_job<'a, J>(&self, jenkins_client: &Jenkins, job_name: J) -> Result<()>
     where
         J: Into<JobName<'a>>,
     {
@@ -142,7 +141,7 @@ impl ListView {
     }
 
     /// Remove the job `job_name` from this view
-    pub fn remove_job<'a, J>(&self, jenkins_client: &Jenkins, job_name: J) -> Result<(), Error>
+    pub fn remove_job<'a, J>(&self, jenkins_client: &Jenkins, job_name: J) -> Result<()>
     where
         J: Into<JobName<'a>>,
     {
@@ -165,7 +164,7 @@ impl ListView {
 
 impl Jenkins {
     /// Get a `View`
-    pub fn get_view<'a, V>(&self, view_name: V) -> Result<CommonView, Error>
+    pub fn get_view<'a, V>(&self, view_name: V) -> Result<CommonView>
     where
         V: Into<ViewName<'a>>,
     {
@@ -177,7 +176,7 @@ impl Jenkins {
     }
 
     /// Add the job `job_name` to the view `view_name`
-    pub fn add_job_to_view<'a, 'b, V, J>(&self, view_name: V, job_name: J) -> Result<(), Error>
+    pub fn add_job_to_view<'a, 'b, V, J>(&self, view_name: V, job_name: J) -> Result<()>
     where
         V: Into<ViewName<'a>>,
         J: Into<JobName<'a>>,
@@ -190,7 +189,7 @@ impl Jenkins {
     }
 
     /// Remove the job `job_name` from the view `view_name`
-    pub fn remove_job_from_view<'a, 'b, V, J>(&self, view_name: V, job_name: J) -> Result<(), Error>
+    pub fn remove_job_from_view<'a, 'b, V, J>(&self, view_name: V, job_name: J) -> Result<()>
     where
         V: Into<ViewName<'a>>,
         J: Into<JobName<'a>>,

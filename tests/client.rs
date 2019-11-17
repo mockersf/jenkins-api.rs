@@ -14,9 +14,9 @@ use jenkins_api::job::{BuildableJob, Job, SCMPollable};
 use jenkins_api::JenkinsBuilder;
 use std::{thread, time};
 
-use std::sync::{Once, ONCE_INIT};
+use std::sync::Once;
 
-static INIT: Once = ONCE_INIT;
+static INIT: Once = Once::new();
 
 fn setup() {
     INIT.call_once(|| {

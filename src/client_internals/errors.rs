@@ -1,12 +1,15 @@
 use std::fmt;
 
-use failure::Fail;
+use thiserror::Error;
+
+/// Wrapper `Result` type
+pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 /// Errors that can be thrown
-#[derive(Debug, Fail)]
+#[derive(Debug, Error)]
 pub enum Error {
-    /// Error thrown when a link between objects has an unexpected format
-    #[fail(display = "invalid url for {}: {}", expected, url)]
+    #[error("invalid url for {expected}: {url}")]
+    ///  Error thrown when a link between objects has an unexpected format
     InvalidUrl {
         /// URL found
         url: String,
@@ -14,38 +17,33 @@ pub enum Error {
         expected: ExpectedType,
     },
 
-    /// Error thrown when CSRF protection use an unexpected field name
-    #[fail(
-        display = "invalid crumbfield '{}', expected 'Jenkins-Crumb'",
-        field_name
-    )]
+    #[error("invalid crumbfield '{field_name}', expected 'Jenkins-Crumb'")]
+    ///  Error thrown when CSRF protection use an unexpected field name
     InvalidCrumbFieldName {
         /// Field name provided by Jenkins api for crumb
         field_name: String,
     },
 
-    /// Error thrown when building a parameterized job with an invalid parameter
-    #[fail(display = "illegal argument: '{}'", message)]
+    #[error("illegal argument: '{message}'")]
+    ///  Error thrown when building a parameterized job with an invalid parameter
     IllegalArgument {
         /// Exception message provided by Jenkins
         message: String,
     },
-    /// Error thrown when building a job with invalid parameters
-    #[fail(display = "illegal state: '{}'", message)]
+
+    #[error("illegal state: '{message}'")]
+    ///  Error thrown when building a job with invalid parameters
     IllegalState {
         /// Exception message provided by Jenkins
         message: String,
     },
 
-    /// Error when trying to remotely build a job with parameters
-    #[fail(display = "can't build a job remotely with parameters")]
+    #[error("can't build a job remotely with parameters")]
+    ///  Error when trying to remotely build a job with parameters
     UnsupportedBuildConfiguration,
 
-    /// Error when trying to do an action on an object not supporting it
-    #[fail(
-        display = "can't do '{}' on a {} of type {}",
-        action, object_type, variant_name
-    )]
+    #[error("can't do '{action}' on a {object_type} of type {variant_name}")]
+    ///  Error when trying to do an action on an object not supporting it
     InvalidObjectType {
         /// Object type
         object_type: ExpectedType,

@@ -1,6 +1,5 @@
 use std::marker::PhantomData;
 
-use failure::Error;
 use serde::{self, Deserialize, Serialize};
 use serde_json;
 
@@ -9,7 +8,7 @@ use crate::helpers::Class;
 use super::JobBuilder;
 use crate::action::CommonAction;
 use crate::build::{CommonBuild, ShortBuild};
-use crate::client;
+use crate::client::{self, Result};
 use crate::client_internals::{Name, Path};
 use crate::property::CommonProperty;
 use crate::queue::ShortQueueItem;
@@ -88,7 +87,7 @@ where
     for<'de> T: Deserialize<'de>,
 {
     /// Get the full details of a `Job` matching the `ShortJob`
-    pub fn get_full_job(&self, jenkins_client: &Jenkins) -> Result<T, Error> {
+    pub fn get_full_job(&self, jenkins_client: &Jenkins) -> Result<T> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Job { .. } = path {
             Ok(jenkins_client.get(&path)?.json()?)
@@ -134,7 +133,7 @@ pub trait Job {
     fn name(&self) -> &str;
 
     /// Enable a `Job`. It may need to be refreshed as it may have been updated
-    fn enable(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
+    fn enable(&self, jenkins_client: &Jenkins) -> Result<()> {
         let path = jenkins_client.url_to_path(&self.url());
         if let Path::Job {
             name,
@@ -153,7 +152,7 @@ pub trait Job {
     }
 
     /// Disable a `Job`. It may need to be refreshed as it may have been updated
-    fn disable(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
+    fn disable(&self, jenkins_client: &Jenkins) -> Result<()> {
         let path = jenkins_client.url_to_path(&self.url());
         if let Path::Job {
             name,
@@ -172,7 +171,7 @@ pub trait Job {
     }
 
     /// Add this job to the view `view_name`
-    fn add_to_view<'a, V>(&self, jenkins_client: &Jenkins, view_name: V) -> Result<(), Error>
+    fn add_to_view<'a, V>(&self, jenkins_client: &Jenkins, view_name: V) -> Result<()>
     where
         V: Into<ViewName<'a>>,
     {
@@ -197,7 +196,7 @@ pub trait Job {
     }
 
     /// Remove this job from the view `view_name`
-    fn remove_from_view<'a, V>(&self, jenkins_client: &Jenkins, view_name: V) -> Result<(), Error>
+    fn remove_from_view<'a, V>(&self, jenkins_client: &Jenkins, view_name: V) -> Result<()>
     where
         V: Into<ViewName<'a>>,
     {
@@ -363,7 +362,7 @@ impl CommonJob {}
 /// Common trait for jobs that can be build
 pub trait BuildableJob: Job + Sized {
     /// Build this job
-    fn build(&self, jenkins_client: &Jenkins) -> Result<ShortQueueItem, Error> {
+    fn build(&self, jenkins_client: &Jenkins) -> Result<ShortQueueItem> {
         self.builder(jenkins_client)?.send()
     }
 
@@ -371,7 +370,7 @@ pub trait BuildableJob: Job + Sized {
     fn builder<'a, 'b, 'c, 'd>(
         &'a self,
         jenkins_client: &'b Jenkins,
-    ) -> Result<JobBuilder<'a, 'b, 'c, 'd>, Error> {
+    ) -> Result<JobBuilder<'a, 'b, 'c, 'd>> {
         JobBuilder::new(self, jenkins_client)
     }
 }
@@ -379,7 +378,7 @@ pub trait BuildableJob: Job + Sized {
 /// Common trait for jobs that can poll a SCM
 pub trait SCMPollable: Job + Sized {
     /// Poll configured SCM for changes
-    fn poll_scm(&self, jenkins_client: &Jenkins) -> Result<(), Error> {
+    fn poll_scm(&self, jenkins_client: &Jenkins) -> Result<()> {
         let path = jenkins_client.url_to_path(&self.url());
         if let Path::Job {
             name,
