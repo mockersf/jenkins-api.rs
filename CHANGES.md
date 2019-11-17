@@ -1,5 +1,9 @@
 # Changes
 
+# 0.7.0 (2019/11/17à
+
+* Removed dependency to failure
+
 # 0.6.0 (2019/09/17)
 
 * Update dependencies
