@@ -48,7 +48,7 @@ fn should_be_forbidden() {
     assert_eq!(
         format!("{:?}", response),
         format!(
-            "Err(Error(Status(401), \"{}/api/json?depth=1\"))",
+            "Err(reqwest::Error {{ kind: Status(401), url: \"{}/api/json?depth=1\" }})",
             JENKINS_URL
         )
     );
@@ -86,7 +86,7 @@ fn should_get_view_not_found() {
     assert_eq!(
         format!("{:?}", response),
         format!(
-            "Err(Error(Status(404), \"{}/view/zut/api/json?depth=1\"))",
+            "Err(reqwest::Error {{ kind: Status(404), url: \"{}/view/zut/api/json?depth=1\" }})",
             JENKINS_URL
         )
     );
