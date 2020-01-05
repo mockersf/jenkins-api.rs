@@ -1,4 +1,4 @@
-use reqwest::{header::HeaderName, header::HeaderValue, RequestBuilder};
+use reqwest::{blocking::RequestBuilder, header::HeaderName, header::HeaderValue};
 use serde::Deserialize;
 
 use super::{path::Path, Jenkins};

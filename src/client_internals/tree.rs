@@ -34,8 +34,7 @@ impl ToString for TreeQueryParam {
                 .iter()
                 .map(TreeQueryParam::to_string)
                 .collect::<Vec<_>>()
-                .join(",")
-                .to_string(),
+                .join(","),
         }
     }
 }

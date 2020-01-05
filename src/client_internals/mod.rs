@@ -6,7 +6,10 @@ use std::string::ToString;
 use log::{debug, warn};
 use regex::Regex;
 use reqwest::{
-    header::HeaderValue, header::CONTENT_TYPE, Body, Client, RequestBuilder, Response, StatusCode,
+    blocking::{Body, Client, RequestBuilder, Response},
+    header::HeaderValue,
+    header::CONTENT_TYPE,
+    StatusCode,
 };
 use serde::Serialize;
 
@@ -137,9 +140,15 @@ impl Jenkins {
         );
         debug!("{:?}", body);
         request_builder = request_builder.query(qps).body(body);
-        let mut response = self.send(request_builder)?;
+        let response = self.send(request_builder)?;
 
         if response.status() == StatusCode::INTERNAL_SERVER_ERROR {
+            // get the error before reading the body. In this case it can't be OK
+            let error = match response.error_for_status_ref() {
+                Ok(_) => unreachable!(),
+                Err(err) => err,
+            };
+
             let body = response.text()?;
 
             let re = Regex::new(r"java.lang.([a-zA-Z]+): (.*)").unwrap();
@@ -181,9 +190,10 @@ impl Jenkins {
                     _ => Ok(()),
                 }?;
             }
+            Err(error.into())
+        } else {
+            Ok(Self::error_for_status(response)?)
         }
-
-        Ok(Self::error_for_status(response)?)
     }
 }
 
@@ -285,8 +295,8 @@ mod tests {
         assert_eq!(
             format!("{:?}", response),
             concat!(
-                r#"Err(Error(Status(500), "#,
-                r#""http://127.0.0.1:1234/error-NewException"))"#
+                r#"Err(reqwest::Error { kind: Status(500), "#,
+                r#"url: "http://127.0.0.1:1234/error-NewException" })"#
             )
         );
     }
