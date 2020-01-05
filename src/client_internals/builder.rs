@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use reqwest::{self, Client, Url};
+use reqwest::{self, blocking::Client, Url};
 
 use super::{Jenkins, User};
 use crate::client::Result;
@@ -12,7 +12,7 @@ use crate::client::Result;
 ///#
 ///# use jenkins_api::JenkinsBuilder;
 ///#
-///# fn main() {
+///# fn example_function() {
 ///     let jenkins = JenkinsBuilder::new("http://localhost:8080")
 ///         .with_user("user", Some("password"))
 ///         .build()
@@ -48,10 +48,10 @@ impl JenkinsBuilder {
     pub fn build(self) -> Result<Jenkins> {
         let url = Url::from_str(&self.url)?;
         if url.cannot_be_a_base() {
-            return Err(reqwest::UrlError::RelativeUrlWithoutBase.into());
+            return Err(url::ParseError::RelativeUrlWithoutBase.into());
         };
         if !url.has_host() {
-            return Err(reqwest::UrlError::EmptyHost.into());
+            return Err(url::ParseError::EmptyHost.into());
         }
 
         Ok(Jenkins {
