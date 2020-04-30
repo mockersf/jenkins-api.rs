@@ -2,7 +2,6 @@
 
 use serde::{Deserialize, Serialize};
 
-
 use crate::action::CommonAction;
 use crate::build::ShortBuild;
 use crate::client::{self, Result};

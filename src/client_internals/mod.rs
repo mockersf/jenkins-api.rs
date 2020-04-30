@@ -199,7 +199,6 @@ impl Jenkins {
 
 #[cfg(test)]
 mod tests {
-    
 
     #[test]
     fn can_post_with_body() {

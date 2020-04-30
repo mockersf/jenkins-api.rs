@@ -4,7 +4,6 @@ use reqwest::header::LOCATION;
 
 use serde::{self, Serialize};
 
-
 use crate::client::{self, Result};
 use crate::client_internals::{Name, Path};
 use crate::job::{Job, JobName};

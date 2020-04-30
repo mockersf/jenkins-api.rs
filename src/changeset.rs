@@ -4,7 +4,6 @@ use crate::user::ShortUser;
 
 use serde::{self, Deserialize, Serialize};
 
-
 use crate::helpers::Class;
 
 /// Trait implemented by specialization of changesetlist

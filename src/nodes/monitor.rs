@@ -2,7 +2,6 @@
 
 use serde::{self, Deserialize, Serialize};
 
-
 use crate::helpers::Class;
 
 /// Monitor data provided by Jenkins about a `Computer`

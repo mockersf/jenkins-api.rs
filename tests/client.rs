@@ -126,7 +126,8 @@ fn can_get_jenkins_view_from_home() {
     let first_view = home_ok
         .views
         .iter()
-        .filter(|view| view.name == "view disabled").next()
+        .filter(|view| view.name == "view disabled")
+        .next()
         .unwrap();
     let full_view = first_view.get_full_view(&jenkins);
     assert!(full_view.is_ok());

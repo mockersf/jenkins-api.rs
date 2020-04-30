@@ -4,7 +4,6 @@ use std::collections::HashMap;
 
 use serde::{self, Deserialize, Serialize};
 
-
 use crate::helpers::Class;
 
 /// Describe a git branch

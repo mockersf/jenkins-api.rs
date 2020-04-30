@@ -2,7 +2,6 @@
 
 use serde::{self, Deserialize, Serialize};
 
-
 use crate::helpers::Class;
 
 use crate::client::{self, Result};

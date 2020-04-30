@@ -1,5 +1,3 @@
-
-
 use super::Jenkins;
 use crate::build;
 

@@ -2,7 +2,6 @@ use std::marker::PhantomData;
 
 use serde::{self, Deserialize, Serialize};
 
-
 use crate::helpers::Class;
 
 use crate::action::CommonAction;
