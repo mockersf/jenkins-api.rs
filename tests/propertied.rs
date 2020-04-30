@@ -17,7 +17,7 @@ fn setup() {
     });
 }
 
-static JENKINS_URL: &'static str = "http://localhost:8080";
+static JENKINS_URL: &str = "http://localhost:8080";
 
 proptest! {
     #[test]

@@ -1,7 +1,7 @@
 //! Types to parse the monitor data of a `Computer`
 
 use serde::{self, Deserialize, Serialize};
-use serde_json;
+
 
 use crate::helpers::Class;
 

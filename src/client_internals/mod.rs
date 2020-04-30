@@ -199,7 +199,7 @@ impl Jenkins {
 
 #[cfg(test)]
 mod tests {
-    use mockito;
+    
 
     #[test]
     fn can_post_with_body() {

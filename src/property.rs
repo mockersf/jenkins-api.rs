@@ -1,7 +1,7 @@
 //! Properties of an object (Build, Job, ...)
 
 use serde::{self, Deserialize, Serialize};
-use serde_json;
+
 
 use crate::helpers::Class;
 

@@ -1,4 +1,4 @@
-use urlencoding;
+
 
 use super::Jenkins;
 use crate::build;
@@ -259,7 +259,7 @@ impl Jenkins {
 mod tests {
     use super::*;
 
-    static JENKINS_URL: &'static str = "http://none:8080";
+    static JENKINS_URL: &str = "http://none:8080";
 
     #[test]
     fn can_parse_view_path() {

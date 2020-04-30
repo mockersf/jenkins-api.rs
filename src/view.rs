@@ -1,7 +1,7 @@
 //! Jenkins Views, use to group Jobs
 
 use serde::{self, Deserialize, Serialize};
-use serde_json;
+
 
 use crate::helpers::Class;
 

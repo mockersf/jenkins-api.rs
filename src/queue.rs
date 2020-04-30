@@ -1,7 +1,7 @@
 //! Jenkins build queue
 
 use serde::{Deserialize, Serialize};
-use serde_json;
+
 
 use crate::action::CommonAction;
 use crate::build::ShortBuild;

@@ -24,7 +24,7 @@ fn setup() {
     });
 }
 
-static JENKINS_URL: &'static str = "http://localhost:8080";
+static JENKINS_URL: &str = "http://localhost:8080";
 
 #[test]
 fn can_get_jenkins_home() {
@@ -126,8 +126,7 @@ fn can_get_jenkins_view_from_home() {
     let first_view = home_ok
         .views
         .iter()
-        .filter(|view| view.name == "view disabled")
-        .nth(0)
+        .filter(|view| view.name == "view disabled").next()
         .unwrap();
     let full_view = first_view.get_full_view(&jenkins);
     assert!(full_view.is_ok());
@@ -219,8 +218,7 @@ fn can_add_and_remove_job_from_view_through_view() {
         .jobs
         .iter()
         .map(|job| &job.name)
-        .find(|job_name| *job_name == "normal job")
-        .is_some());
+        .any(|job_name| job_name == "normal job"));
 
     let removing = view_ok
         .as_variant::<jenkins_api::view::ListView>()
@@ -275,8 +273,7 @@ fn can_add_and_remove_job_from_view_through_job() {
         .jobs
         .iter()
         .map(|job| &job.name)
-        .find(|job_name| *job_name == "pipeline job")
-        .is_some());
+        .any(|job_name| job_name == "pipeline job"));
 
     let removing = job_ok.remove_from_view(&jenkins, &view_ok.name);
     println!("{:#?}", removing);

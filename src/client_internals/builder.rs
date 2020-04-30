@@ -88,7 +88,7 @@ impl JenkinsBuilder {
 
 #[cfg(test)]
 mod tests {
-    static JENKINS_URL: &'static str = "http://none:8080";
+    static JENKINS_URL: &str = "http://none:8080";
 
     #[test]
     fn create_builder() {
