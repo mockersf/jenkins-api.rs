@@ -36,7 +36,7 @@ pub struct Home {
     /// Is Jenkins preparing to restart
     pub quieting_down: bool,
     /// HTTP port to the slave agent
-    pub slave_agent_port: u32,
+    pub slave_agent_port: i32,
     /// Does this instance use crumbs for CSRF
     pub use_crumbs: bool,
     /// False if this instance is either UNSECURED or NO_AUTHENTICATION
