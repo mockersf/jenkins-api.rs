@@ -28,6 +28,8 @@ mod external;
 pub use self::external::ExternalJob;
 mod folder;
 pub use self::folder::Folder;
+mod multibranch_pipeline;
+pub use self::multibranch_pipeline::WorkflowMultiBranchProject;
 
 impl Jenkins {
     /// Get a `Job` from it's `job_name`
