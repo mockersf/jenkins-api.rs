@@ -257,11 +257,11 @@ pub trait Build {
             }
         }
 
-        return Err(client::Error::InvalidUrl {
+        Err(client::Error::InvalidUrl {
             url: self.url().to_string(),
             expected: client::error::ExpectedType::Build,
         }
-        .into());
+        .into())
     }
 }
 

@@ -228,7 +228,7 @@ pub trait Job {
     }
 
     /// Get the config.xml file for this job
-    fn get_config_xml<'a>(&self, jenkins_client: &Jenkins) -> Result<String> {
+    fn get_config_xml(&self, jenkins_client: &Jenkins) -> Result<String> {
         let path = jenkins_client.url_to_path(&self.url());
         if let Path::Job { name, .. } = path {
             return Ok(jenkins_client
@@ -252,11 +252,11 @@ pub trait Job {
             }
         }
 
-        return Err(client::Error::InvalidUrl {
+        Err(client::Error::InvalidUrl {
             url: self.url().to_string(),
             expected: client::error::ExpectedType::Build,
         }
-        .into());
+        .into())
     }
 }
 
