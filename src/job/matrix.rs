@@ -13,7 +13,7 @@ use crate::build::{MatrixBuild, MatrixRun};
 
 use super::{BallColor, HealthReport};
 
-job_build_with_common_fields_and_impl!(
+job_buildable_with_common_fields_and_impl!(
     /// A matrix project
     #[derive(Deserialize, Debug)]
     #[serde(rename_all = "camelCase")]
@@ -39,7 +39,7 @@ register_class!("hudson.matrix.MatrixProject" => MatrixProject);
 impl BuildableJob for MatrixProject {}
 impl SCMPollable for MatrixProject {}
 
-job_build_with_common_fields_and_impl!(
+job_buildable_with_common_fields_and_impl!(
     /// A matrix configuration
     #[derive(Deserialize, Debug)]
     #[serde(rename_all = "camelCase")]

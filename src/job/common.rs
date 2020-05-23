@@ -9,7 +9,6 @@ use crate::action::CommonAction;
 use crate::build::{CommonBuild, ShortBuild};
 use crate::client::{self, Result};
 use crate::client_internals::{Name, Path};
-use crate::property::CommonProperty;
 use crate::queue::ShortQueueItem;
 use crate::view::ViewName;
 use crate::Jenkins;
@@ -89,14 +88,17 @@ where
     pub fn get_full_job(&self, jenkins_client: &Jenkins) -> Result<T> {
         let path = jenkins_client.url_to_path(&self.url);
         if let Path::Job { .. } = path {
-            Ok(jenkins_client.get(&path)?.json()?)
-        } else {
-            Err(client::Error::InvalidUrl {
-                url: self.url.clone(),
-                expected: client::error::ExpectedType::Job,
+            return Ok(jenkins_client.get(&path)?.json()?);
+        } else if let Path::InFolder { path: sub_path, .. } = &path {
+            if let Path::Job { .. } = sub_path.as_ref() {
+                return Ok(jenkins_client.get(&path)?.json()?);
             }
-            .into())
         }
+        Err(client::Error::InvalidUrl {
+            url: self.url.clone(),
+            expected: client::error::ExpectedType::Job,
+        }
+        .into())
     }
 }
 
@@ -220,7 +222,7 @@ pub trait Job {
     }
 }
 
-macro_rules! job_build_with_common_fields_and_impl {
+macro_rules! job_base_with_common_fields_and_impl {
     (
         $(#[$attr:meta])*
         pub struct $name:ident {
@@ -236,7 +238,7 @@ macro_rules! job_build_with_common_fields_and_impl {
             })*
         }
     ) => {
-        job_build_with_common_fields_and_impl! {
+        job_base_with_common_fields_and_impl! {
             $(#[$attr])*
             pub struct $name<BuildType = CommonBuild> {
                 $(
@@ -282,42 +284,14 @@ macro_rules! job_build_with_common_fields_and_impl {
             pub display_name_or_null: Option<String>,
             /// URL for the job
             pub url: String,
-            /// Ball Color for the status of the job
-            pub color: Option<BallColor>,
-            /// Is the job buildable?
-            pub buildable: bool,
-            /// Are dependencies kept for this job?
-            pub keep_dependencies: bool,
-            /// Next build number
-            pub next_build_number: u32,
-            /// Is this job currently in build queue
-            pub in_queue: bool,
             /// Actions of a job
             pub actions: Vec<Option<CommonAction>>,
+            /// Is the job buildable?
+            #[serde(default)]
+            pub buildable: bool,
             /// Link to the last build
+            #[serde(default)]
             pub last_build: Option<ShortBuild<$build_type>>,
-            /// Link to the first build
-            pub first_build: Option<ShortBuild<$build_type>>,
-            /// Link to the last stable build
-            pub last_stable_build: Option<ShortBuild<$build_type>>,
-            /// Link to the last unstable build
-            pub last_unstable_build: Option<ShortBuild<$build_type>>,
-            /// Link to the last successful build
-            pub last_successful_build: Option<ShortBuild<$build_type>>,
-            /// Link to the last unsucressful build
-            pub last_unsuccessful_build: Option<ShortBuild<$build_type>>,
-            /// Link to the last complete build
-            pub last_completed_build: Option<ShortBuild<$build_type>>,
-            /// Link to the last failed build
-            pub last_failed_build: Option<ShortBuild<$build_type>>,
-            /// List of builds of the job
-            pub builds: Vec<ShortBuild>,
-            /// HealthReport of the job
-            pub health_report: Vec<HealthReport>,
-            /// Queue item of this job if it's waiting
-            pub queue_item: Option<ShortQueueItem>,
-            /// Properties of the job
-            property: Vec<CommonProperty>,
             $(
                 $(#[$field_attr])*
                 pub $field: $field_type,
@@ -339,7 +313,103 @@ macro_rules! job_build_with_common_fields_and_impl {
     };
 }
 
-job_build_with_common_fields_and_impl!(
+macro_rules! job_buildable_with_common_fields_and_impl {
+    (
+        $(#[$attr:meta])*
+        pub struct $name:ident {
+            $(
+                $(#[$field_attr:meta])*
+                pub $field:ident: $field_type:ty,
+            )*
+            $(private_fields {
+                $(
+                    $(#[$private_field_attr:meta])*
+                    $private_field:ident: $private_field_type:ty
+                ),* $(,)*
+            })*
+        }
+    ) => {
+        job_buildable_with_common_fields_and_impl! {
+            $(#[$attr])*
+            pub struct $name<BuildType = CommonBuild> {
+                $(
+                    $(#[$field_attr])*
+                    pub $field: $field_type,
+                )*
+                $(private_fields {
+                    $(
+                        $(#[$private_field_attr])*
+                        $private_field: $private_field_type
+                    ),*
+                })*
+            }
+        }
+    };
+
+    (
+        $(#[$attr:meta])*
+        pub struct $name:ident<BuildType = $build_type:ty> {
+            $(
+                $(#[$field_attr:meta])*
+                pub $field:ident: $field_type:ty,
+            )*
+            $(private_fields {
+                $(
+                    $(#[$private_field_attr:meta])*
+                    $private_field:ident: $private_field_type:ty
+                ),* $(,)*
+            })*
+        }
+    ) => {
+        job_base_with_common_fields_and_impl! {
+            $(#[$attr])*
+            pub struct $name<BuildType = $build_type> {
+                /// Ball Color for the status of the job
+                pub color: Option<BallColor>,
+                /// Are dependencies kept for this job?
+                pub keep_dependencies: bool,
+                /// Next build number
+                pub next_build_number: u32,
+                /// Is this job currently in build queue
+                pub in_queue: bool,
+                /// Link to the first build
+                pub first_build: Option<ShortBuild<$build_type>>,
+                /// Link to the last stable build
+                pub last_stable_build: Option<ShortBuild<$build_type>>,
+                /// Link to the last unstable build
+                pub last_unstable_build: Option<ShortBuild<$build_type>>,
+                /// Link to the last successful build
+                pub last_successful_build: Option<ShortBuild<$build_type>>,
+                /// Link to the last unsucressful build
+                pub last_unsuccessful_build: Option<ShortBuild<$build_type>>,
+                /// Link to the last complete build
+                pub last_completed_build: Option<ShortBuild<$build_type>>,
+                /// Link to the last failed build
+                pub last_failed_build: Option<ShortBuild<$build_type>>,
+                /// List of builds of the job
+                pub builds: Vec<ShortBuild>,
+                /// HealthReport of the job
+                pub health_report: Vec<HealthReport>,
+                /// Queue item of this job if it's waiting
+                pub queue_item: Option<ShortQueueItem>,
+                $(
+                    $(#[$field_attr])*
+                    pub $field: $field_type,
+                )*
+                $($(
+                    $(#[$private_field_attr])*
+                    $private_field: $private_field_type,
+                )*)*
+                private_fields {
+                    /// Properties of the job
+                    property: Vec<CommonProperty>,
+                }
+            }
+        }
+    };
+}
+
+job_base_with_common_fields_and_impl!(
     /// A Jenkins `Job`
     #[derive(Serialize, Deserialize, Debug, Clone)]
     #[serde(rename_all = "camelCase")]

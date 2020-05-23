@@ -11,7 +11,7 @@ use crate::scm::CommonSCM;
 
 use super::{BallColor, HealthReport};
 
-job_build_with_common_fields_and_impl!(
+job_buildable_with_common_fields_and_impl!(
     /// A maven project
     #[derive(Deserialize, Debug)]
     #[serde(rename_all = "camelCase")]
@@ -37,7 +37,7 @@ register_class!("hudson.maven.MavenModuleSet" => MavenModuleSet);
 impl BuildableJob for MavenModuleSet {}
 impl SCMPollable for MavenModuleSet {}
 
-job_build_with_common_fields_and_impl!(
+job_buildable_with_common_fields_and_impl!(
     /// A maven module
     #[derive(Deserialize, Debug)]
     #[serde(rename_all = "camelCase")]

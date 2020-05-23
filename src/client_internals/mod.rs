@@ -111,7 +111,7 @@ impl Jenkins {
     pub(crate) fn get_with_params<T: Serialize>(&self, path: &Path, qps: T) -> Result<Response> {
         let query = self
             .client
-            .get(&self.url_api_json(&path.to_string()))
+            .get(&self.url_api_json(&dbg!(path.to_string())))
             .query(&qps);
         Ok(Self::error_for_status(self.send(query)?)?)
     }

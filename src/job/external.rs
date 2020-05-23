@@ -10,7 +10,7 @@ use crate::queue::ShortQueueItem;
 
 use super::{BallColor, HealthReport};
 
-job_build_with_common_fields_and_impl!(
+job_buildable_with_common_fields_and_impl!(
     /// An external job
     #[derive(Deserialize, Debug)]
     #[serde(rename_all = "camelCase")]

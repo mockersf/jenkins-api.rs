@@ -11,7 +11,7 @@ use crate::scm::CommonSCM;
 
 use super::{BallColor, HealthReport};
 
-job_build_with_common_fields_and_impl!(
+job_buildable_with_common_fields_and_impl!(
     /// A build flow job
     #[derive(Deserialize, Debug)]
     #[serde(rename_all = "camelCase")]

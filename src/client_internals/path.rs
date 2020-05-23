@@ -2,7 +2,7 @@ use super::Jenkins;
 use crate::build;
 
 /// Name of an object
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Name<'a> {
     /// Name of an object
     Name(&'a str),
@@ -19,7 +19,7 @@ impl<'a> ToString for Name<'a> {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Path<'a> {
     Home,
     View {
@@ -61,6 +61,7 @@ pub enum Path<'a> {
         job_name: Name<'a>,
         number: build::BuildNumber,
         configuration: Option<Name<'a>>,
+        folder_name: Option<Name<'a>>,
     },
     Queue,
     QueueItem {
@@ -70,6 +71,10 @@ pub enum Path<'a> {
         job_name: Name<'a>,
         number: build::BuildNumber,
         configuration: Option<Name<'a>>,
+    },
+    InFolder {
+        folder_name: Name<'a>,
+        path: Box<Path<'a>>,
     },
     Computers,
     Computer {
@@ -136,6 +141,7 @@ impl<'a> ToString for Path<'a> {
                 ref job_name,
                 ref number,
                 configuration: None,
+                folder_name: None,
             } => format!(
                 "/job/{}/{}/consoleText",
                 job_name.to_string(),
@@ -145,8 +151,32 @@ impl<'a> ToString for Path<'a> {
                 ref job_name,
                 ref number,
                 configuration: Some(ref configuration),
+                folder_name: None,
             } => format!(
                 "/job/{}/{}/{}/consoleText",
+                job_name.to_string(),
+                configuration.to_string(),
+                number.to_string()
+            ),
+            Path::ConsoleText {
+                ref job_name,
+                ref number,
+                configuration: None,
+                folder_name: Some(ref folder_name),
+            } => format!(
+                "/job/{}/job/{}/{}/consoleText",
+                folder_name.to_string(),
+                job_name.to_string(),
+                number.to_string()
+            ),
+            Path::ConsoleText {
+                ref job_name,
+                ref number,
+                configuration: Some(ref configuration),
+                folder_name: Some(ref folder_name),
+            } => format!(
+                "/job/{}/job/{}/{}/{}/consoleText",
+                folder_name.to_string(),
                 job_name.to_string(),
                 configuration.to_string(),
                 number.to_string()
@@ -172,6 +202,10 @@ impl<'a> ToString for Path<'a> {
                 configuration.to_string(),
                 number.to_string()
             ),
+            Path::InFolder {
+                ref folder_name,
+                ref path,
+            } => format!("/job/{}{}", folder_name.to_string(), path.to_string()),
             Path::Computers => "/computer/api/json".to_string(),
             Path::Computer { ref name } => format!("/computer/{}/api/json", name.to_string()),
             Path::Raw { path } => path.to_string(),
@@ -187,7 +221,7 @@ impl Jenkins {
         } else {
             url
         };
-        let slashes: Vec<usize> = path
+        let slashes: Vec<usize> = dbg!(path)
             .char_indices()
             .filter(|c| c.1 == '/')
             .map(|c| c.0)
@@ -218,13 +252,18 @@ impl Jenkins {
                 }
             }
             ("/job", 5) => {
-                if &path[slashes[3]..slashes[4]] == "mavenArtifacts" {
+                if &path[slashes[3]..slashes[4]] == "/mavenArtifacts" {
                     Path::MavenArtifactRecord {
                         job_name: Name::UrlEncodedName(&path[5..slashes[2]]),
                         number: build::BuildNumber::Number(
                             path[(slashes[3] + 1)..(path.len() - 1)].parse().unwrap(),
                         ),
                         configuration: None,
+                    }
+                } else if &path[slashes[2]..slashes[3]] == "/job" {
+                    Path::InFolder {
+                        folder_name: Name::UrlEncodedName(&path[5..slashes[2]]),
+                        path: Box::new(self.url_to_path(&path[slashes[2]..])),
                     }
                 } else {
                     Path::Build {
@@ -238,13 +277,24 @@ impl Jenkins {
                     }
                 }
             }
-            ("/job", 6) => Path::MavenArtifactRecord {
-                job_name: Name::UrlEncodedName(&path[5..slashes[2]]),
-                number: build::BuildNumber::Number(
-                    path[(slashes[3] + 1)..slashes[4]].parse().unwrap(),
-                ),
-                configuration: Some(Name::UrlEncodedName(&path[(slashes[2] + 1)..slashes[3]])),
-            },
+            ("/job", 6) => {
+                if &path[slashes[2]..slashes[3]] == "/job" {
+                    Path::InFolder {
+                        folder_name: Name::UrlEncodedName(&path[5..slashes[2]]),
+                        path: Box::new(self.url_to_path(&path[slashes[2]..])),
+                    }
+                } else {
+                    Path::MavenArtifactRecord {
+                        job_name: Name::UrlEncodedName(&path[5..slashes[2]]),
+                        number: build::BuildNumber::Number(
+                            path[(slashes[3] + 1)..slashes[4]].parse().unwrap(),
+                        ),
+                        configuration: Some(Name::UrlEncodedName(
+                            &path[(slashes[2] + 1)..slashes[3]],
+                        )),
+                    }
+                }
+            }
             ("/queue", 4) => Path::QueueItem {
                 id: path[(slashes[2] + 1)..(path.len() - 1)].parse().unwrap(),
             },

@@ -26,6 +26,8 @@ mod multijob;
 pub use self::multijob::MultiJobProject;
 mod external;
 pub use self::external::ExternalJob;
+mod folder;
+pub use self::folder::Folder;
 
 impl Jenkins {
     /// Get a `Job` from it's `job_name`

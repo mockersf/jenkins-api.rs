@@ -33,21 +33,39 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
             configuration: None,
         } = path
         {
-            Ok(JobBuilder {
+            return Ok(JobBuilder {
                 job_name: name,
                 jenkins_client,
                 delay: None,
                 cause: None,
                 token: None,
                 parameters: None,
-            })
-        } else {
-            Err(client::Error::InvalidUrl {
-                url: job.url().to_string(),
-                expected: client::error::ExpectedType::Job,
+            });
+        } else if let Path::InFolder {
+            folder_name: _folder_name,
+            path: sub_path,
+        } = path
+        {
+            if let Path::Job {
+                name,
+                configuration: None,
+            } = sub_path.as_ref()
+            {
+                return Ok(JobBuilder {
+                    job_name: name.clone(),
+                    jenkins_client,
+                    delay: None,
+                    cause: None,
+                    token: None,
+                    parameters: None,
+                });
             }
-            .into())
         }
+        Err(client::Error::InvalidUrl {
+            url: job.url().to_string(),
+            expected: client::error::ExpectedType::Job,
+        }
+        .into())
     }
 
     pub(crate) fn new_from_job_name<J>(name: J, jenkins_client: &'b Jenkins) -> Result<Self>
