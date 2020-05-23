@@ -18,8 +18,14 @@ pub struct ShortView {
     pub name: String,
     /// URL for the view
     pub url: String,
+
+    #[cfg(not(feature = "extra-fields-visibility"))]
     #[serde(flatten)]
-    other_fields: Option<serde_json::Value>,
+    pub(crate) extra_fields: Option<serde_json::Value>,
+    #[cfg(feature = "extra-fields-visibility")]
+    /// Extra fields not parsed for a common object
+    #[serde(flatten)]
+    pub extra_fields: Option<serde_json::Value>,
 }
 
 impl ShortView {
@@ -85,8 +91,14 @@ pub struct CommonView {
     pub jobs: Vec<ShortJob>,
     /// Properties of the view
     pub property: Vec<CommonProperty>,
+
+    #[cfg(not(feature = "extra-fields-visibility"))]
     #[serde(flatten)]
-    other_fields: serde_json::Value,
+    extra_fields: serde_json::Value,
+    #[cfg(feature = "extra-fields-visibility")]
+    /// Extra fields not parsed for a common object
+    #[serde(flatten)]
+    pub extra_fields: serde_json::Value,
 }
 specialize!(CommonView => View);
 impl View for CommonView {

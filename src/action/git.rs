@@ -36,8 +36,14 @@ pub struct CommonBranchBuild {
     /// _class provided by Jenkins
     #[serde(rename = "_class")]
     pub class: Option<String>,
+
+    #[cfg(not(feature = "extra-fields-visibility"))]
     #[serde(flatten)]
-    other_fields: serde_json::Value,
+    extra_fields: serde_json::Value,
+    #[cfg(feature = "extra-fields-visibility")]
+    /// Extra fields not parsed for a common object
+    #[serde(flatten)]
+    pub extra_fields: serde_json::Value,
 }
 specialize!(CommonBranchBuild => BranchBuild);
 impl BranchBuild for CommonBranchBuild {}

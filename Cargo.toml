@@ -35,3 +35,6 @@ env_logger = "0.7"
 mockito = "0.25"
 spectral = "0.6"
 proptest = "0.9"
+
+[features]
+extra-fields-visibility = []

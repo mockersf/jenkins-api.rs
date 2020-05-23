@@ -137,7 +137,7 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
         if let Some(location) = response.headers().get(LOCATION) {
             Ok(ShortQueueItem {
                 url: location.to_str().unwrap().to_string(),
-                other_fields: None,
+                extra_fields: None,
             })
         } else {
             Err(client::Error::InvalidUrl {

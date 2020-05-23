@@ -17,8 +17,13 @@ pub struct CommonParameter {
     /// The parameter name
     pub name: String,
 
+    #[cfg(not(feature = "extra-fields-visibility"))]
     #[serde(flatten)]
-    other_fields: serde_json::Value,
+    extra_fields: serde_json::Value,
+    #[cfg(feature = "extra-fields-visibility")]
+    /// Extra fields not parsed for a common object
+    #[serde(flatten)]
+    pub extra_fields: serde_json::Value,
 }
 specialize!(CommonParameter => Parameter);
 impl Parameter for CommonParameter {}

@@ -14,8 +14,14 @@ use crate::Jenkins;
 pub struct ShortQueueItem {
     /// URL to this queued item
     pub url: String,
+
+    #[cfg(not(feature = "extra-fields-visibility"))]
     #[serde(flatten)]
-    pub(crate) other_fields: Option<serde_json::Value>,
+    pub(crate) extra_fields: Option<serde_json::Value>,
+    #[cfg(feature = "extra-fields-visibility")]
+    /// Extra fields not parsed for a common object
+    #[serde(flatten)]
+    pub extra_fields: Option<serde_json::Value>,
 }
 impl ShortQueueItem {
     /// Get the full details of a `QueueItem` matching the `ShortQueueItem`

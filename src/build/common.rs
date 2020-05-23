@@ -22,8 +22,14 @@ pub struct ShortBuild<T: Build = CommonBuild> {
     pub display_name: Option<String>,
     /// Timestamp for the build
     pub timestamp: Option<u64>,
+
+    #[cfg(not(feature = "extra-fields-visibility"))]
     #[serde(flatten)]
-    pub(crate) other_fields: Option<serde_json::Value>,
+    pub(crate) extra_fields: Option<serde_json::Value>,
+    #[cfg(feature = "extra-fields-visibility")]
+    /// Extra fields not parsed for a common object
+    #[serde(flatten)]
+    pub extra_fields: Option<serde_json::Value>,
 
     #[serde(skip)]
     build_type: PhantomData<T>,
@@ -367,9 +373,14 @@ build_with_common_fields_and_impl!(
         #[serde(rename = "_class")]
         pub class: Option<String>,
 
+        #[cfg(feature = "extra-fields-visibility")]
+        /// Extra fields not parsed for a common object
+        #[serde(flatten)]
+        pub extra_fields: serde_json::Value,
         private_fields {
+            #[cfg(not(feature = "extra-fields-visibility"))]
             #[serde(flatten)]
-            other_fields: serde_json::Value,
+            extra_fields: serde_json::Value,
         }
     }
 );

@@ -94,17 +94,24 @@ macro_rules! computer_with_common_fields_and_impl {
 }
 
 computer_with_common_fields_and_impl!(/// A Jenkins `Computer`
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct CommonComputer {
-    /// _class provided by Jenkins
-    #[serde(rename = "_class")]
-    pub class: Option<String>,
-    private_fields {
+    #[derive(Serialize, Deserialize, Debug, Clone)]
+    #[serde(rename_all = "camelCase")]
+    pub struct CommonComputer {
+        /// _class provided by Jenkins
+        #[serde(rename = "_class")]
+        pub class: Option<String>,
+
+        #[cfg(feature = "extra-fields-visibility")]
+        /// Extra fields not parsed for a common object
         #[serde(flatten)]
-        other_fields: serde_json::Value,
+        pub extra_fields: serde_json::Value,
+        private_fields {
+            #[cfg(not(feature = "extra-fields-visibility"))]
+            #[serde(flatten)]
+            extra_fields: serde_json::Value,
+        }
     }
-});
+);
 specialize!(CommonComputer => Computer);
 
 computer_with_common_fields_and_impl!(

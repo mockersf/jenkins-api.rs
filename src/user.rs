@@ -10,6 +10,12 @@ pub struct ShortUser {
     pub full_name: String,
     /// Absolute URL to the user profile
     pub absolute_url: String,
+
+    #[cfg(not(feature = "extra-fields-visibility"))]
     #[serde(flatten)]
-    pub(crate) other_fields: Option<serde_json::Value>,
+    pub(crate) extra_fields: Option<serde_json::Value>,
+    #[cfg(feature = "extra-fields-visibility")]
+    /// Extra fields not parsed for a common object
+    #[serde(flatten)]
+    pub extra_fields: Option<serde_json::Value>,
 }

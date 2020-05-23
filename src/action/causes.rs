@@ -17,8 +17,13 @@ pub struct CommonCause {
     /// Short description of the cause
     pub short_description: String,
 
+    #[cfg(not(feature = "extra-fields-visibility"))]
     #[serde(flatten)]
-    other_fields: serde_json::Value,
+    extra_fields: serde_json::Value,
+    #[cfg(feature = "extra-fields-visibility")]
+    /// Extra fields not parsed for a common object
+    #[serde(flatten)]
+    pub extra_fields: serde_json::Value,
 }
 specialize!(CommonCause => Cause);
 impl Cause for CommonCause {}
