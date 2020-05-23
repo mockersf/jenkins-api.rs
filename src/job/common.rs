@@ -220,6 +220,38 @@ pub trait Job {
             .into())
         }
     }
+
+    /// Get the config.xml file for this job
+    fn get_config_xml<'a>(&self, jenkins_client: &Jenkins) -> Result<String> {
+        let path = jenkins_client.url_to_path(&self.url());
+        if let Path::Job { name, .. } = path {
+            return Ok(jenkins_client
+                .get(&Path::ConfigXML {
+                    job_name: name,
+                    folder_name: None,
+                })?
+                .text()?);
+        } else if let Path::InFolder {
+            path: sub_path,
+            folder_name,
+        } = &path
+        {
+            if let Path::Job { name, .. } = sub_path.as_ref() {
+                return Ok(jenkins_client
+                    .get(&Path::ConfigXML {
+                        job_name: name.clone(),
+                        folder_name: Some(folder_name.clone()),
+                    })?
+                    .text()?);
+            }
+        }
+
+        return Err(client::Error::InvalidUrl {
+            url: self.url().to_string(),
+            expected: client::error::ExpectedType::Build,
+        }
+        .into());
+    }
 }
 
 macro_rules! job_base_with_common_fields_and_impl {

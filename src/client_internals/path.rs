@@ -63,6 +63,10 @@ pub enum Path<'a> {
         configuration: Option<Name<'a>>,
         folder_name: Option<Name<'a>>,
     },
+    ConfigXML {
+        job_name: Name<'a>,
+        folder_name: Option<Name<'a>>,
+    },
     Queue,
     QueueItem {
         id: i32,
@@ -181,6 +185,18 @@ impl<'a> ToString for Path<'a> {
                 configuration.to_string(),
                 number.to_string()
             ),
+            Path::ConfigXML {
+                ref job_name,
+                folder_name: None,
+            } => format!("/job/{}/config.xml", job_name.to_string(),),
+            Path::ConfigXML {
+                ref job_name,
+                folder_name: Some(ref folder_name),
+            } => format!(
+                "/job/{}/job/{}/config.xml",
+                folder_name.to_string(),
+                job_name.to_string(),
+            ),
             Path::Queue => "/queue".to_string(),
             Path::QueueItem { ref id } => format!("/queue/item/{}", id),
             Path::MavenArtifactRecord {
@@ -221,7 +237,7 @@ impl Jenkins {
         } else {
             url
         };
-        let slashes: Vec<usize> = dbg!(path)
+        let slashes: Vec<usize> = path
             .char_indices()
             .filter(|c| c.1 == '/')
             .map(|c| c.0)

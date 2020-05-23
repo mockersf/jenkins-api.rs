@@ -362,6 +362,23 @@ fn can_get_console() {
 }
 
 #[test]
+fn can_get_config_xml() {
+    setup();
+    let jenkins = JenkinsBuilder::new(JENKINS_URL)
+        .with_user("user", Some("password"))
+        .build()
+        .unwrap();
+
+    let job = jenkins.get_job("pipeline job");
+    println!("{:#?}", job);
+    assert!(job.is_ok());
+
+    let job_ok = job.unwrap();
+    let config = job_ok.get_config_xml(&jenkins);
+    println!("{:#?}", config);
+    assert!(config.is_ok());
+}
+#[test]
 fn can_get_pipeline() {
     setup();
     let jenkins = JenkinsBuilder::new(JENKINS_URL)
