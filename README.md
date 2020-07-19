@@ -7,6 +7,8 @@ The API docs for the master branch are published [here](https://mockersf.github.
 ## Example
 
 ```rust
+extern crate jenkins_api;
+
 use jenkins_api::JenkinsBuilder;
 use jenkins_api::build::BuildStatus;
 use jenkins_api::job::BuildableJob;
