@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Queue","The Jenkins `Queue`, the list of `QueueItem` that are waiting to be built"],["QueueItem","A queued item in Jenkins, with information about the `Job` and why / since when it's waiting"],["ShortQueueItem","Short Queue Item that is returned when building a job"]]});

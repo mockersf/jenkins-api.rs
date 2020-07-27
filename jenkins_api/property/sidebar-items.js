@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["BuildDiscarderProperty","Old builds of job are discarded"],["CommonProperty","A Jenkins `Property`"],["GithubProjectProperty","Job is a GitHub project"],["RateLimitBranchProperty","Job is limited in number of concurrent builds"]],"trait":[["Property","Trait implemented by specialization of property"]]});

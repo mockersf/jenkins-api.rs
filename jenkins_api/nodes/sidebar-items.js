@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["computer","Types to parse a `Computer`"],["monitor","Types to parse the monitor data of a `Computer`"]],"struct":[["ComputerSet","List of `Computer` associated to the `Jenkins` instance"]]});

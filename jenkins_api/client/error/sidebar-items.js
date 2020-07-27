@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Action","Possible action done on an object"],["ExpectedType","Possible type of URL expected in links between items"]]});

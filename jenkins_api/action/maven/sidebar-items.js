@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Artifact","Artifact produced by a build"],["MavenArtifactRecord","Describe the artifacts produced by a build"],["ShortMavenArtifactRecord","Short Maven Artifact Record that is returned when getting a maven build"]]});

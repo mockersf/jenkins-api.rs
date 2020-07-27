@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["CommonBrowser","A Browser"],["CommonSCM","A SCM"],["GitSCM","Git SCM"],["GithubWeb","Github web browser"],["MergeOptions","SCM merge options"],["NullSCM","No SCM"]],"trait":[["Browser","Trait implemented by specialization of Browser"],["SCM","Trait implemented by specialization of SCM"]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["CommonCause","A `Cause` on a `CauseAction`"],["RemoteCause","Caused remotely"],["SCMTriggerCause","Caused by a SCM change"],["TimerTriggerCause","Caused by a timer"],["UpstreamCause","Caused by another project"],["UserIdCause","Caused by a user"]],"trait":[["Cause","Trait implemented by specialization of cause"]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["ShortUser","Short User that is used in list and links from other structs"]]});

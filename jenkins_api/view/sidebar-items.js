@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["CommonView","A Jenkins `View` with a list of `ShortJob`"],["ListView","A Jenkins `View` with a list of `ShortJob`"],["ShortView","Short View that is used in lists and links from other structs"],["ViewName","Helper type to act on a view"]],"trait":[["View","Trait implemented by specialization of view"]]});

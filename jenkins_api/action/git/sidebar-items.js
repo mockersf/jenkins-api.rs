@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Branch","Describe a git branch"],["BuildsByBranch","HashMap of builds by branch name"],["CommonBranchBuild","Information about a build related to a branch"],["GitBranchBuild","Build from a git branch"],["Revision","Revision from git"]],"trait":[["BranchBuild","Trait implemented by specialization of BranchBuild"]]});

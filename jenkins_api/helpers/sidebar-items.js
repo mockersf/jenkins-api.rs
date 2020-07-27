@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["Class","Trait to implement to match the _class provided by Jenkins"]]});
