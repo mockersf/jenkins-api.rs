@@ -104,7 +104,20 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
                     &qps,
                 )?
             }
-            (Some(_token), Some(_parameters)) => unreachable!(),
+            (Some(token), Some(parameters)) => {
+                let bound_delay = format!("{}", self.delay.unwrap_or(0));
+                let mut qps: Vec<(&str, &str)> = Vec::new();
+                if self.delay.is_some() {
+                    qps.push(("delay", &bound_delay));
+                }
+                self.jenkins_client.post_with_body(
+                    &Path::BuildJobWithParameters {
+                        name: self.job_name,
+                    },
+                    format!("token={}&{}", token, parameters),
+                    &qps,
+                )?
+            }
             (None, None) => {
                 let bound_delay = format!("{}", self.delay.unwrap_or(0));
                 let mut qps: Vec<(&str, &str)> = Vec::new();
@@ -155,16 +168,11 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
     }
 
     /// Trigger the build remotely with a token and a cause
-    /// # Errors
-    /// This methods will return an error if building remotely a build with parameters
     pub fn remotely_with_token_and_cause(
         mut self,
         token: &'d str,
         cause: Option<&'c str>,
     ) -> Result<Self> {
-        if self.parameters.is_some() {
-            return Err(client::Error::UnsupportedBuildConfiguration.into());
-        }
         self.token = Some(token);
         self.cause = cause;
         Ok(self)
@@ -182,8 +190,7 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
     /// If used with invalid parameters type / value, sending this build will return an
     /// [`Error::IllegalArgument`](../enum.Error.html#variant.IllegalArgument)
     ///
-    /// This methods will return an error if serializing `parameters` fails, or if passing
-    /// parameters to a remote build.
+    /// This methods will return an error if serializing `parameters` fails.
     pub fn with_parameters<T: Serialize>(mut self, parameters: &T) -> Result<Self> {
         if self.token.is_some() {
             return Err(client::Error::UnsupportedBuildConfiguration.into());
