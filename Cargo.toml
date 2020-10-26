@@ -16,7 +16,6 @@ edition = "2018"
 travis-ci = { repository = "mockersf/jenkins-api.rs" }
 
 [dependencies]
-reqwest = { version = "0.10", features = [ "blocking", "json" ] }
 url = "2.1"
 serde = { version = "1.0", features = [ "derive" ] }
 serde_json = "1.0"
@@ -25,6 +24,11 @@ urlencoding = "1.0.0"
 regex = "1.3"
 log = "0.4"
 thiserror = "1.0"
+
+[dependencies.reqwest]
+default-features = false
+features = [ "blocking", "json" ]
+version = "0.10"
 
 [build-dependencies]
 skeptic = "0.13"
@@ -37,4 +41,6 @@ spectral = "0.6"
 proptest = "0.10"
 
 [features]
+default = ["reqwest/default-tls"]
 extra-fields-visibility = []
+rustls-tls = ["reqwest/rustls-tls"]
