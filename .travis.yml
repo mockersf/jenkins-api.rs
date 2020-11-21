@@ -2,7 +2,7 @@ language: rust
 
 cache:
   directories:
-  - $HOME/.cargo
+    - $HOME/.cargo
 
 rust:
   - stable
@@ -15,54 +15,22 @@ matrix:
     - env: CARGO-TRAVIS
   fast_finish: true
   include:
-  - rust: stable
-    env: RUSTFMT
-    install:
-      - rustup component add rustfmt
-    script:
-      - cargo fmt -- --check
-  - rust: stable
-    env: CLIPPY
-    install:
-      - rustup component add clippy
-    script:
-      - cargo clippy -- -D clippy
-  - rust: stable
-    sudo: required
-    env: CARGO-TRAVIS
-    install:
-      - cargo install cargo-update || echo "cargo-update already installed"
-      - cargo install cargo-travis || echo "cargo-travis already installed"
-      - cargo install-update -a # update outdated cached binaries
-    script:
-      - cargo test
-    after_success:
-      - cargo coveralls --no-fail-fast
-    addons:
-      apt:
-        packages:
-          - libcurl4-openssl-dev
-          - libelf-dev
-          - libdw-dev
-          - binutils-dev
-          - cmake
-        sources:
-          - kalakris-cmake
+    - rust: stable
+      env: RUSTFMT
+      install:
+        - rustup component add rustfmt
+      script:
+        - cargo fmt -- --check
+    - rust: stable
+      env: CLIPPY
+      install:
+        - rustup component add clippy
+      script:
+        - cargo clippy -- -D clippy
 
 services:
   - docker
 
 before_install:
-- docker run -d -p 127.0.0.1:8080:8080 mockersf/jenkins-api-rs-tests
-- sleep 10
-
-# Upload docs
-after_success:
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_PULL_REQUEST" = "false" && "$TRAVIS_BRANCH" == "master" && "$TRAVIS_RUST_VERSION" == "beta" ]]; then
-      cargo doc --no-deps &&
-      echo "<meta http-equiv=refresh content=0;url=jenkins_api/index.html>" > target/doc/index.html &&
-      git clone https://github.com/davisp/ghp-import.git &&
-      ./ghp-import/ghp_import.py -n -p -f -m "Documentation upload" -r https://"$GH_TOKEN"@github.com/"$TRAVIS_REPO_SLUG.git" target/doc &&
-      echo "Uploaded documentation"
-    fi
+  - docker run -d -p 127.0.0.1:8080:8080 mockersf/jenkins-api-rs-tests
+  - sleep 10
