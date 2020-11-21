@@ -47,10 +47,7 @@ fn should_be_forbidden() {
     assert!(response.is_err());
     assert_eq!(
         format!("{:?}", response),
-        format!(
-            "Err(reqwest::Error {{ kind: Status(401), url: \"{}/api/json?depth=1\" }})",
-            JENKINS_URL
-        )
+        "Err(reqwest::Error { kind: Status(401), url: Url { scheme: \"http\", host: Some(Domain(\"localhost\")), port: Some(8080), path: \"/api/json\", query: Some(\"depth=1\"), fragment: None } })",
     );
 }
 
@@ -85,10 +82,7 @@ fn should_get_view_not_found() {
     assert!(response.is_err());
     assert_eq!(
         format!("{:?}", response),
-        format!(
-            "Err(reqwest::Error {{ kind: Status(404), url: \"{}/view/zut/api/json?depth=1\" }})",
-            JENKINS_URL
-        )
+        "Err(reqwest::Error { kind: Status(404), url: Url { scheme: \"http\", host: Some(Domain(\"localhost\")), port: Some(8080), path: \"/view/zut/api/json\", query: Some(\"depth=1\"), fragment: None } })",
     );
 }
 

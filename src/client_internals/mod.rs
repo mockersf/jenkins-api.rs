@@ -293,10 +293,7 @@ mod tests {
         assert!(response.is_err());
         assert_eq!(
             format!("{:?}", response),
-            concat!(
-                r#"Err(reqwest::Error { kind: Status(500), "#,
-                r#"url: "http://127.0.0.1:1234/error-NewException" })"#
-            )
+            r#"Err(reqwest::Error { kind: Status(500), url: Url { scheme: "http", host: Some(Ipv4(127.0.0.1)), port: Some(1234), path: "/error-NewException", query: None, fragment: None } })"#,
         );
     }
 
