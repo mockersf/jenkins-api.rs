@@ -33,7 +33,7 @@ version = "0.10"
 env_logger = "0.8"
 mockito = "0.28"
 spectral = "0.6"
-proptest = "0.10"
+proptest = "1.0"
 
 [features]
 default = ["reqwest/default-tls"]
