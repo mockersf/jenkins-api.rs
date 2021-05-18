@@ -68,12 +68,21 @@ impl<'a, 'b, 'c, 'd> JobBuilder<'a, 'b, 'c, 'd> {
         .into())
     }
 
-    pub(crate) fn new_from_job_name<J>(name: J, jenkins_client: &'b Jenkins) -> Result<Self>
+    pub(crate) fn new_from_job_name<J>(
+        name: J,
+        jenkins_client: &'b Jenkins,
+        name_encoded: bool,
+    ) -> Result<Self>
     where
         J: Into<JobName<'a>>,
     {
+        let job_name = if !name_encoded {
+            Name::Name(name.into().0)
+        } else {
+            Name::UrlEncodedName(name.into().0)
+        };
         Ok(JobBuilder {
-            job_name: Name::Name(name.into().0),
+            job_name,
             jenkins_client,
             delay: None,
             cause: None,

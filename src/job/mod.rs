@@ -47,19 +47,20 @@ impl Jenkins {
     }
 
     /// Build a `Job` from it's `job_name`
-    pub fn build_job<'a, J>(&self, job_name: J) -> Result<ShortQueueItem>
+    pub fn build_job<'a, J>(&self, job_name: J, name_encoded: bool) -> Result<ShortQueueItem>
     where
         J: Into<JobName<'a>>,
     {
-        JobBuilder::new_from_job_name(job_name.into().0, self)?.send()
+        JobBuilder::new_from_job_name(job_name.into().0, self, name_encoded)?.send()
     }
 
     /// Create a `JobBuilder` to setup a build of a `Job` from it's `job_name`
     pub fn job_builder<'a, 'b, 'c, 'd>(
         &'b self,
         job_name: &'a str,
+        name_encoded: bool,
     ) -> Result<JobBuilder<'a, 'b, 'c, 'd>> {
-        JobBuilder::new_from_job_name(job_name, self)
+        JobBuilder::new_from_job_name(job_name, self, name_encoded)
     }
 
     /// Poll SCM of a `Job` from it's `job_name`

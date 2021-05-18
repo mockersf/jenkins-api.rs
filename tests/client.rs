@@ -398,7 +398,7 @@ fn can_build_job_with_delay() {
         .unwrap();
 
     let triggered = jenkins
-        .job_builder("delayed job")
+        .job_builder("delayed job", false)
         .unwrap()
         .with_delay(5000)
         .send();
@@ -428,7 +428,7 @@ fn can_build_job_remotely() {
         .unwrap();
 
     let triggered = jenkins
-        .job_builder("remote job")
+        .job_builder("remote job", false)
         .unwrap()
         .remotely_with_token_and_cause("remote_token", None)
         .unwrap()
@@ -523,7 +523,7 @@ fn can_build_job_with_parameters() {
     };
 
     let triggered = jenkins
-        .job_builder("parameterized job")
+        .job_builder("parameterized job", false)
         .unwrap()
         .with_parameters(&params)
         .unwrap()
