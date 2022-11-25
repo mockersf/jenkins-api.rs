@@ -30,7 +30,7 @@ features = [ "blocking", "json" ]
 version = "0.10"
 
 [dev-dependencies]
-env_logger = "0.8"
+env_logger = "0.10"
 mockito = "0.28"
 spectral = "0.6"
 proptest = "0.10"
