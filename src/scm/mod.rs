@@ -8,6 +8,7 @@ mod browser;
 pub use self::browser::*;
 
 /// SCM merge options
+#[allow(dead_code)]
 #[derive(Default, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct MergeOptions {

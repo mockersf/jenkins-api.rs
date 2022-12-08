@@ -440,7 +440,7 @@ macro_rules! job_buildable_with_common_fields_and_impl {
                 )*)*
                 private_fields {
                     /// Properties of the job
-                    property: Vec<CommonProperty>,
+                    _property: Vec<CommonProperty>,
                 }
             }
         }
