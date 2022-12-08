@@ -23,6 +23,7 @@ use crate::client::Result;
 pub struct JenkinsBuilder {
     url: String,
     user: Option<User>,
+    allow_insecure_ssl_connection: bool,
     csrf_enabled: bool,
     depth: u8,
 }
@@ -39,6 +40,7 @@ impl JenkinsBuilder {
                 }
             },
             user: None,
+            allow_insecure_ssl_connection: false,
             csrf_enabled: true,
             depth: 1,
         }
@@ -56,7 +58,9 @@ impl JenkinsBuilder {
 
         Ok(Jenkins {
             url: self.url,
-            client: Client::builder().build()?,
+            client: Client::builder()
+                .danger_accept_invalid_certs(self.allow_insecure_ssl_connection)
+                .build()?,
             user: self.user,
             csrf_enabled: self.csrf_enabled,
             depth: self.depth,
@@ -69,6 +73,12 @@ impl JenkinsBuilder {
             username: login.to_string(),
             password: password.map(std::string::ToString::to_string),
         });
+        self
+    }
+
+    /// Allow connections with invalid or self-signed certificates
+    pub fn allow_insecure_ssl(mut self) -> Self {
+        self.allow_insecure_ssl_connection = true;
         self
     }
 
@@ -106,6 +116,14 @@ mod tests {
         assert_eq!(jenkins_client.url, JENKINS_URL);
         assert_eq!(jenkins_client.user, None);
         assert_eq!(jenkins_client.csrf_enabled, true);
+    }
+
+    #[test]
+    fn create_builder_allowing_insecure_tls() {
+        let jenkins_client = crate::JenkinsBuilder::new(JENKINS_URL).allow_insecure_ssl();
+        assert_eq!(jenkins_client.url, JENKINS_URL);
+        assert_eq!(jenkins_client.user, None);
+        assert_eq!(jenkins_client.allow_insecure_ssl_connection, true);
     }
 
     #[test]
