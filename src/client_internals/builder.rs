@@ -14,7 +14,7 @@ use crate::client::Result;
 ///#
 ///# fn example_function() {
 ///     let jenkins = JenkinsBuilder::new("http://localhost:8080")
-///         .with_user("user", Some("password"))
+///         .with_user("user", Some("password_or_token"))
 ///         .build()
 ///         .unwrap();
 ///# }
